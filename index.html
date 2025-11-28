@@ -51,7 +51,7 @@
             100% { opacity: 0; transform: translateY(-50px); }
         }
 
-        /* Rarity Gradients for Cards */
+        /* Rarity Gradients */
         .rarity-common { background: linear-gradient(to bottom right, #f3f4f6, #d1d5db); border: 2px solid #9ca3af; }
         .rarity-uncommon { background: linear-gradient(to bottom right, #d1fae5, #6ee7b7); border: 2px solid #10b981; }
         .rarity-rare { background: linear-gradient(to bottom right, #dbeafe, #60a5fa); border: 2px solid #2563eb; }
@@ -81,9 +81,6 @@
         .rarity-transcendent .text-gray-500 { color: #ffed4e !important; }
         .rarity-transcendent .bg-white\/50 { background: rgba(255,215,0,0.3); }
 
-        /* Index Styles */
-        .pet-silhouette { filter: brightness(0) opacity(0.2); }
-        .pet-locked-text { color: transparent; text-shadow: 0 0 8px rgba(0,0,0,0.5); }
         .rarity-special {
             background: linear-gradient(to bottom right, #ffafbd, #ffc3a0);
             border: 3px solid #ff6b6b;
@@ -108,16 +105,19 @@
             100% { box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700; }
         }
 
-        /* Custom Scrollbar */
+        /* Styles */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+        
+        .pet-silhouette { filter: brightness(0) opacity(0.2); }
+        .pet-locked-text { color: transparent; text-shadow: 0 0 8px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden text-gray-800">
 
-    <!-- Header / Stats -->
+    <!-- Header -->
     <header class="bg-white shadow-md p-4 flex justify-between items-center z-10 shrink-0">
         <div class="flex items-center gap-3">
             <div class="text-3xl">🐣</div>
@@ -125,11 +125,9 @@
                 <h1 class="font-bold text-xl leading-none text-purple-600">Gibchick</h1>
                 <span class="text-xs text-gray-500">Collect 'em all!</span>
             </div>
-            <!-- Index Button -->
             <button onclick="openIndexModal()" class="ml-2 text-blue-400 hover:text-blue-600 transition text-sm" title="Pet Index">
                 <i class="fas fa-book-open text-xl"></i>
             </button>
-            <!-- Reset Button -->
             <button onclick="openResetModal()" class="ml-2 text-gray-300 hover:text-red-500 transition text-sm" title="Reset Progress">
                 <i class="fas fa-trash-alt"></i>
             </button>
@@ -151,53 +149,43 @@
         </div>
     </header>
 
-    <!-- Main Game Area -->
+    <!-- Main Content -->
     <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
         
-        <!-- Left Panel: Clicker & Eggs -->
+        <!-- Left Panel -->
         <section class="flex-1 p-4 overflow-y-auto flex flex-col gap-6 relative" id="click-area">
             
-            <!-- Manual Click Button -->
             <div class="bg-white rounded-2xl shadow-lg p-6 text-center transform hover:scale-[1.02] transition-transform cursor-pointer active:scale-95 select-none" onclick="manualClick(event)">
                 <div class="text-6xl mb-2">🐥</div>
                 <h2 class="font-bold text-xl mb-1">Click for Cash!</h2>
                 <p class="text-gray-500 text-sm">Get quick money to buy eggs</p>
             </div>
 
-            <!-- Egg Shop -->
             <div>
                 <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
                     <i class="fas fa-shopping-basket text-orange-500"></i> Egg Shop
                 </h3>
                 <p class="text-xs text-gray-500 mb-2 italic">Click an egg icon to see drop rates!</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="egg-shop-container">
-                    <!-- Eggs inserted by JS -->
-                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="egg-shop-container"></div>
              </div>
 
-             <!-- Upgrades -->
              <div>
                  <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
                      <i class="fas fa-arrow-up text-purple-500"></i> Upgrades
                  </h3>
-                 <div id="upgrades-container" class="grid grid-cols-1 gap-3">
-                     <!-- Upgrades inserted by JS -->
-                 </div>
+                 <div id="upgrades-container" class="grid grid-cols-1 gap-3"></div>
              </div>
 
-             <!-- Achievements -->
              <div>
                  <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
                      <i class="fas fa-trophy text-yellow-500"></i> Achievements
                      <span id="achievement-count" class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs">0/14</span>
                  </h3>
-                 <div id="achievements-container" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
-                     <!-- Achievements inserted by JS -->
-                 </div>
+                 <div id="achievements-container" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto"></div>
              </div>
          </section>
 
-         <!-- Right Panel: Inventory -->
+         <!-- Right Panel -->
         <section class="flex-1 bg-white/50 backdrop-blur-sm border-l border-white/20 p-4 overflow-y-auto flex flex-col">
             <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center gap-2">
@@ -211,56 +199,42 @@
                 </button>
             </div>
             
-            <!-- Inventory Wrapper -->
             <div class="relative flex-1 overflow-y-auto pr-1">
                 <div id="empty-inventory" class="text-center py-10 text-gray-400 italic">
                     You have no pets yet. Buy an egg to start!
                 </div>
                 
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 content-start pb-4" id="inventory-container">
-                    <!-- Inventory Items inserted by JS -->
-                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 content-start pb-4" id="inventory-container"></div>
             </div>
         </section>
 
     </main>
 
-    <!-- Hatching Modal Overlay -->
+    <!-- Overlays & Modals -->
+    
+    <!-- Hatching -->
     <div id="hatch-overlay" class="fixed inset-0 bg-black/80 z-50 hidden flex flex-col items-center justify-center backdrop-blur-sm p-4 overflow-y-auto">
         <div class="relative flex flex-col items-center justify-center w-full min-h-[50vh]">
-            <!-- Egg Container (Single or Multiple) -->
             <div id="hatch-egg-display" class="transition-all duration-300 cursor-pointer relative z-10"></div>
-            
             <div id="hatch-rays" class="absolute inset-0 bg-yellow-400 rounded-full blur-3xl opacity-0 transition-opacity duration-500 -z-10 animate-pulse pointer-events-none"></div>
-            
             <div id="hatch-message" class="text-white text-2xl font-bold mt-8 text-center h-8 z-20">Tap to Hatch!</div>
             
-            <!-- Single Card Result -->
             <div id="new-pet-card" class="hidden transform transition-all duration-500 z-30">
                 <div class="bg-white p-6 rounded-2xl shadow-2xl text-center w-64 border-4" id="reveal-card-bg">
                     <div class="text-sm font-bold uppercase tracking-wider mb-2" id="reveal-rarity">Common</div>
                     <div class="text-8xl mb-4 pop-in" id="reveal-icon">🐥</div>
                     <h2 class="text-2xl font-bold text-gray-800 mb-1" id="reveal-name">Baby Chick</h2>
                     <div class="text-green-600 font-bold text-lg mb-4">+$<span id="reveal-rate">1</span>/s</div>
-                    <button onclick="closeHatchModal()" class="bg-gray-800 text-white px-6 py-2 rounded-full font-bold hover:bg-gray-700 transition w-full">
-                        Awesome!
-                    </button>
+                    <button onclick="closeHatchModal()" class="bg-gray-800 text-white px-6 py-2 rounded-full font-bold hover:bg-gray-700 transition w-full">Awesome!</button>
                 </div>
             </div>
 
-            <!-- Multi Grid Result -->
-            <div id="multi-pet-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-3xl w-full z-30 mt-4">
-                <!-- Grid Items inserted via JS -->
-            </div>
-
-            <!-- Shared Close Button for Multi-Hatch -->
-            <button id="multi-hatch-close-btn" onclick="closeHatchModal()" class="hidden mt-8 bg-gray-800 text-white px-8 py-3 rounded-full font-bold hover:bg-gray-700 transition shadow-lg z-40 animate-bounce">
-                Awesome!
-            </button>
+            <div id="multi-pet-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-3xl w-full z-30 mt-4"></div>
+            <button id="multi-hatch-close-btn" onclick="closeHatchModal()" class="hidden mt-8 bg-gray-800 text-white px-8 py-3 rounded-full font-bold hover:bg-gray-700 transition shadow-lg z-40 animate-bounce">Awesome!</button>
         </div>
     </div>
 
-    <!-- Egg Info Modal -->
+    <!-- Egg Info -->
     <div id="egg-info-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
             <div id="egg-info-header" class="p-4 bg-gray-100 border-b flex justify-between items-center">
@@ -268,17 +242,13 @@
                 <button onclick="closeEggInfo()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
             </div>
             <div class="p-4 max-h-[60vh] overflow-y-auto">
-                <div id="egg-info-list" class="space-y-2">
-                    <!-- Rates inserted by JS -->
-                </div>
+                <div id="egg-info-list" class="space-y-2"></div>
             </div>
-            <div class="p-4 bg-gray-50 border-t text-center text-xs text-gray-500">
-                Good luck!
-            </div>
+            <div class="p-4 bg-gray-50 border-t text-center text-xs text-gray-500">Good luck!</div>
         </div>
     </div>
 
-    <!-- Merge Modal -->
+    <!-- Merge -->
     <div id="merge-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[80vh]">
             <div class="p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white flex justify-between items-center shrink-0">
@@ -288,11 +258,8 @@
                 </div>
                 <button onclick="closeMergeModal()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
-            
             <div class="p-4 overflow-y-auto flex-1 bg-gray-50">
-                <div id="merge-list" class="space-y-3">
-                    <!-- Merge candidates inserted by JS -->
-                </div>
+                <div id="merge-list" class="space-y-3"></div>
                 <div id="no-merge-msg" class="hidden text-center py-8 text-gray-400">
                     <div class="text-4xl mb-2">🧬</div>
                     <p>You need 3 of the same pet to merge.</p>
@@ -301,7 +268,7 @@
         </div>
     </div>
 
-    <!-- Pet Index Modal -->
+    <!-- Index -->
     <div id="index-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[90vh] overflow-hidden flex flex-col">
             <div class="p-4 bg-blue-600 text-white flex justify-between items-center shrink-0">
@@ -311,15 +278,9 @@
                 </div>
                 <button onclick="closeIndexModal()" class="text-white/80 hover:text-white text-2xl"><i class="fas fa-times"></i></button>
             </div>
-            
-            <!-- Index Grid -->
             <div class="p-6 overflow-y-auto flex-1 bg-gray-100">
-                <div id="index-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
-                    <!-- Grid items inserted by JS -->
-                </div>
+                <div id="index-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4"></div>
             </div>
-
-            <!-- Reward Footer -->
             <div class="p-4 bg-white border-t flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
                     <h3 class="font-bold text-lg text-gray-800">Completion Reward</h3>
@@ -332,7 +293,7 @@
         </div>
     </div>
 
-    <!-- Reset Confirmation Modal -->
+    <!-- Reset -->
     <div id="reset-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
             <div class="text-red-500 text-5xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
@@ -345,20 +306,13 @@
         </div>
     </div>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-[60] text-sm font-bold text-center">
-        Notification
-    </div>
-
-    <!-- Pet Info Tooltip -->
-    <div id="pet-tooltip" class="fixed bg-white rounded-lg shadow-xl border-2 border-gray-200 p-3 opacity-0 transition-opacity duration-200 pointer-events-none z-[70] text-sm max-w-xs">
-        <div id="pet-tooltip-content"></div>
-    </div>
+    <!-- Toast & Tooltip -->
+    <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-[60] text-sm font-bold text-center">Notification</div>
+    <div id="pet-tooltip" class="fixed bg-white rounded-lg shadow-xl border-2 border-gray-200 p-3 opacity-0 transition-opacity duration-200 pointer-events-none z-[70] text-sm max-w-xs"><div id="pet-tooltip-content"></div></div>
 
     <script>
-        /* --- GAME DATA --- */
+        // --- DATA ---
         const PETS = {
-            // Tier 1: Common
             'ant': { id: 'ant', name: 'Worker Ant', icon: '🐜', rate: 1, rarity: 'Common', next: 'chick' },
             'chick': { id: 'chick', name: 'Baby Chick', icon: '🐥', rate: 2, rarity: 'Common', next: 'mouse' },
             'mouse': { id: 'mouse', name: 'Field Mouse', icon: '🐁', rate: 3, rarity: 'Common', next: 'fish' },
@@ -366,8 +320,6 @@
             'beetle': { id: 'beetle', name: 'Beetle', icon: '🐞', rate: 8, rarity: 'Common', next: 'spider' },
             'spider': { id: 'spider', name: 'Spider', icon: '🕷️', rate: 12, rarity: 'Common', next: 'bee' },
             'bee': { id: 'bee', name: 'Honey Bee', icon: '🐝', rate: 16, rarity: 'Common', next: 'cat' },
-
-            // Tier 2: Uncommon
             'cat': { id: 'cat', name: 'Stray Cat', icon: '🐈', rate: 20, rarity: 'Uncommon', next: 'dog' },
             'dog': { id: 'dog', name: 'Good Boy', icon: '🐕', rate: 30, rarity: 'Uncommon', next: 'pig' },
             'pig': { id: 'pig', name: 'Piggy', icon: '🐖', rate: 45, rarity: 'Uncommon', next: 'sheep' },
@@ -375,8 +327,6 @@
             'snake': { id: 'snake', name: 'Snake', icon: '🐍', rate: 80, rarity: 'Uncommon', next: 'crab' },
             'crab': { id: 'crab', name: 'Crab', icon: '🦀', rate: 100, rarity: 'Uncommon', next: 'frog' },
             'frog': { id: 'frog', name: 'Frog', icon: '🐸', rate: 125, rarity: 'Uncommon', next: 'fox' },
-
-            // Tier 3: Rare
             'fox': { id: 'fox', name: 'Sly Fox', icon: '🦊', rate: 150, rarity: 'Rare', next: 'monkey' },
             'monkey': { id: 'monkey', name: 'Monkey', icon: '🐒', rate: 200, rarity: 'Rare', next: 'penguin' },
             'penguin': { id: 'penguin', name: 'Penguin', icon: '🐧', rate: 300, rarity: 'Rare', next: 'owl' },
@@ -385,8 +335,6 @@
             'turtle': { id: 'turtle', name: 'Turtle', icon: '🐢', rate: 650, rarity: 'Rare', next: 'wolf' },
             'wolf': { id: 'wolf', name: 'Wolf', icon: '🐺', rate: 800, rarity: 'Rare', next: 'vulture' },
             'vulture': { id: 'vulture', name: 'Vulture', icon: '🦅', rate: 1000, rarity: 'Rare', next: 't-rex' },
-
-            // Tier 4: Epic
             't-rex': { id: 't-rex', name: 'T-Rex', icon: '🦖', rate: 1500, rarity: 'Epic', next: 'shark' },
             'shark': { id: 'shark', name: 'Great White', icon: '🦈', rate: 1800, rarity: 'Epic', next: 'alien' },
             'alien': { id: 'alien', name: 'Martian', icon: '👽', rate: 2100, rarity: 'Epic', next: 'robot' },
@@ -396,89 +344,37 @@
             'triceratops': { id: 'triceratops', name: 'Triceratops', icon: '🦕', rate: 3700, rarity: 'Epic', next: 'pterodactyl' },
             'pterodactyl': { id: 'pterodactyl', name: 'Pterodactyl', icon: '🦇', rate: 4100, rarity: 'Epic', next: 'skeleton' },
             'skeleton': { id: 'skeleton', name: 'Skeleton', icon: '💀', rate: 4500, rarity: 'Epic', next: 'unicorn' },
-
-            // Tier 5: Legendary
             'unicorn': { id: 'unicorn', name: 'Unicorn', icon: '🦄', rate: 5000, rarity: 'Legendary', next: 'dragon' },
             'dragon': { id: 'dragon', name: 'Red Dragon', icon: '🐉', rate: 6000, rarity: 'Legendary', next: 'yeti' },
             'yeti': { id: 'yeti', name: 'Abominable', icon: '🦍', rate: 7500, rarity: 'Legendary', next: 'mammoth' },
             'mammoth': { id: 'mammoth', name: 'Mammoth', icon: '🦣', rate: 10000, rarity: 'Legendary', next: 'reaper' },
             'reaper': { id: 'reaper', name: 'Grim Reaper', icon: '🕯️', rate: 15000, rarity: 'Legendary', next: 'griffin' },
             'griffin': { id: 'griffin', name: 'Chimera', icon: '🦁', rate: 25000, rarity: 'Legendary', next: 'phoenix' },
-
-            // Tier 6: Mythical
             'phoenix': { id: 'phoenix', name: 'Phoenix', icon: '🔥', rate: 50000, rarity: 'Mythical', next: 'kraken' },
             'kraken': { id: 'kraken', name: 'The Kraken', icon: '🐙', rate: 100000, rarity: 'Mythical', next: 'hydra' },
             'hydra': { id: 'hydra', name: 'Hydra', icon: '🐍', rate: 250000, rarity: 'Mythical', next: 'titan' },
             'titan': { id: 'titan', name: 'Titan', icon: '🗿', rate: 500000, rarity: 'Mythical', next: 'void' },
-
-            // Tier 7: Godly
             'void': { id: 'void', name: 'The Void', icon: '🌌', rate: 1000000, rarity: 'Godly', next: 'cosmos' },
-
-            // Tier 8: Transcendent
             'cosmos': { id: 'cosmos', name: 'The Cosmos', icon: '🌌', rate: 5000000, rarity: 'Transcendent', next: null },
-
-            // REWARD PET (Special)
             'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 10000000, rarity: 'Special', next: null, hidden: true }
         };
 
         const EGGS = [
-            { 
-                id: 'starter', name: 'Starter Egg', cost: 50, icon: '🥚', colorClass: 'bg-orange-100 border-orange-200',
-                pool: { 'ant': 0.45, 'chick': 0.40, 'mouse': 0.15 } 
-            },
-            { 
-                id: 'farm', name: 'Farm Egg', cost: 200, icon: '🏡', colorClass: 'bg-yellow-100 border-yellow-200',
-                pool: { 'mouse': 0.3, 'beetle': 0.2, 'cat': 0.25, 'dog': 0.15, 'pig': 0.08, 'sheep': 0.02 } 
-            },
-            { 
-                id: 'aqua', name: 'Aqua Egg', cost: 750, icon: '🌊', colorClass: 'bg-blue-100 border-blue-200',
-                pool: { 'fish': 0.35, 'crab': 0.3, 'turtle': 0.2, 'shark': 0.1, 'kraken': 0.005 } 
-            },
-            { 
-                id: 'desert', name: 'Desert Egg', cost: 2500, icon: '🌵', colorClass: 'bg-amber-100 border-amber-200',
-                pool: { 'snake': 0.4, 'camel': 0.3, 'vulture': 0.2, 'fox': 0.1 } 
-            },
-            { 
-                id: 'spooky', name: 'Spooky Egg', cost: 7500, icon: '👻', colorClass: 'bg-purple-100 border-purple-200',
-                pool: { 'spider': 0.3, 'owl': 0.3, 'wolf': 0.25, 'skeleton': 0.1, 'reaper': 0.05 } 
-            },
-            { 
-                id: 'forest', name: 'Forest Egg', cost: 20000, icon: '🌲', colorClass: 'bg-green-100 border-green-200',
-                pool: { 'fox': 0.3, 'monkey': 0.3, 'owl': 0.2, 'wolf': 0.15, 'bear': 0.05 } 
-            },
-            { 
-                id: 'prehistoric', name: 'Dino Egg', cost: 75000, icon: '🌋', colorClass: 'bg-red-100 border-red-200',
-                pool: { 't-rex': 0.4, 'triceratops': 0.3, 'pterodactyl': 0.2, 'mammoth': 0.1 } 
-            },
-            { 
-                id: 'jungle', name: 'Jungle Egg', cost: 250000, icon: '🌴', colorClass: 'bg-emerald-100 border-emerald-200',
-                pool: { 'monkey': 0.3, 'snake': 0.3, 'tiger': 0.2, 'bear': 0.15, 'hydra': 0.005 } 
-            },
-            { 
-                id: 'arctic', name: 'Arctic Egg', cost: 750000, icon: '❄️', colorClass: 'bg-cyan-100 border-cyan-200',
-                pool: { 'penguin': 0.4, 'bear': 0.3, 'yeti': 0.2, 'mammoth': 0.1 } 
-            },
-            { 
-                id: 'cosmic', name: 'Cosmic Egg', cost: 2500000, icon: '🪐', colorClass: 'bg-indigo-100 border-indigo-200',
-                pool: { 'alien': 0.4, 'robot': 0.4, 'titan': 0.15, 'void': 0.005 } 
-            },
-            { 
-                id: 'fantasy', name: 'Fantasy Egg', cost: 10000000, icon: '🏰', colorClass: 'bg-pink-100 border-pink-200',
-                pool: { 'unicorn': 0.35, 'griffin': 0.3, 'dragon': 0.2, 'phoenix': 0.1, 'titan': 0.05 } 
-             },
-             {
-                 id: 'divine', name: 'Divine Egg', cost: 50000000, icon: '👑', colorClass: 'bg-yellow-50 border-yellow-300',
-                 pool: { 'phoenix': 0.4, 'kraken': 0.25, 'hydra': 0.2, 'titan': 0.1, 'void': 0.05 }
-             },
-             {
-                 id: 'void', name: 'Void Egg', cost: 250000000, icon: '🕳️', colorClass: 'bg-gray-900 border-gray-600',
-                 pool: { 'void': 0.6, 'cosmos': 0.4 }
-             },
-             {
-                 id: 'mystery', name: 'Mystery Egg', cost: 25000, icon: '❓', colorClass: 'bg-purple-100 border-purple-300',
-                 pool: { 'spider': 0.2, 'bee': 0.2, 'frog': 0.2, 'turtle': 0.15, 'penguin': 0.15, 'camel': 0.1 }
-             }
-         ];
+            { id: 'starter', name: 'Starter Egg', cost: 50, icon: '🥚', colorClass: 'bg-orange-100 border-orange-200', pool: { 'ant': 0.45, 'chick': 0.40, 'mouse': 0.15 } },
+            { id: 'farm', name: 'Farm Egg', cost: 200, icon: '🏡', colorClass: 'bg-yellow-100 border-yellow-200', pool: { 'mouse': 0.3, 'beetle': 0.2, 'cat': 0.25, 'dog': 0.15, 'pig': 0.08, 'sheep': 0.02 } },
+            { id: 'aqua', name: 'Aqua Egg', cost: 750, icon: '🌊', colorClass: 'bg-blue-100 border-blue-200', pool: { 'fish': 0.35, 'crab': 0.3, 'turtle': 0.2, 'shark': 0.1, 'kraken': 0.005 } },
+            { id: 'desert', name: 'Desert Egg', cost: 2500, icon: '🌵', colorClass: 'bg-amber-100 border-amber-200', pool: { 'snake': 0.4, 'camel': 0.3, 'vulture': 0.2, 'fox': 0.1 } },
+            { id: 'spooky', name: 'Spooky Egg', cost: 7500, icon: '👻', colorClass: 'bg-purple-100 border-purple-200', pool: { 'spider': 0.3, 'owl': 0.3, 'wolf': 0.25, 'skeleton': 0.1, 'reaper': 0.05 } },
+            { id: 'forest', name: 'Forest Egg', cost: 20000, icon: '🌲', colorClass: 'bg-green-100 border-green-200', pool: { 'fox': 0.3, 'monkey': 0.3, 'owl': 0.2, 'wolf': 0.15, 'bear': 0.05 } },
+            { id: 'prehistoric', name: 'Dino Egg', cost: 75000, icon: '🌋', colorClass: 'bg-red-100 border-red-200', pool: { 't-rex': 0.4, 'triceratops': 0.3, 'pterodactyl': 0.2, 'mammoth': 0.1 } },
+            { id: 'jungle', name: 'Jungle Egg', cost: 250000, icon: '🌴', colorClass: 'bg-emerald-100 border-emerald-200', pool: { 'monkey': 0.3, 'snake': 0.3, 'tiger': 0.2, 'bear': 0.15, 'hydra': 0.005 } },
+            { id: 'arctic', name: 'Arctic Egg', cost: 750000, icon: '❄️', colorClass: 'bg-cyan-100 border-cyan-200', pool: { 'penguin': 0.4, 'bear': 0.3, 'yeti': 0.2, 'mammoth': 0.1 } },
+            { id: 'cosmic', name: 'Cosmic Egg', cost: 2500000, icon: '🪐', colorClass: 'bg-indigo-100 border-indigo-200', pool: { 'alien': 0.4, 'robot': 0.4, 'titan': 0.15, 'void': 0.005 } },
+            { id: 'fantasy', name: 'Fantasy Egg', cost: 10000000, icon: '🏰', colorClass: 'bg-pink-100 border-pink-200', pool: { 'unicorn': 0.35, 'griffin': 0.3, 'dragon': 0.2, 'phoenix': 0.1, 'titan': 0.05 } },
+            { id: 'divine', name: 'Divine Egg', cost: 50000000, icon: '👑', colorClass: 'bg-yellow-50 border-yellow-300', pool: { 'phoenix': 0.4, 'kraken': 0.25, 'hydra': 0.2, 'titan': 0.1, 'void': 0.05 } },
+            { id: 'void', name: 'Void Egg', cost: 250000000, icon: '🕳️', colorClass: 'bg-gray-900 border-gray-600', pool: { 'void': 0.6, 'cosmos': 0.4 } },
+            { id: 'mystery', name: 'Mystery Egg', cost: 25000, icon: '❓', colorClass: 'bg-purple-100 border-purple-300', pool: { 'spider': 0.2, 'bee': 0.2, 'frog': 0.2, 'turtle': 0.15, 'penguin': 0.15, 'camel': 0.1 } }
+        ];
 
         const UPGRADES = {
             luck: { name: 'Luck', description: 'Increases merge success rate', icon: '🍀', baseCost: 1000, costMultiplier: 2.5, maxLevel: 10, getEffect: (level) => level * 0.05 },
@@ -507,29 +403,27 @@
             firstTranscendent: { id: 'firstTranscendent', name: 'Transcendent', description: 'Get a Transcendent pet', icon: '🌌', condition: (state) => state.inventory.some(id => PETS[id] && PETS[id].rarity === 'Transcendent') }
         };
 
-        /* --- STATE --- */
+        // --- STATE ---
         let state = {
             money: 0,
-            inventory: [], // Array of pet IDs
-            collection: [], // Array of ALL pet IDs ever owned
-            upgrades: {
-                luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0
-            },
-            achievements: [], 
+            inventory: [],
+            collection: [],
+            upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 },
+            achievements: [],
             stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 },
             lastSave: Date.now()
         };
 
-        // Auto clicker interval
         let autoClickerInterval = null;
+        let hatchQueue = [];
+        let isHatching = false;
 
-        /* --- GAME LOGIC --- */
-
+        // --- CORE FUNCTIONS ---
         window.onload = function() {
             loadGame();
             renderShop();
             renderUpgrades();
-            renderAchievements();
+            renderAchievements(); // Defined below
             renderInventory();
             updateAutoClicker();
             checkAchievements();
@@ -548,7 +442,6 @@
                 const pet = PETS[petId];
                 return total + (pet ? pet.rate : 0);
             }, 0);
-
             const incomeMultiplier = 1 + UPGRADES.income.getEffect(state.upgrades.income);
             const petBonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
             return Math.floor(baseIncome * incomeMultiplier * petBonus);
@@ -568,9 +461,7 @@
             let total = baseClick + incomeBonus + upgradeBonus;
 
             const critChance = UPGRADES.criticalClicks.getEffect(state.upgrades.criticalClicks);
-            if (Math.random() < critChance) {
-                total *= 5;
-            }
+            if (Math.random() < critChance) total *= 5;
 
             addMoney(total);
 
@@ -591,7 +482,7 @@
 
             const discount = UPGRADES.eggDiscount.getEffect(state.upgrades.eggDiscount);
             const discountedCost = Math.floor(egg.cost * (1 - discount));
-            const hatchCount = UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch); // Default level 0 is count 1
+            const hatchCount = UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
             const totalCost = discountedCost * hatchCount;
 
             if (state.money >= totalCost) {
@@ -605,179 +496,44 @@
             }
         }
 
-        /* --- INDEX SYSTEM --- */
-        function openIndexModal() {
-            const modal = document.getElementById('index-modal');
-            const grid = document.getElementById('index-grid');
-            const progressText = document.getElementById('index-progress-text');
-            const rewardBtn = document.getElementById('claim-reward-btn');
-
-            modal.classList.remove('hidden');
-
-            const allPets = Object.values(PETS).filter(p => !p.hidden);
-            const collectedCount = allPets.filter(p => state.collection.includes(p.id)).length;
-            const totalCount = allPets.length;
-            const isComplete = collectedCount >= totalCount;
-
-            progressText.innerText = `Collected: ${collectedCount}/${totalCount}`;
-
-            grid.innerHTML = allPets.map(pet => {
-                const isCollected = state.collection.includes(pet.id);
-                return `
-                    <div class="aspect-square rounded-xl flex flex-col items-center justify-center p-2 border-2 ${isCollected ? `bg-white ${getRarityBorder(pet.rarity)}` : 'bg-gray-200 border-gray-300'}">
-                        <div class="text-4xl mb-2 ${isCollected ? '' : 'pet-silhouette'}">${pet.icon}</div>
-                        <div class="text-xs font-bold text-center w-full truncate ${isCollected ? 'text-gray-800' : 'pet-locked-text'}">${pet.name}</div>
-                    </div>
-                `;
-            }).join('');
-
-            const rewardClaimed = state.collection.includes('reward_griffin');
-            
-            if (rewardClaimed) {
-                rewardBtn.innerHTML = `<span>Claimed</span> <i class="fas fa-check"></i>`;
-                rewardBtn.className = "bg-green-100 text-green-600 font-bold py-3 px-8 rounded-full cursor-default flex items-center gap-2 border-2 border-green-500";
-                rewardBtn.onclick = null;
-                rewardBtn.disabled = true;
-            } else if (isComplete) {
-                rewardBtn.innerHTML = `<span>Claim Reward</span> <i class="fas fa-gift"></i>`;
-                rewardBtn.className = "bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition shadow-lg flex items-center gap-2 animate-bounce cursor-pointer";
-                rewardBtn.onclick = claimIndexReward;
-                rewardBtn.disabled = false;
-            } else {
-                rewardBtn.innerHTML = `<span>Locked</span> <i class="fas fa-lock"></i>`;
-                rewardBtn.className = "bg-gray-300 text-gray-500 font-bold py-3 px-8 rounded-full transition cursor-not-allowed flex items-center gap-2";
-                rewardBtn.onclick = null;
-                rewardBtn.disabled = true;
-            }
-        }
-
-        function closeIndexModal() {
-            document.getElementById('index-modal').classList.add('hidden');
-        }
-
-        function getRarityBorder(rarity) {
-            switch(rarity) {
-                case 'Common': return 'border-gray-400';
-                case 'Uncommon': return 'border-green-400';
-                case 'Rare': return 'border-blue-500';
-                case 'Epic': return 'border-purple-500';
-                case 'Legendary': return 'border-yellow-500';
-                case 'Mythical': return 'border-red-500';
-                case 'Godly': return 'border-gray-800';
-                case 'Transcendent': return 'border-yellow-300';
-                default: return 'border-gray-200';
-            }
-        }
-
-        function claimIndexReward() {
-            if(state.collection.includes('reward_griffin')) return;
-            state.inventory.push('reward_griffin');
-            state.collection.push('reward_griffin');
-            renderInventory();
-            updateUI();
-            saveGame();
-            openIndexModal(); 
-            showToast("Guardian Griffin Acquired!");
-        }
-
-        /* --- UPGRADE SYSTEM --- */
-        function buyUpgrade(upgradeId) {
-            const upgrade = UPGRADES[upgradeId];
-            if (!upgrade) return;
-
-            const currentLevel = state.upgrades[upgradeId];
-            if (currentLevel >= upgrade.maxLevel) {
-                showToast("Max level reached!");
-                return;
-            }
-
-            const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel));
-
-            if (state.money >= cost) {
-                state.money -= cost;
-                state.upgrades[upgradeId]++;
-                updateUI();
-                renderUpgrades();
-                if (upgradeId === 'autoClicker') updateAutoClicker();
-                if (upgradeId === 'eggDiscount' || upgradeId === 'multiHatch') renderShop();
-                saveGame();
-                showToast(`${upgrade.name} upgraded!`);
-            } else {
-                showToast("Not enough money!");
-            }
-        }
-
-        function renderUpgrades() {
-            const container = document.getElementById('upgrades-container');
-            container.innerHTML = Object.entries(UPGRADES).map(([id, upgrade]) => {
-                const currentLevel = state.upgrades[id];
-                const maxed = currentLevel >= upgrade.maxLevel;
-                const cost = maxed ? 0 : Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel));
-
-                let effectText = '';
-                if (id === 'luck') {
-                    const chance = Math.min(0.75 + upgrade.getEffect(currentLevel), 1) * 100;
-                    effectText = `${chance.toFixed(0)}% merge success`;
-                } else if (id === 'income') {
-                    const multiplier = 1 + upgrade.getEffect(currentLevel);
-                    effectText = `${multiplier.toFixed(1)}x income`;
-                } else if (id === 'clickPower') {
-                    effectText = `+$${upgrade.getEffect(currentLevel)} per click`;
-                } else if (id === 'autoClicker') {
-                    effectText = `${upgrade.getEffect(currentLevel)} clicks/sec`;
-                } else if (id === 'criticalClicks') {
-                    const chance = upgrade.getEffect(currentLevel) * 100;
-                    effectText = `${chance.toFixed(1)}% crit chance (5x)`;
-                } else if (id === 'eggDiscount') {
-                    const discount = upgrade.getEffect(currentLevel) * 100;
-                    effectText = `${discount.toFixed(1)}% egg discount`;
-                } else if (id === 'petBonus') {
-                    const bonus = upgrade.getEffect(currentLevel) * 100;
-                    effectText = `+${bonus.toFixed(1)}% pet income`;
-                } else if (id === 'multiHatch') {
-                    effectText = `Hatch ${upgrade.getEffect(currentLevel)} eggs at once`;
+        // --- ACHIEVEMENTS ---
+        function checkAchievements() {
+            if (!state.achievements) state.achievements = [];
+            let newAchievements = [];
+            Object.values(ACHIEVEMENTS).forEach(achievement => {
+                if (!state.achievements.includes(achievement.id) && achievement.condition(state)) {
+                    state.achievements.push(achievement.id);
+                    newAchievements.push(achievement);
                 }
+            });
 
+            if (newAchievements.length > 0) {
+                newAchievements.forEach(a => showToast(`Achievement: ${a.name}!`));
+                renderAchievements();
+                saveGame();
+            }
+        }
+
+        function renderAchievements() {
+            const container = document.getElementById('achievements-container');
+            const totalAchievements = Object.keys(ACHIEVEMENTS).length;
+            const unlockedCount = state.achievements.length;
+            document.getElementById('achievement-count').textContent = `${unlockedCount}/${totalAchievements}`;
+
+            container.innerHTML = Object.values(ACHIEVEMENTS).map(a => {
+                const unlocked = state.achievements.includes(a.id);
                 return `
-                    <div class="bg-white rounded-xl p-4 shadow-md transition-all hover:shadow-lg ${maxed ? 'opacity-60' : ''}">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="text-3xl">${upgrade.icon}</div>
-                            <div>
-                                <div class="font-bold text-lg leading-none">${upgrade.name}</div>
-                                <div class="text-xs text-gray-500">${upgrade.description}</div>
-                            </div>
-                        </div>
-                        <div class="text-sm text-green-600 font-bold mb-3">${effectText}</div>
-                        <div class="flex items-center justify-between">
-                            <div class="text-xs text-gray-500">
-                                Lvl ${currentLevel}/${upgrade.maxLevel}
-                            </div>
-                            ${maxed ? `
-                                <div class="text-green-600 font-bold text-sm">MAX</div>
-                            ` : `
-                                <button onclick="buyUpgrade('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold py-1.5 px-3 rounded-lg transition active:scale-95">
-                                    $${formatCompact(cost)}
-                                </button>
-                            `}
+                    <div class="bg-white rounded-lg p-2 shadow-sm transition-all ${unlocked ? 'border-2 border-yellow-400' : 'opacity-50'}">
+                        <div class="text-center">
+                            <div class="text-lg mb-1">${a.icon}</div>
+                            <div class="text-xs font-bold ${unlocked ? 'text-yellow-600' : 'text-gray-400'}">${a.name}</div>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        function updateAutoClicker() {
-            if (autoClickerInterval) {
-                clearInterval(autoClickerInterval);
-                autoClickerInterval = null;
-            }
-            const clicksPerSecond = UPGRADES.autoClicker.getEffect(state.upgrades.autoClicker);
-            if (clicksPerSecond > 0) {
-                const interval = 1000 / clicksPerSecond;
-                autoClickerInterval = setInterval(() => manualClick(null, true), interval);
-            }
-        }
-
-        /* --- BATCH HATCHING SYSTEM --- */
+        // --- HATCHING ---
         function startHatchingSequence(egg, count = 1) {
             const overlay = document.getElementById('hatch-overlay');
             const eggContainer = document.getElementById('hatch-egg-display'); 
@@ -787,7 +543,6 @@
             const rays = document.getElementById('hatch-rays');
             const closeBtn = document.getElementById('multi-hatch-close-btn');
 
-            // Reset UI
             petCard.classList.add('hidden');
             if(multiGrid) multiGrid.classList.add('hidden');
             if(closeBtn) closeBtn.classList.add('hidden');
@@ -798,19 +553,16 @@
             message.classList.remove('hidden');
             rays.style.opacity = '0';
 
-            // Render Eggs
             if (count === 1) {
                 eggContainer.className = "text-9xl transition-all duration-300 cursor-pointer relative z-10 select-none";
                 eggContainer.innerHTML = egg.icon;
             } else {
-                // Grid of eggs
                 eggContainer.className = "grid grid-cols-3 gap-4 transition-all duration-300 cursor-pointer relative z-10 select-none max-w-md mx-auto";
                 eggContainer.innerHTML = Array(count).fill(`<div class="text-6xl animate-bounce">${egg.icon}</div>`).join('');
             }
 
             overlay.classList.remove('hidden');
 
-            // Click Handler
             eggContainer.onclick = function() {
                 if(count === 1) {
                     eggContainer.classList.add('shake-animation');
@@ -821,11 +573,7 @@
                 }
                 
                 message.innerText = "Cracking...";
-                
-                setTimeout(() => {
-                    revealBatch(egg, count);
-                }, 1000);
-                
+                setTimeout(() => revealBatch(egg, count), 1000);
                 eggContainer.onclick = null;
             };
         }
@@ -840,7 +588,6 @@
 
             const results = [];
             let highestRarityScore = 0; 
-
             const getRarityVal = (r) => {
                 const map = {'Common':1, 'Uncommon':2, 'Rare':3, 'Epic':4, 'Legendary':5, 'Mythical':6, 'Godly':7, 'Transcendent':8};
                 return map[r] || 0;
@@ -853,20 +600,17 @@
                     state.inventory.push(petId);
                     if (!state.collection.includes(petId)) state.collection.push(petId);
                     results.push(pet);
-                    
                     const score = getRarityVal(pet.rarity);
                     if(score > highestRarityScore) highestRarityScore = score;
                 }
             }
 
-            // Hide Eggs
             eggContainer.classList.add('hidden');
             eggContainer.classList.remove('shake-animation'); 
-            eggContainer.innerHTML = ''; // Clear to remove old classes
+            eggContainer.innerHTML = '';
             message.classList.add('hidden');
 
             if (results.length === 1) {
-                // Single Card
                 const pet = results[0];
                 document.getElementById('reveal-icon').innerText = pet.icon;
                 document.getElementById('reveal-name').innerText = pet.name;
@@ -877,7 +621,6 @@
                 petCard.classList.remove('hidden');
                 petCard.classList.add('pop-in');
             } else {
-                // Multi Grid
                 multiGrid.innerHTML = results.map(pet => `
                     <div class="bg-white p-3 rounded-xl shadow-lg border-2 rarity-${pet.rarity.toLowerCase()} flex flex-col items-center pop-in transform transition hover:scale-105">
                         <div class="text-[10px] font-bold uppercase mb-1 opacity-70">${pet.rarity}</div>
@@ -887,16 +630,10 @@
                 `).join('');
                 multiGrid.classList.remove('hidden');
                 closeBtn.classList.remove('hidden');
-                
-                // Stagger animations
-                Array.from(multiGrid.children).forEach((el, i) => {
-                    el.style.animationDelay = `${i * 0.05}s`;
-                });
+                Array.from(multiGrid.children).forEach((el, i) => el.style.animationDelay = `${i * 0.05}s`);
             }
 
-            if(highestRarityScore >= 4) { // Epic+
-                rays.style.opacity = '0.5';
-            }
+            if(highestRarityScore >= 4) rays.style.opacity = '0.5';
 
             saveGame();
             renderInventory();
@@ -918,18 +655,15 @@
             document.getElementById('hatch-overlay').classList.add('hidden');
         }
 
-        /* --- MERGE SYSTEM --- */
+        // --- MERGE ---
         function openMergeModal() {
             const modal = document.getElementById('merge-modal');
             const list = document.getElementById('merge-list');
             const msg = document.getElementById('no-merge-msg');
-            
             modal.classList.remove('hidden');
             
             const counts = {};
-            state.inventory.forEach(id => {
-                counts[id] = (counts[id] || 0) + 1;
-            });
+            state.inventory.forEach(id => counts[id] = (counts[id] || 0) + 1);
 
             const mergeable = Object.entries(counts)
                 .filter(([id, count]) => count >= 3 && PETS[id] && PETS[id].next)
@@ -944,8 +678,6 @@
             msg.classList.add('hidden');
             list.innerHTML = mergeable.map(m => {
                 const nextPet = PETS[m.pet.next];
-                if (!nextPet) return '';
-
                 return `
                     <div class="bg-white border-2 border-blue-100 p-4 rounded-xl flex items-center justify-between shadow-sm">
                         <div class="flex items-center gap-4">
@@ -960,9 +692,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button onclick="performMerge('${m.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition active:scale-95">
-                            Merge
-                        </button>
+                        <button onclick="performMerge('${m.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition active:scale-95">Merge</button>
                     </div>
                 `;
             }).join('');
@@ -1017,71 +747,142 @@
             openMergeModal();
         }
 
-        /* --- EGG INFO --- */
-        function showEggInfo(eggId) {
-            const egg = EGGS.find(e => e.id === eggId);
-            if(!egg) return;
+        // --- UPGRADES ---
+        function buyUpgrade(upgradeId) {
+            const upgrade = UPGRADES[upgradeId];
+            if (!upgrade) return;
+            const currentLevel = state.upgrades[upgradeId];
+            if (currentLevel >= upgrade.maxLevel) {
+                showToast("Max level reached!");
+                return;
+            }
+            const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel));
+            if (state.money >= cost) {
+                state.money -= cost;
+                state.upgrades[upgradeId]++;
+                updateUI();
+                renderUpgrades();
+                if (upgradeId === 'autoClicker') updateAutoClicker();
+                if (upgradeId === 'eggDiscount' || upgradeId === 'multiHatch') renderShop();
+                saveGame();
+                showToast(`${upgrade.name} upgraded!`);
+            } else {
+                showToast("Not enough money!");
+            }
+        }
 
-            const hatchCount = UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
-            const hatchText = hatchCount > 1 ? ` (x${hatchCount})` : '';
-
-            document.getElementById('egg-info-title').innerHTML = `${egg.icon} ${egg.name} Rates${hatchText}`;
-            const list = document.getElementById('egg-info-list');
-            
-            const drops = Object.entries(egg.pool)
-                .map(([petId, chance]) => ({ pet: PETS[petId], chance }))
-                .filter(d => d.pet)
-                .sort((a,b) => a.chance - b.chance); 
-
-            list.innerHTML = drops.map(d => {
-                const percent = (d.chance * 100).toFixed(1);
-                let percentColor = 'text-gray-600';
-                if(d.chance < 0.05) percentColor = 'text-red-500 font-bold';
-                else if(d.chance < 0.15) percentColor = 'text-orange-500 font-bold';
+        function renderUpgrades() {
+            const container = document.getElementById('upgrades-container');
+            container.innerHTML = Object.entries(UPGRADES).map(([id, upgrade]) => {
+                const currentLevel = state.upgrades[id];
+                const maxed = currentLevel >= upgrade.maxLevel;
+                const cost = maxed ? 0 : Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel));
+                let effectText = '';
+                if (id === 'luck') effectText = `${(Math.min(0.75 + upgrade.getEffect(currentLevel), 1) * 100).toFixed(0)}% merge success`;
+                else if (id === 'income') effectText = `${(1 + upgrade.getEffect(currentLevel)).toFixed(1)}x income`;
+                else if (id === 'clickPower') effectText = `+$${upgrade.getEffect(currentLevel)} per click`;
+                else if (id === 'autoClicker') effectText = `${upgrade.getEffect(currentLevel)} clicks/sec`;
+                else if (id === 'criticalClicks') effectText = `${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% crit chance`;
+                else if (id === 'eggDiscount') effectText = `${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% discount`;
+                else if (id === 'petBonus') effectText = `+${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% pet income`;
+                else if (id === 'multiHatch') effectText = `Hatch ${upgrade.getEffect(currentLevel)} eggs`;
 
                 return `
-                    <div class="flex items-center justify-between p-2 rounded bg-gray-50 border border-gray-100">
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl">${d.pet.icon}</div>
+                    <div class="bg-white rounded-xl p-4 shadow-md transition-all hover:shadow-lg ${maxed ? 'opacity-60' : ''}">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="text-3xl">${upgrade.icon}</div>
                             <div>
-                                <div class="font-bold text-sm text-gray-800">${d.pet.name}</div>
-                                <div class="text-[10px] uppercase font-bold text-gray-400">${d.pet.rarity}</div>
+                                <div class="font-bold text-lg leading-none">${upgrade.name}</div>
+                                <div class="text-xs text-gray-500">${upgrade.description}</div>
                             </div>
                         </div>
-                        <div class="${percentColor}">${percent}%</div>
+                        <div class="text-sm text-green-600 font-bold mb-3">${effectText}</div>
+                        <div class="flex items-center justify-between">
+                            <div class="text-xs text-gray-500">Lvl ${currentLevel}/${upgrade.maxLevel}</div>
+                            ${maxed ? `<div class="text-green-600 font-bold text-sm">MAX</div>` : `<button onclick="buyUpgrade('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold py-1.5 px-3 rounded-lg transition active:scale-95">$${formatCompact(cost)}</button>`}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateAutoClicker() {
+            if (autoClickerInterval) { clearInterval(autoClickerInterval); autoClickerInterval = null; }
+            const clicksPerSecond = UPGRADES.autoClicker.getEffect(state.upgrades.autoClicker);
+            if (clicksPerSecond > 0) autoClickerInterval = setInterval(() => manualClick(null, true), 1000 / clicksPerSecond);
+        }
+
+        // --- INDEX ---
+        function openIndexModal() {
+            const modal = document.getElementById('index-modal');
+            const grid = document.getElementById('index-grid');
+            const progressText = document.getElementById('index-progress-text');
+            const rewardBtn = document.getElementById('claim-reward-btn');
+            modal.classList.remove('hidden');
+
+            const allPets = Object.values(PETS).filter(p => !p.hidden);
+            const collectedCount = allPets.filter(p => state.collection.includes(p.id)).length;
+            const totalCount = allPets.length;
+            const isComplete = collectedCount >= totalCount;
+            const rewardClaimed = state.collection.includes('reward_griffin');
+
+            progressText.innerText = `Collected: ${collectedCount}/${totalCount}`;
+            grid.innerHTML = allPets.map(pet => {
+                const isCollected = state.collection.includes(pet.id);
+                return `
+                    <div class="aspect-square rounded-xl flex flex-col items-center justify-center p-2 border-2 ${isCollected ? `bg-white ${getRarityBorder(pet.rarity)}` : 'bg-gray-200 border-gray-300'}">
+                        <div class="text-4xl mb-2 ${isCollected ? '' : 'pet-silhouette'}">${pet.icon}</div>
+                        <div class="text-xs font-bold text-center w-full truncate ${isCollected ? 'text-gray-800' : 'pet-locked-text'}">${pet.name}</div>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('egg-info-modal').classList.remove('hidden');
+            if (rewardClaimed) {
+                rewardBtn.innerHTML = `<span>Claimed</span> <i class="fas fa-check"></i>`;
+                rewardBtn.className = "bg-green-100 text-green-600 font-bold py-3 px-8 rounded-full cursor-default flex items-center gap-2 border-2 border-green-500";
+                rewardBtn.onclick = null;
+                rewardBtn.disabled = true;
+            } else if (isComplete) {
+                rewardBtn.innerHTML = `<span>Claim Reward</span> <i class="fas fa-gift"></i>`;
+                rewardBtn.className = "bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition shadow-lg flex items-center gap-2 animate-bounce cursor-pointer";
+                rewardBtn.onclick = claimIndexReward;
+                rewardBtn.disabled = false;
+            } else {
+                rewardBtn.innerHTML = `<span>Locked</span> <i class="fas fa-lock"></i>`;
+                rewardBtn.className = "bg-gray-300 text-gray-500 font-bold py-3 px-8 rounded-full transition cursor-not-allowed flex items-center gap-2";
+                rewardBtn.onclick = null;
+                rewardBtn.disabled = true;
+            }
         }
 
-        function closeEggInfo() {
-            document.getElementById('egg-info-modal').classList.add('hidden');
+        function closeIndexModal() { document.getElementById('index-modal').classList.add('hidden'); }
+        function claimIndexReward() {
+            if(state.collection.includes('reward_griffin')) return;
+            state.inventory.push('reward_griffin');
+            state.collection.push('reward_griffin');
+            renderInventory(); updateUI(); saveGame(); openIndexModal(); showToast("Guardian Griffin Acquired!");
+        }
+        function getRarityBorder(rarity) {
+            const map = { 'Common':'border-gray-400', 'Uncommon':'border-green-400', 'Rare':'border-blue-500', 'Epic':'border-purple-500', 'Legendary':'border-yellow-500', 'Mythical':'border-red-500', 'Godly':'border-gray-800', 'Transcendent':'border-yellow-300' };
+            return map[rarity] || 'border-gray-200';
         }
 
-        /* --- UI & UTILS --- */
+        // --- MISC UI ---
         function renderShop() {
             const container = document.getElementById('egg-shop-container');
             const discount = UPGRADES.eggDiscount.getEffect(state.upgrades.eggDiscount);
             const hatchCount = UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
-
             container.innerHTML = EGGS.map(egg => {
                 const discountedCost = Math.floor(egg.cost * (1 - discount));
                 const totalCost = discountedCost * hatchCount;
                 const hasDiscount = discount > 0;
                 const hasMultiHatch = hatchCount > 1;
-
                 return `
                     <div class="rounded-xl p-4 shadow-md transition-all hover:-translate-y-1 hover:shadow-lg flex flex-col items-center ${egg.colorClass}">
                         <div class="cursor-pointer transition-transform hover:scale-110 active:scale-95 text-center w-full" onclick="showEggInfo('${egg.id}')" title="Click for Drop Rates">
                             <div class="text-4xl mb-2">${egg.icon}</div>
-                            <div class="font-bold text-lg leading-tight mb-1 flex items-center justify-center gap-1">
-                                ${egg.name} <i class="fas fa-info-circle text-gray-400 text-xs"></i>
-                            </div>
-                            <div class="text-xs text-gray-500 text-center mb-3 h-8 overflow-hidden">
-                                ${getRarePreview(egg.pool)}
-                            </div>
+                            <div class="font-bold text-lg leading-tight mb-1 flex items-center justify-center gap-1">${egg.name} <i class="fas fa-info-circle text-gray-400 text-xs"></i></div>
+                            <div class="text-xs text-gray-500 text-center mb-3 h-8 overflow-hidden">${getRarePreview(egg.pool)}</div>
                         </div>
                         <button onclick="buyEgg('${egg.id}')" class="bg-white border-2 border-green-500 text-green-600 font-bold py-1.5 px-6 rounded-full hover:bg-green-500 hover:text-white transition w-full shadow-sm z-10">
                             $${formatCompact(totalCost)}${hasMultiHatch ? ` (${hatchCount}x)` : ''}${hasDiscount ? ` <span class="line-through text-red-400 text-xs">$${formatCompact(egg.cost)}</span>` : ''}
@@ -1092,10 +893,8 @@
         }
 
         function getRarePreview(pool) {
-            const validPool = Object.entries(pool).filter(([id]) => PETS[id]);
-            const sorted = validPool.sort((a,b) => a[1] - b[1]); 
-            const best = sorted.slice(0, 2);
-            return "Contains: " + best.map(([id]) => PETS[id].icon).join(' ');
+            const sorted = Object.entries(pool).filter(([id]) => PETS[id]).sort((a,b) => a[1] - b[1]); 
+            return "Contains: " + sorted.slice(0, 2).map(([id]) => PETS[id].icon).join(' ');
         }
 
         function formatCompact(num) {
@@ -1105,7 +904,6 @@
         function renderInventory() {
             const container = document.getElementById('inventory-container');
             const emptyMsg = document.getElementById('empty-inventory');
-            
             if (state.inventory.length === 0) {
                 if(emptyMsg) emptyMsg.style.display = 'block';
                 container.innerHTML = '';
@@ -1113,26 +911,21 @@
             } else {
                 if(emptyMsg) emptyMsg.style.display = 'none';
             }
-
             const list = [...state.inventory].reverse();
             const petCounts = {};
             state.inventory.forEach(id => { petCounts[id] = (petCounts[id] || 0) + 1; });
-
             container.innerHTML = list.map(petId => {
                 const pet = PETS[petId];
                 if (!pet) return '';
-                const count = petCounts[petId] || 1;
                 return `
                     <div class="rarity-${pet.rarity.toLowerCase()} rounded-lg p-2 flex flex-col items-center justify-center relative shadow-sm aspect-square transition hover:scale-105 select-none pet-card"
-                         onmouseenter="showPetTooltip('${petId}', ${count}, event)"
-                         onmouseleave="hidePetTooltip()">
+                         onmouseenter="showPetTooltip('${petId}', ${petCounts[petId] || 1}, event)" onmouseleave="hidePetTooltip()">
                         <div class="text-3xl mb-1">${pet.icon}</div>
                         <div class="text-xs font-bold text-gray-700 truncate w-full text-center">${pet.name}</div>
                         <div class="text-[10px] text-gray-500 font-mono bg-white/50 px-1 rounded">+$${formatCompact(pet.rate)}/s</div>
                     </div>
                 `;
             }).join('');
-            
             document.getElementById('pet-count').innerText = state.inventory.length;
         }
 
@@ -1158,40 +951,37 @@
             setTimeout(() => toast.style.opacity = '0', 3000);
         }
 
+        function showEggInfo(eggId) {
+            const egg = EGGS.find(e => e.id === eggId);
+            if(!egg) return;
+            const hatchCount = UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
+            document.getElementById('egg-info-title').innerHTML = `${egg.icon} ${egg.name} Rates${hatchCount > 1 ? ` (x${hatchCount})` : ''}`;
+            const list = document.getElementById('egg-info-list');
+            list.innerHTML = Object.entries(egg.pool).map(([id, chance]) => ({pet: PETS[id], chance})).filter(d=>d.pet).sort((a,b)=>a.chance-b.chance).map(d => {
+                let color = d.chance < 0.05 ? 'text-red-500 font-bold' : (d.chance < 0.15 ? 'text-orange-500 font-bold' : 'text-gray-600');
+                return `<div class="flex items-center justify-between p-2 rounded bg-gray-50 border border-gray-100"><div class="flex items-center gap-3"><div class="text-2xl">${d.pet.icon}</div><div><div class="font-bold text-sm text-gray-800">${d.pet.name}</div><div class="text-[10px] uppercase font-bold text-gray-400">${d.pet.rarity}</div></div></div><div class="${color}">${(d.chance*100).toFixed(1)}%</div></div>`;
+            }).join('');
+            document.getElementById('egg-info-modal').classList.remove('hidden');
+        }
+        function closeEggInfo() { document.getElementById('egg-info-modal').classList.add('hidden'); }
+
         function showPetTooltip(petId, count, event) {
             const pet = PETS[petId];
             if (!pet) return;
             const tooltip = document.getElementById('pet-tooltip');
             const content = document.getElementById('pet-tooltip-content');
-            const incomeMultiplier = 1 + UPGRADES.income.getEffect(state.upgrades.income);
-            const petBonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
-            const effectiveRate = Math.floor(pet.rate * incomeMultiplier * petBonus);
-
-            content.innerHTML = `
-                <div class="font-bold text-lg mb-2 flex items-center gap-2">
-                    <span class="text-2xl">${pet.icon}</span>
-                    <span>${pet.name}</span>
-                </div>
-                <div class="space-y-1 text-xs">
-                    <div><strong>Rarity:</strong> <span class="capitalize">${pet.rarity}</span></div>
-                    <div><strong>Owned:</strong> ${count}</div>
-                    <div><strong>Base Income:</strong> $${formatCompact(pet.rate)}/s</div>
-                    <div><strong>Effective Income:</strong> $${formatCompact(effectiveRate)}/s</div>
-                    ${pet.next ? `<div><strong>Next Tier:</strong> ${PETS[pet.next].icon} ${PETS[pet.next].name}</div>` : '<div><strong>Max Tier</strong></div>'}
-                </div>
-            `;
+            const mult = 1 + UPGRADES.income.getEffect(state.upgrades.income);
+            const bonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
+            content.innerHTML = `<div class="font-bold text-lg mb-2 flex items-center gap-2"><span class="text-2xl">${pet.icon}</span><span>${pet.name}</span></div><div class="space-y-1 text-xs"><div><strong>Rarity:</strong> <span class="capitalize">${pet.rarity}</span></div><div><strong>Owned:</strong> ${count}</div><div><strong>Base Income:</strong> $${formatCompact(pet.rate)}/s</div><div><strong>Effective:</strong> $${formatCompact(Math.floor(pet.rate*mult*bonus))}/s</div>${pet.next ? `<div><strong>Next:</strong> ${PETS[pet.next].icon} ${PETS[pet.next].name}</div>` : '<div><strong>Max Tier</strong></div>'}</div>`;
             const rect = event.target.getBoundingClientRect();
             tooltip.style.left = (rect.left + rect.width / 2) + 'px';
             tooltip.style.top = (rect.top - 10) + 'px';
             tooltip.style.transform = 'translate(-50%, -100%)';
             tooltip.style.opacity = '1';
         }
+        function hidePetTooltip() { document.getElementById('pet-tooltip').style.opacity = '0'; }
 
-        function hidePetTooltip() {
-            document.getElementById('pet-tooltip').style.opacity = '0';
-        }
-
-        /* --- RESET SYSTEM --- */
+        // --- SAVE/LOAD ---
         function openResetModal() { document.getElementById('reset-modal').classList.remove('hidden'); }
         function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); }
         function confirmReset() {
@@ -1199,12 +989,7 @@
             state = { money: 0, inventory: [], collection: [], upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 }, achievements: [], stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 }, lastSave: Date.now() };
             renderInventory(); renderUpgrades(); renderAchievements(); updateUI(); updateAutoClicker(); closeResetModal(); showToast("Account Reset!");
         }
-
-        /* --- SAVE SYSTEM --- */
-        function saveGame() {
-            try { localStorage.setItem('gibchick_save', JSON.stringify(state)); } catch (e) { console.warn(e); }
-        }
-
+        function saveGame() { try { localStorage.setItem('gibchick_save', JSON.stringify(state)); } catch (e) { console.warn(e); } }
         function loadGame() {
             const saved = localStorage.getItem('gibchick_save');
             if (saved) {
@@ -1217,7 +1002,7 @@
                     if(parsed.achievements) state.achievements = parsed.achievements;
                     if(parsed.stats) state.stats = { ...state.stats, ...parsed.stats };
                 } catch (e) { console.error("Save corrupted"); }
-            } else { state.money = 0; state.collection = []; }
+            }
         }
     </script>
 </body>
