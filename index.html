@@ -125,6 +125,10 @@
                 <h1 class="font-bold text-xl leading-none text-purple-600">Gibchick</h1>
                 <span class="text-xs text-gray-500">Collect 'em all!</span>
             </div>
+            <!-- Rebirth Button -->
+            <button onclick="openRebirthModal()" class="ml-2 text-purple-500 hover:text-purple-700 transition text-sm animate-pulse" title="Rebirth">
+                <i class="fas fa-sync-alt text-xl"></i>
+            </button>
             <button onclick="openIndexModal()" class="ml-2 text-blue-400 hover:text-blue-600 transition text-sm" title="Pet Index">
                 <i class="fas fa-book-open text-xl"></i>
             </button>
@@ -159,6 +163,7 @@
                 <div class="text-6xl mb-2">🐥</div>
                 <h2 class="font-bold text-xl mb-1">Click for Cash!</h2>
                 <p class="text-gray-500 text-sm">Get quick money to buy eggs</p>
+                <div id="rebirth-multiplier-display" class="text-xs text-purple-600 font-bold mt-2 hidden">Rebirth Multiplier: x1</div>
             </div>
 
             <div>
@@ -293,6 +298,41 @@
         </div>
     </div>
 
+    <!-- Rebirth Modal -->
+    <div id="rebirth-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-gray-900 border border-purple-500 rounded-2xl shadow-2xl w-full max-w-md p-6 text-center text-white relative overflow-hidden">
+            <div class="absolute inset-0 bg-purple-600 opacity-10 animate-pulse pointer-events-none"></div>
+            <div class="relative z-10">
+                <div class="text-5xl mb-4">🌀</div>
+                <h2 class="text-3xl font-bold mb-2 text-purple-300">Rebirth</h2>
+                <div id="rebirth-info" class="mb-6">
+                    <p class="text-gray-300 mb-2">Current Multiplier: <span id="rebirth-current-mult" class="text-green-400 font-bold">x1</span></p>
+                    <p class="text-gray-300 mb-4">Rebirth Level: <span id="rebirth-current-level" class="text-blue-400 font-bold">0</span></p>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="text-sm font-bold uppercase text-gray-500 mb-2">Next Rebirth Requirements</div>
+                        <div id="rebirth-reqs" class="text-xl font-bold flex justify-center items-center gap-2 mb-2">
+                            <!-- JS fills this -->
+                        </div>
+                        <div class="text-xs text-gray-400 italic">Sacrifice these pets to ascend.</div>
+                        <div class="mt-3 pt-3 border-t border-gray-700">
+                            <div class="text-sm">New Multiplier: <span id="rebirth-next-mult" class="text-purple-400 font-bold text-lg">x1.5</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-red-400 text-xs mb-6">Warning: Rebirthing resets your Money, Inventory, and Upgrades. Achievements and Index are saved.</p>
+                
+                <div class="flex gap-3 justify-center">
+                    <button onclick="closeRebirthModal()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-full transition">Cancel</button>
+                    <button onclick="performRebirth()" id="rebirth-confirm-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-8 rounded-full transition shadow-lg shadow-purple-500/30 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Rebirth
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Reset -->
     <div id="reset-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
@@ -376,6 +416,17 @@
             { id: 'mystery', name: 'Mystery Egg', cost: 25000, icon: '❓', colorClass: 'bg-purple-100 border-purple-300', pool: { 'spider': 0.2, 'bee': 0.2, 'frog': 0.2, 'turtle': 0.15, 'penguin': 0.15, 'camel': 0.1 } }
         ];
 
+        const REBIRTH_LEVELS = [
+            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5 },
+            { level: 2, req: { 'cat': 3 }, multiplier: 2.0 },
+            { level: 3, req: { 'fox': 2 }, multiplier: 3.0 },
+            { level: 4, req: { 't-rex': 1 }, multiplier: 5.0 },
+            { level: 5, req: { 'unicorn': 1 }, multiplier: 10.0 },
+            { level: 6, req: { 'phoenix': 1 }, multiplier: 25.0 },
+            { level: 7, req: { 'void': 1 }, multiplier: 100.0 },
+            { level: 8, req: { 'cosmos': 1 }, multiplier: 1000.0 }
+        ];
+
         const UPGRADES = {
             luck: { name: 'Luck', description: 'Increases merge success rate', icon: '🍀', baseCost: 1000, costMultiplier: 2.5, maxLevel: 10, getEffect: (level) => level * 0.05 },
             income: { name: 'Income', description: 'Multiplies all pet income', icon: '💰', baseCost: 5000, costMultiplier: 3, maxLevel: 10, getEffect: (level) => level * 0.1 },
@@ -409,6 +460,7 @@
             inventory: [],
             collection: [],
             upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 },
+            rebirth: { level: 0, multiplier: 1 },
             achievements: [],
             stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 },
             lastSave: Date.now()
@@ -423,7 +475,7 @@
             loadGame();
             renderShop();
             renderUpgrades();
-            renderAchievements(); // Defined below
+            renderAchievements();
             renderInventory();
             updateAutoClicker();
             checkAchievements();
@@ -444,7 +496,8 @@
             }, 0);
             const incomeMultiplier = 1 + UPGRADES.income.getEffect(state.upgrades.income);
             const petBonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
-            return Math.floor(baseIncome * incomeMultiplier * petBonus);
+            const rebirthMult = state.rebirth.multiplier || 1;
+            return Math.floor(baseIncome * incomeMultiplier * petBonus * rebirthMult);
         }
 
         function addMoney(amount) {
@@ -458,7 +511,8 @@
             const baseClick = 1;
             const incomeBonus = Math.floor(calculateIncome() * 0.05);
             const upgradeBonus = UPGRADES.clickPower.getEffect(state.upgrades.clickPower);
-            let total = baseClick + incomeBonus + upgradeBonus;
+            const rebirthMult = state.rebirth.multiplier || 1;
+            let total = (baseClick + incomeBonus + upgradeBonus) * rebirthMult;
 
             const critChance = UPGRADES.criticalClicks.getEffect(state.upgrades.criticalClicks);
             if (Math.random() < critChance) total *= 5;
@@ -471,8 +525,8 @@
             }
 
             if (!isAuto && e) {
-                const critText = total > (baseClick + incomeBonus + upgradeBonus) ? 'CRIT! ' : '';
-                createFloatingText(e.clientX, e.clientY, `${critText}+$${total.toLocaleString()}`);
+                const critText = total > ((baseClick + incomeBonus + upgradeBonus) * rebirthMult) ? 'CRIT! ' : '';
+                createFloatingText(e.clientX, e.clientY, `${critText}+$${formatCompact(total)}`);
             }
         }
 
@@ -494,6 +548,101 @@
             } else {
                 showToast("Not enough money!");
             }
+        }
+
+        // --- REBIRTH SYSTEM ---
+        function openRebirthModal() {
+            const modal = document.getElementById('rebirth-modal');
+            const currentLevelDisplay = document.getElementById('rebirth-current-level');
+            const currentMultDisplay = document.getElementById('rebirth-current-mult');
+            const reqsDisplay = document.getElementById('rebirth-reqs');
+            const nextMultDisplay = document.getElementById('rebirth-next-mult');
+            const confirmBtn = document.getElementById('rebirth-confirm-btn');
+
+            const currentLvl = state.rebirth.level;
+            const nextRebirth = REBIRTH_LEVELS.find(r => r.level === currentLvl + 1);
+
+            currentLevelDisplay.innerText = currentLvl;
+            currentMultDisplay.innerText = 'x' + state.rebirth.multiplier;
+            modal.classList.remove('hidden');
+
+            if (!nextRebirth) {
+                reqsDisplay.innerHTML = '<span class="text-green-400">Max Rebirth Level Reached!</span>';
+                nextMultDisplay.innerText = "MAX";
+                confirmBtn.disabled = true;
+                return;
+            }
+
+            nextMultDisplay.innerText = 'x' + nextRebirth.multiplier;
+
+            // Check Requirements
+            let canRebirth = true;
+            let reqsHTML = '';
+            
+            // Count inventory
+            const petCounts = {};
+            state.inventory.forEach(id => petCounts[id] = (petCounts[id] || 0) + 1);
+
+            for (const [petId, countNeeded] of Object.entries(nextRebirth.req)) {
+                const pet = PETS[petId];
+                const countOwned = petCounts[petId] || 0;
+                const satisfied = countOwned >= countNeeded;
+                if (!satisfied) canRebirth = false;
+
+                reqsHTML += `
+                    <div class="flex flex-col items-center p-2 rounded ${satisfied ? 'bg-green-900/30' : 'bg-red-900/30'} border ${satisfied ? 'border-green-500' : 'border-red-500'}">
+                        <div class="text-2xl">${pet.icon}</div>
+                        <div class="text-xs font-bold">${pet.name}</div>
+                        <div class="text-sm ${satisfied ? 'text-green-400' : 'text-red-400'}">${countOwned}/${countNeeded}</div>
+                    </div>
+                `;
+            }
+            reqsDisplay.innerHTML = reqsHTML;
+            confirmBtn.disabled = !canRebirth;
+        }
+
+        function closeRebirthModal() {
+            document.getElementById('rebirth-modal').classList.add('hidden');
+        }
+
+        function performRebirth() {
+            const nextRebirth = REBIRTH_LEVELS.find(r => r.level === state.rebirth.level + 1);
+            if (!nextRebirth) return;
+
+            // Remove required pets
+            const countsToRemove = { ...nextRebirth.req };
+            const newInventory = [];
+            
+            // Rebuild inventory skipping the paid pets
+            for (let item of state.inventory) {
+                if (countsToRemove[item] && countsToRemove[item] > 0) {
+                    countsToRemove[item]--; // "Consume" pet
+                } else {
+                    newInventory.push(item);
+                }
+            }
+            // Actually, usually rebirth wipes inventory. "Sacrifice these pets" usually implies they are the gate key, 
+            // but the description says "Resets Inventory". So we verify they exist, then wipe EVERYTHING.
+            
+            // Reset Progress
+            state.inventory = []; 
+            state.money = 0;
+            state.upgrades = { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 };
+            
+            // Apply Rebirth Stats
+            state.rebirth.level = nextRebirth.level;
+            state.rebirth.multiplier = nextRebirth.multiplier;
+
+            saveGame();
+            
+            // UI Updates
+            closeRebirthModal();
+            renderInventory();
+            renderUpgrades();
+            updateUI();
+            updateAutoClicker();
+            
+            showToast(`Rebirth Successful! Multiplier is now x${state.rebirth.multiplier}`);
         }
 
         // --- ACHIEVEMENTS ---
@@ -932,6 +1081,15 @@
         function updateUI() {
             document.getElementById('money-display').innerText = formatCompact(Math.floor(state.money));
             document.getElementById('income-display').innerText = formatCompact(calculateIncome());
+            
+            // Rebirth indicator
+            const rDisplay = document.getElementById('rebirth-multiplier-display');
+            if(state.rebirth && state.rebirth.multiplier > 1) {
+                rDisplay.innerText = `Rebirth Multiplier: x${state.rebirth.multiplier}`;
+                rDisplay.classList.remove('hidden');
+            } else {
+                rDisplay.classList.add('hidden');
+            }
         }
 
         function createFloatingText(x, y, text) {
@@ -972,7 +1130,10 @@
             const content = document.getElementById('pet-tooltip-content');
             const mult = 1 + UPGRADES.income.getEffect(state.upgrades.income);
             const bonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
-            content.innerHTML = `<div class="font-bold text-lg mb-2 flex items-center gap-2"><span class="text-2xl">${pet.icon}</span><span>${pet.name}</span></div><div class="space-y-1 text-xs"><div><strong>Rarity:</strong> <span class="capitalize">${pet.rarity}</span></div><div><strong>Owned:</strong> ${count}</div><div><strong>Base Income:</strong> $${formatCompact(pet.rate)}/s</div><div><strong>Effective:</strong> $${formatCompact(Math.floor(pet.rate*mult*bonus))}/s</div>${pet.next ? `<div><strong>Next:</strong> ${PETS[pet.next].icon} ${PETS[pet.next].name}</div>` : '<div><strong>Max Tier</strong></div>'}</div>`;
+            const rMult = state.rebirth.multiplier || 1;
+            const effectiveRate = Math.floor(pet.rate * mult * bonus * rMult);
+
+            content.innerHTML = `<div class="font-bold text-lg mb-2 flex items-center gap-2"><span class="text-2xl">${pet.icon}</span><span>${pet.name}</span></div><div class="space-y-1 text-xs"><div><strong>Rarity:</strong> <span class="capitalize">${pet.rarity}</span></div><div><strong>Owned:</strong> ${count}</div><div><strong>Base Income:</strong> $${formatCompact(pet.rate)}/s</div><div><strong>Effective:</strong> $${formatCompact(effectiveRate)}/s</div>${pet.next ? `<div><strong>Next:</strong> ${PETS[pet.next].icon} ${PETS[pet.next].name}</div>` : '<div><strong>Max Tier</strong></div>'}</div>`;
             const rect = event.target.getBoundingClientRect();
             tooltip.style.left = (rect.left + rect.width / 2) + 'px';
             tooltip.style.top = (rect.top - 10) + 'px';
@@ -986,7 +1147,7 @@
         function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); }
         function confirmReset() {
             localStorage.removeItem('gibchick_save');
-            state = { money: 0, inventory: [], collection: [], upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 }, achievements: [], stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 }, lastSave: Date.now() };
+            state = { money: 0, inventory: [], collection: [], upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 }, rebirth: { level: 0, multiplier: 1 }, achievements: [], stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 }, lastSave: Date.now() };
             renderInventory(); renderUpgrades(); renderAchievements(); updateUI(); updateAutoClicker(); closeResetModal(); showToast("Account Reset!");
         }
         function saveGame() { try { localStorage.setItem('gibchick_save', JSON.stringify(state)); } catch (e) { console.warn(e); } }
@@ -999,10 +1160,11 @@
                     if(parsed.inventory) state.inventory = parsed.inventory;
                     if(parsed.collection) state.collection = parsed.collection; else state.collection = [...new Set(state.inventory)];
                     if(parsed.upgrades) state.upgrades = { ...state.upgrades, ...parsed.upgrades };
+                    if(parsed.rebirth) state.rebirth = parsed.rebirth; else state.rebirth = { level: 0, multiplier: 1 };
                     if(parsed.achievements) state.achievements = parsed.achievements;
                     if(parsed.stats) state.stats = { ...state.stats, ...parsed.stats };
                 } catch (e) { console.error("Save corrupted"); }
-            }
+            } else { state.money = 0; state.collection = []; }
         }
     </script>
 </body>
