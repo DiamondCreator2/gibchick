@@ -81,6 +81,15 @@
         .rarity-transcendent .text-gray-500 { color: #ffed4e !important; }
         .rarity-transcendent .bg-white\/50 { background: rgba(255,215,0,0.3); }
 
+        /* Index Styles */
+        .pet-silhouette { filter: brightness(0) opacity(0.2); }
+        .pet-locked-text { color: transparent; text-shadow: 0 0 8px rgba(0,0,0,0.5); }
+        .rarity-special {
+            background: linear-gradient(to bottom right, #ffafbd, #ffc3a0);
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 0 20px #ff6b6b;
+        }
+
         @keyframes pulse-godly {
             0% { box-shadow: 0 0 10px #ffffff; }
             50% { box-shadow: 0 0 30px #888, 0 0 50px #fff; }
@@ -116,6 +125,10 @@
                 <h1 class="font-bold text-xl leading-none text-purple-600">Gibchick</h1>
                 <span class="text-xs text-gray-500">Collect 'em all!</span>
             </div>
+            <!-- Index Button -->
+            <button onclick="openIndexModal()" class="ml-2 text-blue-400 hover:text-blue-600 transition text-sm" title="Pet Index">
+                <i class="fas fa-book-open text-xl"></i>
+            </button>
             <!-- Reset Button -->
             <button onclick="openResetModal()" class="ml-2 text-gray-300 hover:text-red-500 transition text-sm" title="Reset Progress">
                 <i class="fas fa-trash-alt"></i>
@@ -275,6 +288,37 @@
         </div>
     </div>
 
+    <!-- Pet Index Modal -->
+    <div id="index-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-4 bg-blue-600 text-white flex justify-between items-center shrink-0">
+                <div>
+                    <h2 class="font-bold text-2xl flex items-center gap-2"><i class="fas fa-book-open"></i> Pet Index</h2>
+                    <p class="text-sm opacity-90" id="index-progress-text">Collected: 0/0</p>
+                </div>
+                <button onclick="closeIndexModal()" class="text-white/80 hover:text-white text-2xl"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <!-- Index Grid -->
+            <div class="p-6 overflow-y-auto flex-1 bg-gray-100">
+                <div id="index-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+                    <!-- Grid items inserted by JS -->
+                </div>
+            </div>
+
+            <!-- Reward Footer -->
+            <div class="p-4 bg-white border-t flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    <h3 class="font-bold text-lg text-gray-800">Completion Reward</h3>
+                    <p class="text-xs text-gray-500">Collect all standard pets to unlock the Guardian Griffin!</p>
+                </div>
+                <button id="claim-reward-btn" onclick="claimIndexReward()" disabled class="bg-gray-300 text-gray-500 font-bold py-3 px-8 rounded-full transition cursor-not-allowed flex items-center gap-2">
+                    <span>Locked</span> <i class="fas fa-lock"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Reset Confirmation Modal -->
     <div id="reset-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
@@ -301,6 +345,7 @@
     <script>
         /* --- GAME DATA --- */
         // Rebalanced Rates (Mammoth ~10k) with Full Pet List (up to Transcendent)
+        // Includes the Guardian Griffin Reward
         const PETS = {
             // Tier 1: Common
             'ant': { id: 'ant', name: 'Worker Ant', icon: '🐜', rate: 1, rarity: 'Common', next: 'chick' },
@@ -347,7 +392,7 @@
             'yeti': { id: 'yeti', name: 'Abominable', icon: '🦍', rate: 7500, rarity: 'Legendary', next: 'mammoth' },
             'mammoth': { id: 'mammoth', name: 'Mammoth', icon: '🦣', rate: 10000, rarity: 'Legendary', next: 'reaper' },
             'reaper': { id: 'reaper', name: 'Grim Reaper', icon: '🕯️', rate: 15000, rarity: 'Legendary', next: 'griffin' },
-            'griffin': { id: 'griffin', name: 'Griffin', icon: '🦁', rate: 25000, rarity: 'Legendary', next: 'phoenix' },
+            'griffin': { id: 'griffin', name: 'Chimera', icon: '🦁', rate: 25000, rarity: 'Legendary', next: 'phoenix' }, // Renamed to Chimera for uniqueness
 
             // Tier 6: Mythical
             'phoenix': { id: 'phoenix', name: 'Phoenix', icon: '🔥', rate: 50000, rarity: 'Mythical', next: 'kraken' },
@@ -360,6 +405,9 @@
 
             // Tier 8: Transcendent
             'cosmos': { id: 'cosmos', name: 'The Cosmos', icon: '🌌', rate: 5000000, rarity: 'Transcendent', next: null },
+
+            // REWARD PET (Special)
+            'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 10000000, rarity: 'Special', next: null, hidden: true }
         };
 
         const EGGS = [
@@ -516,6 +564,7 @@
         let state = {
             money: 0,
             inventory: [], // Array of pet IDs
+            collection: [], // Array of ALL pet IDs ever owned
             upgrades: {
                 luck: 0,        // Merge success rate bonus
                 income: 0,      // Income multiplier level
@@ -641,6 +690,86 @@
             } else {
                 showToast("Not enough money!");
             }
+        }
+
+        /* --- INDEX SYSTEM --- */
+        function openIndexModal() {
+            const modal = document.getElementById('index-modal');
+            const grid = document.getElementById('index-grid');
+            const progressText = document.getElementById('index-progress-text');
+            const rewardBtn = document.getElementById('claim-reward-btn');
+
+            modal.classList.remove('hidden');
+
+            // All standard pets (excluding hidden rewards)
+            const allPets = Object.values(PETS).filter(p => !p.hidden);
+            const collectedCount = allPets.filter(p => state.collection.includes(p.id)).length;
+            const totalCount = allPets.length;
+            const isComplete = collectedCount >= totalCount;
+
+            // Render Progress
+            progressText.innerText = `Collected: ${collectedCount}/${totalCount}`;
+
+            // Render Grid
+            grid.innerHTML = allPets.map(pet => {
+                const isCollected = state.collection.includes(pet.id);
+                return `
+                    <div class="aspect-square rounded-xl flex flex-col items-center justify-center p-2 border-2 ${isCollected ? `bg-white ${getRarityBorder(pet.rarity)}` : 'bg-gray-200 border-gray-300'}">
+                        <div class="text-4xl mb-2 ${isCollected ? '' : 'pet-silhouette'}">${pet.icon}</div>
+                        <div class="text-xs font-bold text-center w-full truncate ${isCollected ? 'text-gray-800' : 'pet-locked-text'}">${pet.name}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Setup Reward Button
+            const rewardClaimed = state.collection.includes('reward_griffin');
+            
+            if (rewardClaimed) {
+                rewardBtn.innerHTML = `<span>Claimed</span> <i class="fas fa-check"></i>`;
+                rewardBtn.className = "bg-green-100 text-green-600 font-bold py-3 px-8 rounded-full cursor-default flex items-center gap-2 border-2 border-green-500";
+                rewardBtn.onclick = null;
+            } else if (isComplete) {
+                rewardBtn.innerHTML = `<span>Claim Reward</span> <i class="fas fa-gift"></i>`;
+                rewardBtn.className = "bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition shadow-lg flex items-center gap-2 animate-bounce";
+                rewardBtn.onclick = claimIndexReward;
+                rewardBtn.disabled = false;
+            } else {
+                rewardBtn.innerHTML = `<span>Locked</span> <i class="fas fa-lock"></i>`;
+                rewardBtn.className = "bg-gray-300 text-gray-500 font-bold py-3 px-8 rounded-full transition cursor-not-allowed flex items-center gap-2";
+                rewardBtn.onclick = null;
+                rewardBtn.disabled = true;
+            }
+        }
+
+        function closeIndexModal() {
+            document.getElementById('index-modal').classList.add('hidden');
+        }
+
+        function getRarityBorder(rarity) {
+            switch(rarity) {
+                case 'Common': return 'border-gray-400';
+                case 'Uncommon': return 'border-green-400';
+                case 'Rare': return 'border-blue-500';
+                case 'Epic': return 'border-purple-500';
+                case 'Legendary': return 'border-yellow-500';
+                case 'Mythical': return 'border-red-500';
+                case 'Godly': return 'border-gray-800';
+                case 'Transcendent': return 'border-yellow-300';
+                default: return 'border-gray-200';
+            }
+        }
+
+        function claimIndexReward() {
+            if(state.collection.includes('reward_griffin')) return;
+            
+            state.inventory.push('reward_griffin');
+            state.collection.push('reward_griffin');
+            
+            renderInventory();
+            updateUI();
+            saveGame();
+            openIndexModal(); // Refresh UI
+            showToast("Guardian Griffin Acquired!");
         }
 
         /* --- EGG INFO SYSTEM --- */
@@ -780,6 +909,11 @@
 
             if (success) {
                 state.inventory.push(nextPetId);
+                // ADD TO COLLECTION
+                if (!state.collection.includes(nextPetId)) {
+                    state.collection.push(nextPetId);
+                }
+                
                 state.stats.totalMerges++;
                 const rarityMsg = ['Mythical', 'Godly', 'Transcendent'].includes(nextPet.rarity) ? ` (${nextPet.rarity})` : '';
                 showToast(`Success! Merged into ${nextPet.name}${rarityMsg}!`);
@@ -936,6 +1070,7 @@
             state = {
                 money: 0,
                 inventory: [],
+                collection: [],
                 upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 },
                 achievements: [],
                 stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 },
@@ -1048,6 +1183,11 @@
             const pet = PETS[petId];
             state.inventory.push(petId);
             
+            // ADD TO COLLECTION
+            if (!state.collection.includes(petId)) {
+                state.collection.push(petId);
+            }
+            
             try {
                 const eggDisplay = document.getElementById('hatch-egg-display');
                 const petCard = document.getElementById('new-pet-card');
@@ -1131,7 +1271,7 @@
                             </div>
                         </div>
                         <button onclick="buyEgg('${egg.id}')" class="bg-white border-2 border-green-500 text-green-600 font-bold py-1.5 px-6 rounded-full hover:bg-green-500 hover:text-white transition w-full shadow-sm z-10">
-                            $${discountedCost.toLocaleString()}${hasMultiHatch ? ` x${hatchCount} = $${totalCost.toLocaleString()}` : ''}${hasDiscount ? ` <span class="line-through text-red-400 text-xs">$${egg.cost.toLocaleString()}</span>` : ''}
+                            $${totalCost.toLocaleString()}${hasMultiHatch ? ` (${hatchCount}x)` : ''}${hasDiscount ? ` <span class="line-through text-red-400 text-xs">$${egg.cost.toLocaleString()}</span>` : ''}
                         </button>
                     </div>
                 `;
@@ -1148,7 +1288,7 @@
         function renderInventory() {
             const container = document.getElementById('inventory-container');
             const emptyMsg = document.getElementById('empty-inventory');
-
+            
             if (state.inventory.length === 0) {
                 if(emptyMsg) emptyMsg.style.display = 'block';
                 container.innerHTML = '';
@@ -1179,7 +1319,7 @@
                     </div>
                 `;
             }).join('');
-
+            
             document.getElementById('pet-count').innerText = state.inventory.length;
         }
 
@@ -1262,6 +1402,15 @@
                     const parsed = JSON.parse(saved);
                     if(parsed.money !== undefined) state.money = parsed.money;
                     if(parsed.inventory && Array.isArray(parsed.inventory)) state.inventory = parsed.inventory;
+                    
+                    // COLLECTION BACKFILL
+                    if (parsed.collection && Array.isArray(parsed.collection)) {
+                        state.collection = parsed.collection;
+                    } else {
+                        // Backfill if collection doesn't exist yet
+                        state.collection = [...new Set(state.inventory)];
+                    }
+
                     if(parsed.upgrades && typeof parsed.upgrades === 'object') {
                         state.upgrades = { ...state.upgrades, ...parsed.upgrades };
                     }
@@ -1276,6 +1425,7 @@
                 }
             } else {
                 state.money = 0;
+                state.collection = [];
             }
         }
     </script>
