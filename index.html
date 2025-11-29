@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gibchick.com - Idle Egg Clicker</title>
+    <title>Gibchick - Ultimate Idle Clicker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -22,34 +22,29 @@
         .bg-world-jurassic { background: linear-gradient(135deg, #fed7aa 0%, #fb923c 100%); }
         .bg-world-frozen { background: linear-gradient(135deg, #cffafe 0%, #67e8f9 100%); }
         .bg-world-magic { background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 100%); }
-        .bg-world-space { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; }
+        .bg-world-space { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: #1f2937; } /* Dark Text */
         .bg-world-divine { background: linear-gradient(135deg, #fef9c3 0%, #facc15 100%); }
         
         /* New Worlds */
-        .bg-world-cyber { background: linear-gradient(135deg, #0f172a 0%, #0ea5e9 100%); color: #bae6fd; }
+        .bg-world-cyber { background: linear-gradient(135deg, #0f172a 0%, #0ea5e9 100%); color: #1f2937; } /* Dark Text */
         .bg-world-volcano { background: linear-gradient(135deg, #450a0a 0%, #ef4444 100%); color: #fecaca; }
         .bg-world-candy { background: linear-gradient(135deg, #fdf4ff 0%, #f5d0fe 100%); color: #86198f; }
-        .bg-world-atlantis { background: linear-gradient(135deg, #022c22 0%, #0d9488 100%); color: #ccfbf1; }
-        .bg-world-shadow { background: linear-gradient(135deg, #000000 0%, #581c87 100%); color: #e9d5ff; }
+        .bg-world-atlantis { background: linear-gradient(135deg, #022c22 0%, #0d9488 100%); color: #1f2937; } /* Dark Text */
+        .bg-world-shadow { background: linear-gradient(135deg, #000000 0%, #581c87 100%); color: #1f2937; } /* Dark Text */
         .bg-world-celestial { background: linear-gradient(135deg, #fffbeb 0%, #fcd34d 50%, #fffbeb 100%); color: #78350f; }
 
+        /* Chickverse Worlds */
+        .bg-world-gold { background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); color: #7c5e10; }
+        .bg-world-rainbow { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #a18cd1 100%); color: #4a044e; }
+        .bg-world-mecha { background: linear-gradient(135deg, #2c3e50 0%, #bdc3c7 100%); color: #1f2937; }
+        .bg-world-darkmatter { background: linear-gradient(135deg, #000000 0%, #434343 100%); color: #1f2937; } /* Dark Text */
+
         /* General Dark Text overrides for dark backgrounds */
-        .bg-world-space .bg-white, .bg-world-cyber .bg-white, 
-        .bg-world-atlantis .bg-white, .bg-world-shadow .bg-white { 
-            background-color: rgba(255,255,255,0.1); 
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255,255,255,0.2); 
-            color: #fff;
-        }
+        /* Note: Most dark worlds removed from here to force white cards with black text */
+        /* Only truly custom/light text worlds should go here if needed in future */
         
         /* Ensure text inside cards on dark modes is readable */
-        .bg-world-space .text-gray-800, 
-        .bg-world-cyber .text-gray-800, .bg-world-atlantis .text-gray-800,
-        .bg-world-shadow .text-gray-800 { color: #f3f4f6; }
-
-        .bg-world-space .text-gray-500,
-        .bg-world-cyber .text-gray-500, .bg-world-atlantis .text-gray-500,
-        .bg-world-shadow .text-gray-500 { color: #9ca3af; }
+        /* (Cleaned up as most use default now) */
 
         .shake-animation {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite;
@@ -231,6 +226,11 @@
                     <div class="text-xs text-gray-500" id="world-status">Home Village</div>
                 </div>
                 
+                <!-- Galaxy Navigation -->
+                <div class="flex gap-2 overflow-x-auto pb-2 mb-2 scrollbar-hide border-b border-gray-200/20" id="galaxy-nav-container">
+                    <!-- Galaxies JS -->
+                </div>
+
                 <!-- World Navigation Scroll -->
                 <div class="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide" id="world-nav-container">
                     <!-- Worlds JS -->
@@ -451,6 +451,13 @@
 
     <script>
         // --- DATA ---
+        const GALAXIES = [
+            { id: 'origin', name: 'Origin System', icon: '🌌', minRebirth: 0, worlds: ['home', 'spooky', 'jurassic', 'frozen', 'magic'] },
+            { id: 'astral', name: 'Astral Sector', icon: '🪐', minRebirth: 5, worlds: ['space', 'divine', 'cyber', 'volcano'] },
+            { id: 'mystic', name: 'Mystic Reach', icon: '✨', minRebirth: 11, worlds: ['candy', 'atlantis', 'shadow', 'celestial'] },
+            { id: 'chickverse', name: 'Chickverse', icon: '🐣', minRebirth: 20, worlds: ['gold', 'rainbow', 'mecha', 'darkmatter'] }
+        ];
+
         const WORLDS = [
             { id: 'home', name: 'Home Village', minRebirth: 0, bgClass: 'bg-world-home', eggIds: ['starter', 'farm', 'aqua', 'desert'] },
             { id: 'spooky', name: 'Haunted Forest', minRebirth: 1, bgClass: 'bg-world-spooky', eggIds: ['spooky', 'forest'] },
@@ -464,7 +471,12 @@
             { id: 'candy', name: 'Candy Land', minRebirth: 11, bgClass: 'bg-world-candy', eggIds: ['sugar'] },
             { id: 'atlantis', name: 'Atlantis', minRebirth: 12, bgClass: 'bg-world-atlantis', eggIds: ['abyssal'] },
             { id: 'shadow', name: 'Shadow Realm', minRebirth: 13, bgClass: 'bg-world-shadow', eggIds: ['eclipse'] },
-            { id: 'celestial', name: 'Celestial Haven', minRebirth: 14, bgClass: 'bg-world-celestial', eggIds: ['ether', 'infinity'] }
+            { id: 'celestial', name: 'Celestial Haven', minRebirth: 14, bgClass: 'bg-world-celestial', eggIds: ['ether', 'infinity'] },
+            // Chickverse Worlds
+            { id: 'gold', name: 'Gilded Coop', minRebirth: 20, bgClass: 'bg-world-gold', eggIds: ['treasury'] },
+            { id: 'rainbow', name: 'Prismatic Fields', minRebirth: 25, bgClass: 'bg-world-rainbow', eggIds: ['spectrum'] },
+            { id: 'mecha', name: 'Mecha Base', minRebirth: 30, bgClass: 'bg-world-mecha', eggIds: ['machinery'] },
+            { id: 'darkmatter', name: 'Void Nexus', minRebirth: 35, bgClass: 'bg-world-darkmatter', eggIds: ['singularity'] }
         ];
 
         const PETS = {
@@ -519,7 +531,7 @@
             'leviathan': { id: 'leviathan', name: 'Leviathan', icon: '🐋', rate: 2000000000, rarity: 'Transcendent', next: 'nightmare' },
             'nightmare': { id: 'nightmare', name: 'Nightmare', icon: '🌚', rate: 10000000000, rarity: 'Transcendent', next: 'archangel' },
             'archangel': { id: 'archangel', name: 'Archangel', icon: '👼', rate: 50000000000, rarity: 'Transcendent', next: 'chronos' },
-            'chronos': { id: 'chronos', name: 'Chronos', icon: '⏳', rate: 250000000000, rarity: 'Eternal', next: null },
+            'chronos': { id: 'chronos', name: 'Chronos', icon: '⏳', rate: 250000000000, rarity: 'Eternal', next: 'golden_chick' },
 
             // Lower Tier Themed Fillers
             'drone': { id: 'drone', name: 'Drone', icon: '🚁', rate: 150000, rarity: 'Epic', next: 'cyborg' },
@@ -528,6 +540,12 @@
             'mermaid': { id: 'mermaid', name: 'Mermaid', icon: '🧜‍♀️', rate: 5000000, rarity: 'Legendary', next: 'leviathan' },
             'wraith': { id: 'wraith', name: 'Wraith', icon: '👻', rate: 8000000, rarity: 'Legendary', next: 'nightmare' },
             'cherub': { id: 'cherub', name: 'Cherub', icon: '🏹', rate: 12000000, rarity: 'Mythical', next: 'archangel' },
+
+            // Chick Variants
+            'golden_chick': { id: 'golden_chick', name: 'Golden Chick', icon: '🏆', rate: 1000000000000, rarity: 'Legendary', next: 'rainbow_chick' },
+            'rainbow_chick': { id: 'rainbow_chick', name: 'Rainbow Chick', icon: '🌈', rate: 5000000000000, rarity: 'Mythical', next: 'mecha_chick' },
+            'mecha_chick': { id: 'mecha_chick', name: 'Mecha Chick', icon: '🤖', rate: 25000000000000, rarity: 'Godly', next: 'darkmatter_chick' },
+            'darkmatter_chick': { id: 'darkmatter_chick', name: 'Dark Matter Chick', icon: '🌑', rate: 100000000000000, rarity: 'Transcendent', next: null },
 
             'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 2000000000000, rarity: 'Special', next: null, hidden: true }
         };
@@ -554,7 +572,13 @@
             { id: 'abyssal', name: 'Abyssal Egg', cost: 100000000000, icon: '🔱', colorClass: 'bg-teal-900 border-teal-500 text-teal-200', pool: { 'kraken': 0.5, 'mermaid': 0.4, 'leviathan': 0.1 } },
             { id: 'eclipse', name: 'Eclipse Egg', cost: 500000000000, icon: '🌑', colorClass: 'bg-purple-900 border-purple-600 text-purple-200', pool: { 'wraith': 0.5, 'void': 0.4, 'nightmare': 0.1 } },
             { id: 'ether', name: 'Ether Egg', cost: 2500000000000, icon: '🌤️', colorClass: 'bg-yellow-100 border-yellow-400 text-yellow-800', pool: { 'cherub': 0.5, 'cosmos': 0.4, 'archangel': 0.1 } },
-            { id: 'infinity', name: 'Infinity Egg', cost: 10000000000000, icon: '♾️', colorClass: 'bg-gray-800 border-white text-white', pool: { 'chronos': 0.05, 'archangel': 0.2, 'nightmare': 0.25, 'leviathan': 0.5 } }
+            { id: 'infinity', name: 'Infinity Egg', cost: 10000000000000, icon: '♾️', colorClass: 'bg-gray-100 border-black text-black', pool: { 'chronos': 0.05, 'archangel': 0.2, 'nightmare': 0.25, 'leviathan': 0.5 } },
+            
+            // Chickverse Eggs
+            { id: 'treasury', name: 'Treasury Egg', cost: 50000000000000, icon: '🏆', colorClass: 'bg-yellow-200 border-yellow-500 text-yellow-900', pool: { 'golden_chick': 0.1, 'dragon': 0.4, 'unicorn': 0.5 } },
+            { id: 'spectrum', name: 'Spectrum Egg', cost: 100000000000000, icon: '🌈', colorClass: 'bg-pink-100 border-purple-400 text-purple-900', pool: { 'rainbow_chick': 0.1, 'phoenix': 0.4, 'kraken': 0.5 } },
+            { id: 'machinery', name: 'Mecha Egg', cost: 500000000000000, icon: '⚙️', colorClass: 'bg-gray-300 border-gray-600 text-gray-900', pool: { 'mecha_chick': 0.1, 'cyborg': 0.4, 'robot': 0.5 } },
+            { id: 'singularity', name: 'Singularity Egg', cost: 1000000000000000, icon: '🌌', colorClass: 'bg-black border-white text-white', pool: { 'darkmatter_chick': 0.05, 'void': 0.4, 'cosmos': 0.55 } }
         ];
 
         const REBIRTH_LEVELS = [
@@ -562,16 +586,21 @@
             { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
             { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" },
             { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" },
-            { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space" },
+            { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space (Astral Sector)" },
             { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" },
             { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" },
             { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" },
             { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" },
             { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" },
-            { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm" },
+            { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm (Mystic Reach)" },
             { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" },
             { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" },
-            { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" }
+            { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" },
+            // Chickverse Rebirths
+            { level: 20, req: { 'golden_chick': 1 }, multiplier: 15.0, unlockMsg: "Unlocks: Chickverse Galaxy (Gilded Coop)" },
+            { level: 25, req: { 'rainbow_chick': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Prismatic Fields" },
+            { level: 30, req: { 'mecha_chick': 1 }, multiplier: 50.0, unlockMsg: "Unlocks: Mecha Base" },
+            { level: 35, req: { 'darkmatter_chick': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Void Nexus" }
         ];
 
         const UPGRADES = {
@@ -610,6 +639,7 @@
             rebirth: { level: 0, multiplier: 1 },
             achievements: [],
             currentWorld: 'home',
+            currentGalaxy: 'origin',
             stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 },
             lastSave: Date.now()
         };
@@ -713,31 +743,59 @@
             updateUI();
         }
 
+        function switchGalaxy(galaxyId) {
+            const galaxy = GALAXIES.find(g => g.id === galaxyId);
+            if(!galaxy) return;
+
+            if (state.rebirth.level < galaxy.minRebirth) {
+                showToast(`Galaxy requires Rebirth ${galaxy.minRebirth}!`);
+                return;
+            }
+
+            state.currentGalaxy = galaxyId;
+            // Switch to first unlocked world in that galaxy
+            const firstWorldId = galaxy.worlds[0];
+            const world = WORLDS.find(w => w.id === firstWorldId);
+            if (world && state.rebirth.level >= world.minRebirth) {
+                state.currentWorld = firstWorldId;
+            } else {
+                // If specific world locked, just stay put (or find first available)
+            }
+            
+            saveGame();
+            renderShop();
+            updateUI();
+        }
+
         // --- REBIRTH SYSTEM (DYNAMIC) ---
         function getRebirthLevelData(level) {
-            // HARDCODED LEVELS (1-14) for specific unlocks
-            // Debuffed Multipliers: 1 + (Level * 0.25) approx logic
+            // HARDCODED LEVELS (1-14 + 20-35) for specific unlocks
             if (level === 1) return { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" };
             if (level === 2) return { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" };
             if (level === 3) return { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" };
             if (level === 4) return { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" };
-            if (level === 5) return { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space" };
+            if (level === 5) return { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space (Astral Sector)" };
             if (level === 6) return { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" };
             if (level === 7) return { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" };
             if (level === 8) return { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" };
             if (level === 9) return { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" };
             if (level === 10) return { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" };
-            if (level === 11) return { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm" };
+            if (level === 11) return { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm (Mystic Reach)" };
             if (level === 12) return { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" };
             if (level === 13) return { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" };
             if (level === 14) return { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" };
+            
+            // New Chickverse Unlocks
+            if (level === 20) return { level: 20, req: { 'golden_chick': 1 }, multiplier: 15.0, unlockMsg: "Unlocks: Chickverse Galaxy (Gilded Coop)" };
+            if (level === 25) return { level: 25, req: { 'rainbow_chick': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Prismatic Fields" };
+            if (level === 30) return { level: 30, req: { 'mecha_chick': 1 }, multiplier: 50.0, unlockMsg: "Unlocks: Mecha Base" };
+            if (level === 35) return { level: 35, req: { 'darkmatter_chick': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Void Nexus" };
 
             // PROCEDURAL LEVELS (15-1000)
             if (level <= 1000) {
-                const multiplier = 1 + (level * 0.5); // Linear growth: +50% per rebirth (e.g. Lvl 100 = x51)
+                const multiplier = 1 + (level * 0.5); // Linear growth
                 
-                // Cycle through high tier pets
-                const highTierPets = ['magma_lord', 'candy_king', 'leviathan', 'nightmare', 'archangel', 'chronos'];
+                const highTierPets = ['magma_lord', 'candy_king', 'leviathan', 'nightmare', 'archangel', 'chronos', 'golden_chick', 'rainbow_chick', 'mecha_chick', 'darkmatter_chick'];
                 const index = (level - 15) % highTierPets.length;
                 const petId = highTierPets[index];
                 const count = 1 + Math.floor((level - 15) / highTierPets.length);
@@ -818,8 +876,11 @@
             state.rebirth.level = nextRebirth.level;
             state.rebirth.multiplier = nextRebirth.multiplier;
             
-            const newWorld = WORLDS.find(w => w.minRebirth === state.rebirth.level);
-            if(newWorld) state.currentWorld = newWorld.id;
+            // Re-evaluate current galaxy/world based on new level
+            // Default reset to home unless unlocked
+            // But we keep current world if possible? No, standard is reset to start
+            state.currentWorld = 'home';
+            state.currentGalaxy = 'origin';
 
             saveGame();
             closeRebirthModal();
@@ -1145,13 +1206,32 @@
         function renderShop() {
             // Render World Navigation
             const navContainer = document.getElementById('world-nav-container');
-            const currentWorld = WORLDS.find(w => w.id === state.currentWorld) || WORLDS[0];
-            document.getElementById('world-status').innerText = currentWorld.name;
+            const galaxyNavContainer = document.getElementById('galaxy-nav-container');
             
-            // Set Body Background
+            // Get Current Galaxy Data
+            const currentGalaxy = GALAXIES.find(g => g.id === state.currentGalaxy) || GALAXIES[0];
+            const currentWorld = WORLDS.find(w => w.id === state.currentWorld) || WORLDS[0];
+            
+            document.getElementById('world-status').innerText = `${currentGalaxy.name} - ${currentWorld.name}`;
             document.getElementById('game-body').className = `h-screen flex flex-col overflow-hidden text-gray-800 ${currentWorld.bgClass}`;
 
-            navContainer.innerHTML = WORLDS.map(w => {
+            // Render Galaxy Tabs
+            galaxyNavContainer.innerHTML = GALAXIES.map(g => {
+                const locked = state.rebirth.level < g.minRebirth;
+                const active = state.currentGalaxy === g.id;
+                // Don't show galaxies that are too far ahead (optional, but clean)
+                // if (state.rebirth.level < g.minRebirth - 5) return ''; 
+                return `
+                    <button onclick="switchGalaxy('${g.id}')" class="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border transition flex items-center gap-1 ${active ? 'bg-purple-600 text-white border-purple-600' : (locked ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50')}">
+                        <span>${g.icon}</span> ${locked ? '<i class="fas fa-lock text-[10px] ml-1"></i>' : g.name}
+                    </button>
+                `;
+            }).join('');
+
+            // Render Worlds for CURRENT GALAXY only
+            const worldsInGalaxy = WORLDS.filter(w => currentGalaxy.worlds.includes(w.id));
+            
+            navContainer.innerHTML = worldsInGalaxy.map(w => {
                 const locked = state.rebirth.level < w.minRebirth;
                 const active = state.currentWorld === w.id;
                 return `
@@ -1267,7 +1347,7 @@
         function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); }
         function confirmReset() {
             localStorage.removeItem('gibchick_save');
-            state = { money: 0, inventory: [], collection: [], upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 }, rebirth: { level: 0, multiplier: 1 }, achievements: [], currentWorld: 'home', stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 }, lastSave: Date.now() };
+            state = { money: 0, inventory: [], collection: [], upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 }, rebirth: { level: 0, multiplier: 1 }, achievements: [], currentWorld: 'home', currentGalaxy: 'origin', stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 }, lastSave: Date.now() };
             renderInventory(); renderUpgrades(); renderShop(); renderAchievements(); updateUI(); updateAutoClicker(); closeResetModal(); showToast("Account Reset!");
         }
         function saveGame() { try { localStorage.setItem('gibchick_save', JSON.stringify(state)); } catch (e) { console.warn(e); } }
@@ -1284,6 +1364,7 @@
                     if(parsed.achievements) state.achievements = parsed.achievements;
                     if(parsed.stats) state.stats = { ...state.stats, ...parsed.stats };
                     if(parsed.currentWorld) state.currentWorld = parsed.currentWorld; else state.currentWorld = 'home';
+                    if(parsed.currentGalaxy) state.currentGalaxy = parsed.currentGalaxy; else state.currentGalaxy = 'origin';
                 } catch (e) { console.error("Save corrupted"); }
             } else { state.money = 0; state.collection = []; }
         }
