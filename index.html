@@ -469,7 +469,7 @@
             'rainbow_chick': { id: 'rainbow_chick', name: 'Rainbow Chick', icon: '🌈', rate: 5000000000000, rarity: 'Mythical', next: 'mecha_chick' },
             'mecha_chick': { id: 'mecha_chick', name: 'Mecha Chick', icon: '🤖', rate: 25000000000000, rarity: 'Godly', next: 'darkmatter_chick' },
             'darkmatter_chick': { id: 'darkmatter_chick', name: 'Dark Matter Chick', icon: '🌑', rate: 100000000000000, rarity: 'Transcendent', next: null },
-            'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 0, rarity: 'Special', next: null, hidden: true },
+            'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 0, rarity: 'Special', next: null, hidden: false },
             
             // Radioactive Pets
             'roach': { id: 'roach', name: 'Rad-Roach', icon: '🪳', rate: 500000, rarity: 'Common', next: 'slime' },
@@ -488,7 +488,7 @@
             { id: 'prehistoric', name: 'Dino Egg', cost: 75000, icon: '🌋', colorClass: 'bg-red-100 border-red-200 text-gray-900', pool: { 't-rex': 0.4, 'triceratops': 0.3, 'pterodactyl': 0.2, 'mammoth': 0.1 } },
             { id: 'jungle', name: 'Jungle Egg', cost: 250000, icon: '🌴', colorClass: 'bg-emerald-100 border-emerald-200 text-gray-900', pool: { 'monkey': 0.3, 'snake': 0.3, 'tiger': 0.2, 'bear': 0.15, 'hydra': 0.005 } },
             { id: 'arctic', name: 'Arctic Egg', cost: 750000, icon: '❄️', colorClass: 'bg-cyan-100 border-cyan-200 text-gray-900', pool: { 'penguin': 0.4, 'bear': 0.3, 'yeti': 0.2, 'mammoth': 0.1 } },
-            { id: 'cosmic', name: 'Cosmic Egg', cost: 2500000, icon: '🪐', colorClass: 'bg-indigo-100 border-indigo-200 text-gray-900', pool: { 'alien': 0.4, 'robot': 0.4, 'titan': 0.15, 'void': 0.005 } },
+            { id: 'cosmic', name: 'Cosmic Egg', cost: 2500000, icon: '🪐', colorClass: 'bg-indigo-100 border-indigo-200 text-gray-900', pool: { 'alien': 0.4, 'robot': 0.4, 'titan': 0.15, 'void': 0.005, 'reward_griffin': 0.001 } },
             { id: 'fantasy', name: 'Fantasy Egg', cost: 10000000, icon: '🏰', colorClass: 'bg-pink-100 border-pink-200 text-gray-900', pool: { 'unicorn': 0.35, 'griffin': 0.3, 'dragon': 0.2, 'phoenix': 0.1, 'titan': 0.05 } },
             { id: 'divine', name: 'Divine Egg', cost: 50000000, icon: '👑', colorClass: 'bg-yellow-50 border-yellow-300 text-gray-900', pool: { 'phoenix': 0.4, 'kraken': 0.25, 'hydra': 0.2, 'titan': 0.1, 'void': 0.05 } },
             { id: 'void', name: 'Void Egg', cost: 250000000, icon: '🕳️', colorClass: 'bg-gray-900 border-gray-600 text-white', pool: { 'void': 0.6, 'cosmos': 0.4 } },
@@ -591,7 +591,7 @@
             });
 
             if (hasGriffin) {
-                baseIncome += (baseIncome * 3);
+                baseIncome *= 3;
             }
 
             const incomeMultiplier = 1 + UPGRADES.income.getEffect(state.upgrades.income);
