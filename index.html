@@ -594,7 +594,8 @@
             'deer': { id: 'deer', name: 'Deer', icon: '🦌', rate: 900000, rarity: 'Rare', next: 'bear' },
             'raccoon': { id: 'raccoon', name: 'Raccoon', icon: '🦝', rate: 1100000, rarity: 'Rare', next: 'wolf' },
             'squirrel': { id: 'squirrel', name: 'Squirrel', icon: '🐿️', rate: 700000, rarity: 'Common', next: 'fox' },
-            'owl': { id: 'owl', name: 'Owl', icon: '🦉', rate: 1300000, rarity: 'Rare', next: 'eagle' },
+            // Renamed to forest_owl to avoid conflict with the starter owl (400 rate)
+            'forest_owl': { id: 'forest_owl', name: 'Forest Owl', icon: '🦉', rate: 1300000, rarity: 'Rare', next: 'eagle' },
             'eagle': { id: 'eagle', name: 'Eagle', icon: '🦅', rate: 1800000, rarity: 'Epic', next: 'griffin' },
 
             // Desert/Ancient Pets
@@ -753,8 +754,8 @@
             { id: 'tropical', name: 'Tropical Egg', cost: 600000000, icon: '🏝️', colorClass: 'bg-teal-700 border-teal-400 text-teal-200', pool: { 'dolphin': 0.4, 'seahorse': 0.3, 'shark': 0.2, 'kraken': 0.1 } },
 
             // Forest/Woodland Eggs
-            { id: 'woodland', name: 'Woodland Egg', cost: 200000000, icon: '🌳', colorClass: 'bg-green-800 border-green-400 text-green-200', pool: { 'deer': 0.4, 'raccoon': 0.3, 'squirrel': 0.2, 'owl': 0.1 } },
-            { id: 'ancient_forest', name: 'Ancient Forest Egg', cost: 400000000, icon: '🌲', colorClass: 'bg-emerald-900 border-emerald-400 text-emerald-200', pool: { 'deer': 0.3, 'owl': 0.25, 'eagle': 0.2, 'bear': 0.15, 'griffin': 0.1 } },
+            { id: 'woodland', name: 'Woodland Egg', cost: 200000000, icon: '🌳', colorClass: 'bg-green-800 border-green-400 text-green-200', pool: { 'deer': 0.4, 'raccoon': 0.3, 'squirrel': 0.2, 'forest_owl': 0.1 } },
+            { id: 'ancient_forest', name: 'Ancient Forest Egg', cost: 400000000, icon: '🌲', colorClass: 'bg-emerald-900 border-emerald-400 text-emerald-200', pool: { 'deer': 0.3, 'forest_owl': 0.25, 'eagle': 0.2, 'bear': 0.15, 'griffin': 0.1 } },
             { id: 'enchanted_woods', name: 'Enchanted Woods Egg', cost: 800000000, icon: '🧚', colorClass: 'bg-lime-800 border-lime-400 text-lime-200', pool: { 'raccoon': 0.35, 'eagle': 0.3, 'griffin': 0.25, 'unicorn': 0.1 } },
 
             // Desert/Ancient Eggs
