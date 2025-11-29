@@ -34,7 +34,6 @@
         .bg-world-celestial { background: linear-gradient(135deg, #fffbeb 0%, #fcd34d 50%, #fffbeb 100%); color: #78350f; }
 
         /* General Dark Text overrides for dark backgrounds */
-        /* Removed .bg-world-spooky from here to keep cards white and text black */
         .bg-world-space .bg-white, .bg-world-cyber .bg-white, 
         .bg-world-atlantis .bg-white, .bg-world-shadow .bg-white { 
             background-color: rgba(255,255,255,0.1); 
@@ -44,12 +43,10 @@
         }
         
         /* Ensure text inside cards on dark modes is readable */
-        /* Removed .bg-world-spooky from here */
         .bg-world-space .text-gray-800, 
         .bg-world-cyber .text-gray-800, .bg-world-atlantis .text-gray-800,
         .bg-world-shadow .text-gray-800 { color: #f3f4f6; }
 
-        /* Removed .bg-world-spooky from here */
         .bg-world-space .text-gray-500,
         .bg-world-cyber .text-gray-500, .bg-world-atlantis .text-gray-500,
         .bg-world-shadow .text-gray-500 { color: #9ca3af; }
@@ -319,6 +316,14 @@
                         <button onclick="adminAddPet()" class="bg-blue-500 text-white px-3 rounded font-bold hover:bg-blue-600">+</button>
                     </div>
                 </div>
+
+                <div class="bg-gray-100 p-3 rounded">
+                    <label class="block text-xs font-bold text-gray-500 mb-1">SET REBIRTH LEVEL</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="admin-rebirth-input" class="flex-1 border p-2 rounded text-sm" placeholder="Level (0-1000)">
+                        <button onclick="adminSetRebirth()" class="bg-purple-600 text-white px-3 rounded font-bold hover:bg-purple-700">SET</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -550,6 +555,23 @@
             { id: 'eclipse', name: 'Eclipse Egg', cost: 500000000000, icon: '🌑', colorClass: 'bg-purple-900 border-purple-600 text-purple-200', pool: { 'wraith': 0.5, 'void': 0.4, 'nightmare': 0.1 } },
             { id: 'ether', name: 'Ether Egg', cost: 2500000000000, icon: '🌤️', colorClass: 'bg-yellow-100 border-yellow-400 text-yellow-800', pool: { 'cherub': 0.5, 'cosmos': 0.4, 'archangel': 0.1 } },
             { id: 'infinity', name: 'Infinity Egg', cost: 10000000000000, icon: '♾️', colorClass: 'bg-gray-800 border-white text-white', pool: { 'chronos': 0.05, 'archangel': 0.2, 'nightmare': 0.25, 'leviathan': 0.5 } }
+        ];
+
+        const REBIRTH_LEVELS = [
+            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" },
+            { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
+            { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" },
+            { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" },
+            { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space" },
+            { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" },
+            { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" },
+            { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" },
+            { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" },
+            { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" },
+            { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm" },
+            { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" },
+            { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" },
+            { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" }
         ];
 
         const UPGRADES = {
@@ -837,7 +859,7 @@
             }).join('');
         }
 
-        // --- HATCHING & MERGE ---
+        // --- HATCHING & MERGE (Reuse prev logic, shortened for brevity but functional) ---
         function startHatchingSequence(egg, count = 1) {
             const overlay = document.getElementById('hatch-overlay');
             const eggContainer = document.getElementById('hatch-egg-display'); 
@@ -1066,6 +1088,31 @@
                 renderInventory();
                 saveGame();
                 showToast(`Added ${PETS[petId].name}!`);
+            }
+        }
+
+        function adminSetRebirth() {
+            const level = parseInt(document.getElementById('admin-rebirth-input').value);
+            if (!isNaN(level) && level >= 0) {
+                state.rebirth.level = level;
+                
+                // Calculate multiplier based on level
+                if (level === 0) {
+                    state.rebirth.multiplier = 1;
+                } else {
+                    const data = getRebirthLevelData(level);
+                    if (data) {
+                        state.rebirth.multiplier = data.multiplier;
+                    } else {
+                        // Fallback if getRebirthLevelData returns null (e.g. > 1000)
+                        state.rebirth.multiplier = 1 + (level * 0.5);
+                    }
+                }
+
+                saveGame();
+                renderShop(); // Updates world locks
+                updateUI();
+                showToast(`Rebirth set to Level ${level} (x${state.rebirth.multiplier})`);
             }
         }
 
