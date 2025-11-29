@@ -135,10 +135,22 @@
         .rarity-eternal .text-gray-500 { color: #155e75 !important; }
         
         .rarity-special {
-            background: linear-gradient(to bottom right, #ffafbd, #ffc3a0);
-            border: 3px solid #ff6b6b;
-            box-shadow: 0 0 20px #ff6b6b;
-            color: #881337;
+            background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+            background-size: 400% 400%;
+            border: 3px solid white;
+            box-shadow: 0 0 20px #ffffff;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+            animation: rainbow 6s ease infinite;
+        }
+        .rarity-special .text-gray-700 { color: #fff !important; text-shadow: 1px 1px 2px black; }
+        .rarity-special .text-gray-500 { color: #eee !important; text-shadow: 1px 1px 2px black; }
+        .rarity-special .bg-white\/50 { background: rgba(255,255,255,0.1); }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
         }
 
         @keyframes pulse-godly {
@@ -244,6 +256,15 @@
                 <!-- World Navigation Scroll -->
                 <div class="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide" id="world-nav-container"></div>
                 
+                <!-- Hatch Amount Slider -->
+                <div class="mb-4 px-2" id="hatch-slider-container" style="display:none;">
+                     <div class="flex justify-between text-xs font-bold mb-1">
+                         <span>Hatch Amount</span>
+                         <span id="hatch-amount-display">1x</span>
+                     </div>
+                     <input type="range" id="hatch-amount-slider" min="1" max="1" value="1" class="w-full accent-blue-500" oninput="updateHatchSetting(this.value)">
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="egg-shop-container"></div>
              </div>
 
@@ -541,7 +562,7 @@
             'rainbow_chick': { id: 'rainbow_chick', name: 'Rainbow Chick', icon: '🌈', rate: 5000000000000, rarity: 'Mythical', next: 'mecha_chick' },
             'mecha_chick': { id: 'mecha_chick', name: 'Mecha Chick', icon: '🤖', rate: 25000000000000, rarity: 'Godly', next: 'darkmatter_chick' },
             'darkmatter_chick': { id: 'darkmatter_chick', name: 'Dark Matter Chick', icon: '🌑', rate: 100000000000000, rarity: 'Transcendent', next: null },
-            'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 2000000000000, rarity: 'Special', next: null, hidden: true }
+            'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 0, rarity: 'Special', next: null, hidden: true } // Rate calculated dynamically
         };
 
         const EGGS = [
@@ -572,11 +593,32 @@
             { id: 'singularity', name: 'Singularity Egg', cost: 1000000000000000, icon: '🌌', colorClass: 'bg-black border-white text-white', pool: { 'darkmatter_chick': 0.05, 'void': 0.4, 'cosmos': 0.55 } }
         ];
 
+        const REBIRTH_LEVELS = [
+            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" },
+            { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
+            { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" },
+            { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" },
+            { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space (Astral Sector)" },
+            { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" },
+            { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" },
+            { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" },
+            { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" },
+            { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" },
+            { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm (Mystic Reach)" },
+            { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" },
+            { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" },
+            { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" },
+            { level: 20, req: { 'golden_chick': 1 }, multiplier: 15.0, unlockMsg: "Unlocks: Chickverse Galaxy (Gilded Coop)" },
+            { level: 25, req: { 'rainbow_chick': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Prismatic Fields" },
+            { level: 30, req: { 'mecha_chick': 1 }, multiplier: 50.0, unlockMsg: "Unlocks: Mecha Base" },
+            { level: 35, req: { 'darkmatter_chick': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Void Nexus" }
+        ];
+
         const UPGRADES = {
             luck: { name: 'Luck', description: 'Increases merge success rate', icon: '🍀', baseCost: 1000, costMultiplier: 2.5, maxLevel: 10, getEffect: (level) => level * 0.05 },
             income: { name: 'Income', description: 'Multiplies all pet income', icon: '💰', baseCost: 5000, costMultiplier: 3, maxLevel: 10, getEffect: (level) => level * 0.1 },
             clickPower: { name: 'Click', description: 'Increases click earnings', icon: '👆', baseCost: 500, costMultiplier: 2, maxLevel: 20, getEffect: (level) => level * 2 },
-            autoClicker: { name: 'Auto-Click', description: 'Automatically clicks for you', icon: '🤖', baseCost: 10000, costMultiplier: 4, maxLevel: 10, getEffect: (level) => level * 4 }, // Buffed to 4 clicks/sec
+            autoClicker: { name: 'Auto-Click', description: 'Automatically clicks for you', icon: '🤖', baseCost: 10000, costMultiplier: 4, maxLevel: 10, getEffect: (level) => level * 4 }, // 4 clicks/sec
             criticalClicks: { name: 'Critical', description: 'Chance for 5x click earnings', icon: '💥', baseCost: 2500, costMultiplier: 2.8, maxLevel: 15, getEffect: (level) => level * 0.02 },
             eggDiscount: { name: 'Discount', description: 'Reduces egg costs', icon: '🏷️', baseCost: 7500, costMultiplier: 3.5, maxLevel: 8, getEffect: (level) => level * 0.05 },
             petBonus: { name: 'Pet Boost', description: 'Increases pet income rates', icon: '⭐', baseCost: 15000, costMultiplier: 3.2, maxLevel: 12, getEffect: (level) => level * 0.08 },
@@ -638,14 +680,32 @@
         };
 
         function calculateIncome() {
-            const baseIncome = state.inventory.reduce((total, petId) => {
-                const pet = PETS[petId];
-                return total + (pet ? pet.rate : 0);
-            }, 0);
+            // 1. Calculate base income from non-special pets
+            let otherPetsIncome = 0;
+            let hasGriffin = false;
+
+            state.inventory.forEach(petId => {
+                if (petId === 'reward_griffin') {
+                    hasGriffin = true;
+                } else {
+                    const pet = PETS[petId];
+                    if (pet) otherPetsIncome += pet.rate;
+                }
+            });
+
+            // 2. Calculate Griffin Income
+            let griffinIncome = 0;
+            if (hasGriffin) {
+                griffinIncome = otherPetsIncome * 3;
+            }
+
+            // 3. Total Base
+            const totalBase = otherPetsIncome + griffinIncome;
+
             const incomeMultiplier = 1 + UPGRADES.income.getEffect(state.upgrades.income);
             const petBonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
             const rebirthMult = state.rebirth.multiplier || 1;
-            return Math.floor(baseIncome * incomeMultiplier * petBonus * rebirthMult);
+            return Math.floor(totalBase * incomeMultiplier * petBonus * rebirthMult);
         }
 
         function addMoney(amount) {
@@ -681,7 +741,7 @@
         function updateHatchSetting(val) {
              state.settings.hatchAmount = parseInt(val);
              document.getElementById('hatch-amount-display').innerText = state.settings.hatchAmount + 'x';
-             renderShop();
+             // renderShop(); // Removed to prevent flickering, value updates in UI via span
         }
         
         function updateSortSetting(val) {
@@ -837,8 +897,10 @@
         function performRebirth() {
             const nextRebirth = getRebirthLevelData(state.rebirth.level + 1);
             if (!nextRebirth) return;
-
-            state.inventory = []; 
+            
+            const keepPets = state.inventory.filter(id => id === 'reward_griffin');
+            state.inventory = [...keepPets]; 
+            
             state.money = 0;
             state.upgrades = { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 };
             
@@ -1242,7 +1304,23 @@
                 container.innerHTML = list.map(petId => {
                     const pet = PETS[petId];
                     if (!pet) return '';
-                    return `<div class="rarity-${pet.rarity.toLowerCase()} rounded-lg p-2 flex flex-col items-center justify-center relative shadow-sm aspect-square transition hover:scale-105 select-none pet-card bg-white/90 backdrop-blur" onmouseenter="showPetTooltip('${petId}', ${petCounts[petId] || 1}, event)" onmouseleave="hidePetTooltip()"><div class="text-3xl mb-1">${pet.icon}</div><div class="text-xs font-bold text-gray-700 truncate w-full text-center">${pet.name}</div><div class="text-[10px] text-gray-500 font-mono bg-white/50 px-1 rounded">+$${formatCompact(pet.rate)}/s</div></div>`;
+                    // Tooltip income calculation
+                    const mult = 1 + UPGRADES.income.getEffect(state.upgrades.income);
+                    const bonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
+                    const rMult = state.rebirth.multiplier || 1;
+                    let effectiveRate;
+                    if (petId === 'reward_griffin') {
+                         // Recalculate base income for tooltip context
+                         let otherPetsIncome = 0;
+                         state.inventory.forEach(id => {
+                             if (id !== 'reward_griffin' && PETS[id]) otherPetsIncome += PETS[id].rate;
+                         });
+                         effectiveRate = Math.floor(otherPetsIncome * 3 * mult * bonus * rMult);
+                    } else {
+                        effectiveRate = Math.floor(pet.rate * mult * bonus * rMult);
+                    }
+
+                    return `<div class="rarity-${pet.rarity.toLowerCase()} rounded-lg p-2 flex flex-col items-center justify-center relative shadow-sm aspect-square transition hover:scale-105 select-none pet-card bg-white/90 backdrop-blur" onmouseenter="showPetTooltip('${petId}', ${petCounts[petId] || 1}, event)" onmouseleave="hidePetTooltip()"><div class="text-3xl mb-1">${pet.icon}</div><div class="text-xs font-bold text-gray-700 truncate w-full text-center">${pet.name}</div><div class="text-[10px] text-gray-500 font-mono bg-white/50 px-1 rounded">+$${formatCompact(effectiveRate)}/s</div></div>`;
                 }).join('');
             }
             document.getElementById('pet-count').innerText = state.inventory.length;
@@ -1289,8 +1367,19 @@
             const mult = 1 + UPGRADES.income.getEffect(state.upgrades.income);
             const bonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
             const rMult = state.rebirth.multiplier || 1;
-            const effectiveRate = Math.floor(pet.rate * mult * bonus * rMult);
-            content.innerHTML = `<div class="font-bold text-lg mb-2 flex items-center gap-2"><span class="text-2xl">${pet.icon}</span><span>${pet.name}</span></div><div class="space-y-1 text-xs"><div><strong>Rarity:</strong> <span class="capitalize">${pet.rarity}</span></div><div><strong>Owned:</strong> ${count}</div><div><strong>Base Income:</strong> $${formatCompact(pet.rate)}/s</div><div><strong>Effective:</strong> $${formatCompact(effectiveRate)}/s</div>${pet.next ? `<div><strong>Next:</strong> ${PETS[pet.next].icon} ${PETS[pet.next].name}</div>` : '<div><strong>Max Tier</strong></div>'}</div>`;
+            
+            let effectiveRate;
+            if (petId === 'reward_griffin') {
+                let otherPetsIncome = 0;
+                state.inventory.forEach(id => {
+                    if (id !== 'reward_griffin' && PETS[id]) otherPetsIncome += PETS[id].rate;
+                });
+                effectiveRate = Math.floor(otherPetsIncome * 3 * mult * bonus * rMult);
+            } else {
+                effectiveRate = Math.floor(pet.rate * mult * bonus * rMult);
+            }
+
+            content.innerHTML = `<div class="font-bold text-lg mb-2 flex items-center gap-2"><span class="text-2xl">${pet.icon}</span><span>${pet.name}</span></div><div class="space-y-1 text-xs"><div><strong>Rarity:</strong> <span class="capitalize">${pet.rarity}</span></div><div><strong>Owned:</strong> ${count}</div><div><strong>Base Income:</strong> ${petId === 'reward_griffin' ? 'Dynamic (3x Others)' : '$'+formatCompact(pet.rate)+'/s'}</div><div><strong>Effective Income:</strong> $${formatCompact(effectiveRate)}/s</div>${pet.next ? `<div><strong>Next:</strong> ${PETS[pet.next].icon} ${PETS[pet.next].name}</div>` : '<div><strong>Max Tier</strong></div>'}</div>`;
             const rect = event.target.getBoundingClientRect();
             tooltip.style.left = (rect.left + rect.width / 2) + 'px'; tooltip.style.top = (rect.top - 10) + 'px'; tooltip.style.transform = 'translate(-50%, -100%)'; tooltip.style.opacity = '1';
         }
