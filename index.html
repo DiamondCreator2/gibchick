@@ -11,7 +11,7 @@
         
         body {
             font-family: 'Fredoka', sans-serif;
-            transition: background 1s ease; /* Smooth world transitions */
+            transition: background 1s ease, color 0.5s ease;
             overscroll-behavior: none;
             user-select: none;
         }
@@ -24,11 +24,32 @@
         .bg-world-magic { background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 100%); }
         .bg-world-space { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; }
         .bg-world-divine { background: linear-gradient(135deg, #fef9c3 0%, #facc15 100%); }
+        
+        /* New Worlds */
+        .bg-world-cyber { background: linear-gradient(135deg, #0f172a 0%, #0ea5e9 100%); color: #bae6fd; }
+        .bg-world-volcano { background: linear-gradient(135deg, #450a0a 0%, #ef4444 100%); color: #fecaca; }
+        .bg-world-candy { background: linear-gradient(135deg, #fdf4ff 0%, #f5d0fe 100%); color: #86198f; }
+        .bg-world-atlantis { background: linear-gradient(135deg, #022c22 0%, #0d9488 100%); color: #ccfbf1; }
+        .bg-world-shadow { background: linear-gradient(135deg, #000000 0%, #581c87 100%); color: #e9d5ff; }
+        .bg-world-celestial { background: linear-gradient(135deg, #fffbeb 0%, #fcd34d 50%, #fffbeb 100%); color: #78350f; }
 
-        /* Text Adjustments for Dark Worlds */
-        .bg-world-spooky .text-gray-800, .bg-world-space .text-gray-800 { color: #f3f4f6; }
-        .bg-world-spooky .bg-white, .bg-world-space .bg-white { background-color: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
-        .bg-world-spooky .shadow-md, .bg-world-space .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); }
+        /* General Dark Text overrides for dark backgrounds */
+        .bg-world-spooky .bg-white, .bg-world-space .bg-white, .bg-world-cyber .bg-white, 
+        .bg-world-atlantis .bg-white, .bg-world-shadow .bg-white { 
+            background-color: rgba(255,255,255,0.1); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            color: #fff;
+        }
+        
+        /* Ensure text inside cards on dark modes is readable */
+        .bg-world-spooky .text-gray-800, .bg-world-space .text-gray-800, 
+        .bg-world-cyber .text-gray-800, .bg-world-atlantis .text-gray-800,
+        .bg-world-shadow .text-gray-800 { color: #f3f4f6; }
+
+        .bg-world-spooky .text-gray-500, .bg-world-space .text-gray-500,
+        .bg-world-cyber .text-gray-500, .bg-world-atlantis .text-gray-500,
+        .bg-world-shadow .text-gray-500 { color: #9ca3af; }
 
         .shake-animation {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite;
@@ -95,6 +116,16 @@
         .rarity-transcendent .text-gray-500 { color: #ffed4e !important; }
         .rarity-transcendent .bg-white\/50 { background: rgba(255,215,0,0.3); }
 
+        .rarity-eternal {
+            background: linear-gradient(to bottom right, #0891b2, #ecfeff, #0891b2);
+            border: 3px solid #22d3ee;
+            box-shadow: 0 0 40px #22d3ee, 0 0 80px #67e8f9;
+            color: #0e7490;
+            animation: pulse-eternal 4s infinite;
+        }
+        .rarity-eternal .text-gray-700 { color: #164e63 !important; }
+        .rarity-eternal .text-gray-500 { color: #155e75 !important; }
+        
         .rarity-special {
             background: linear-gradient(to bottom right, #ffafbd, #ffc3a0);
             border: 3px solid #ff6b6b;
@@ -118,6 +149,12 @@
             0% { box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700; }
             50% { box-shadow: 0 0 40px #ffd700, 0 0 80px #ffed4e, 0 0 120px #ffd700; }
             100% { box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700; }
+        }
+
+        @keyframes pulse-eternal {
+            0% { background-position: 0% 50%; box-shadow: 0 0 30px #22d3ee; }
+            50% { background-position: 100% 50%; box-shadow: 0 0 60px #67e8f9, 0 0 90px #a5f3fc; }
+            100% { background-position: 0% 50%; box-shadow: 0 0 30px #22d3ee; }
         }
 
         /* Styles */
@@ -375,7 +412,13 @@
             { id: 'frozen', name: 'Frozen Tundra', minRebirth: 3, bgClass: 'bg-world-frozen', eggIds: ['arctic'] },
             { id: 'magic', name: 'Magic Realm', minRebirth: 4, bgClass: 'bg-world-magic', eggIds: ['fantasy', 'mystery'] },
             { id: 'space', name: 'Deep Space', minRebirth: 5, bgClass: 'bg-world-space', eggIds: ['cosmic', 'void'] },
-            { id: 'divine', name: 'Divine Plane', minRebirth: 6, bgClass: 'bg-world-divine', eggIds: ['divine'] }
+            { id: 'divine', name: 'Divine Plane', minRebirth: 6, bgClass: 'bg-world-divine', eggIds: ['divine'] },
+            { id: 'cyber', name: 'Cyber City', minRebirth: 9, bgClass: 'bg-world-cyber', eggIds: ['cyber'] },
+            { id: 'volcano', name: 'Volcanic Core', minRebirth: 10, bgClass: 'bg-world-volcano', eggIds: ['magma'] },
+            { id: 'candy', name: 'Candy Land', minRebirth: 11, bgClass: 'bg-world-candy', eggIds: ['sugar'] },
+            { id: 'atlantis', name: 'Atlantis', minRebirth: 12, bgClass: 'bg-world-atlantis', eggIds: ['abyssal'] },
+            { id: 'shadow', name: 'Shadow Realm', minRebirth: 13, bgClass: 'bg-world-shadow', eggIds: ['eclipse'] },
+            { id: 'celestial', name: 'Celestial Haven', minRebirth: 14, bgClass: 'bg-world-celestial', eggIds: ['ether', 'infinity'] }
         ];
 
         const PETS = {
@@ -421,7 +464,25 @@
             'hydra': { id: 'hydra', name: 'Hydra', icon: '🐍', rate: 250000, rarity: 'Mythical', next: 'titan' },
             'titan': { id: 'titan', name: 'Titan', icon: '🗿', rate: 500000, rarity: 'Mythical', next: 'void' },
             'void': { id: 'void', name: 'The Void', icon: '🌌', rate: 1000000, rarity: 'Godly', next: 'cosmos' },
-            'cosmos': { id: 'cosmos', name: 'The Cosmos', icon: '🌌', rate: 5000000, rarity: 'Transcendent', next: null },
+            'cosmos': { id: 'cosmos', name: 'The Cosmos', icon: '🌌', rate: 5000000, rarity: 'Transcendent', next: 'cyborg' },
+            
+            // New High Tier Pets
+            'cyborg': { id: 'cyborg', name: 'Cyborg', icon: '🤖', rate: 25000000, rarity: 'Godly', next: 'magma_lord' },
+            'magma_lord': { id: 'magma_lord', name: 'Magma Lord', icon: '👹', rate: 100000000, rarity: 'Godly', next: 'candy_king' },
+            'candy_king': { id: 'candy_king', name: 'Candy King', icon: '🍬', rate: 500000000, rarity: 'Godly', next: 'leviathan' },
+            'leviathan': { id: 'leviathan', name: 'Leviathan', icon: '🐋', rate: 2000000000, rarity: 'Transcendent', next: 'nightmare' },
+            'nightmare': { id: 'nightmare', name: 'Nightmare', icon: '🌚', rate: 10000000000, rarity: 'Transcendent', next: 'archangel' },
+            'archangel': { id: 'archangel', name: 'Archangel', icon: '👼', rate: 50000000000, rarity: 'Transcendent', next: 'chronos' },
+            'chronos': { id: 'chronos', name: 'Chronos', icon: '⏳', rate: 250000000000, rarity: 'Eternal', next: null },
+
+            // Lower Tier Themed Fillers
+            'drone': { id: 'drone', name: 'Drone', icon: '🚁', rate: 150000, rarity: 'Epic', next: 'cyborg' },
+            'magma_golem': { id: 'magma_golem', name: 'Magma Golem', icon: '🌋', rate: 2000000, rarity: 'Legendary', next: 'magma_lord' },
+            'gummy_bear': { id: 'gummy_bear', name: 'Gummy Bear', icon: '🧸', rate: 5000, rarity: 'Rare', next: 'candy_king' },
+            'mermaid': { id: 'mermaid', name: 'Mermaid', icon: '🧜‍♀️', rate: 5000000, rarity: 'Legendary', next: 'leviathan' },
+            'wraith': { id: 'wraith', name: 'Wraith', icon: '👻', rate: 8000000, rarity: 'Legendary', next: 'nightmare' },
+            'cherub': { id: 'cherub', name: 'Cherub', icon: '🏹', rate: 12000000, rarity: 'Mythical', next: 'archangel' },
+
             'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 10000000, rarity: 'Special', next: null, hidden: true }
         };
 
@@ -439,7 +500,15 @@
             { id: 'fantasy', name: 'Fantasy Egg', cost: 10000000, icon: '🏰', colorClass: 'bg-pink-100 border-pink-200', pool: { 'unicorn': 0.35, 'griffin': 0.3, 'dragon': 0.2, 'phoenix': 0.1, 'titan': 0.05 } },
             { id: 'divine', name: 'Divine Egg', cost: 50000000, icon: '👑', colorClass: 'bg-yellow-50 border-yellow-300', pool: { 'phoenix': 0.4, 'kraken': 0.25, 'hydra': 0.2, 'titan': 0.1, 'void': 0.05 } },
             { id: 'void', name: 'Void Egg', cost: 250000000, icon: '🕳️', colorClass: 'bg-gray-900 border-gray-600', pool: { 'void': 0.6, 'cosmos': 0.4 } },
-            { id: 'mystery', name: 'Mystery Egg', cost: 25000, icon: '❓', colorClass: 'bg-purple-100 border-purple-300', pool: { 'spider': 0.2, 'bee': 0.2, 'frog': 0.2, 'turtle': 0.15, 'penguin': 0.15, 'camel': 0.1 } }
+            { id: 'mystery', name: 'Mystery Egg', cost: 25000, icon: '❓', colorClass: 'bg-purple-100 border-purple-300', pool: { 'spider': 0.2, 'bee': 0.2, 'frog': 0.2, 'turtle': 0.15, 'penguin': 0.15, 'camel': 0.1 } },
+            // New Eggs
+            { id: 'cyber', name: 'Cyber Egg', cost: 1000000000, icon: '💾', colorClass: 'bg-blue-900 border-blue-500 text-blue-200', pool: { 'drone': 0.6, 'alien': 0.3, 'cyborg': 0.1 } },
+            { id: 'magma', name: 'Magma Egg', cost: 5000000000, icon: '☄️', colorClass: 'bg-red-900 border-red-500 text-red-200', pool: { 'magma_golem': 0.6, 'dragon': 0.3, 'magma_lord': 0.1 } },
+            { id: 'sugar', name: 'Sugar Egg', cost: 25000000000, icon: '🍭', colorClass: 'bg-pink-200 border-pink-400 text-pink-800', pool: { 'gummy_bear': 0.6, 'unicorn': 0.3, 'candy_king': 0.1 } },
+            { id: 'abyssal', name: 'Abyssal Egg', cost: 100000000000, icon: '🔱', colorClass: 'bg-teal-900 border-teal-500 text-teal-200', pool: { 'kraken': 0.5, 'mermaid': 0.4, 'leviathan': 0.1 } },
+            { id: 'eclipse', name: 'Eclipse Egg', cost: 500000000000, icon: '🌑', colorClass: 'bg-purple-900 border-purple-600 text-purple-200', pool: { 'wraith': 0.5, 'void': 0.4, 'nightmare': 0.1 } },
+            { id: 'ether', name: 'Ether Egg', cost: 2500000000000, icon: '🌤️', colorClass: 'bg-yellow-100 border-yellow-400 text-yellow-800', pool: { 'cherub': 0.5, 'cosmos': 0.4, 'archangel': 0.1 } },
+            { id: 'infinity', name: 'Infinity Egg', cost: 10000000000000, icon: '♾️', colorClass: 'bg-gray-800 border-white text-white', pool: { 'chronos': 0.05, 'archangel': 0.2, 'nightmare': 0.25, 'leviathan': 0.5 } }
         ];
 
         const REBIRTH_LEVELS = [
@@ -449,8 +518,14 @@
             { level: 4, req: { 't-rex': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Magic Realm" },
             { level: 5, req: { 'unicorn': 1 }, multiplier: 10.0, unlockMsg: "Unlocks: Deep Space" },
             { level: 6, req: { 'phoenix': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Divine Plane" },
-            { level: 7, req: { 'void': 1 }, multiplier: 100.0, unlockMsg: "" },
-            { level: 8, req: { 'cosmos': 1 }, multiplier: 1000.0, unlockMsg: "" }
+            { level: 7, req: { 'void': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Cyber City" },
+            { level: 8, req: { 'cosmos': 1 }, multiplier: 500.0, unlockMsg: "Unlocks: Volcanic Core" },
+            { level: 9, req: { 'cyborg': 1 }, multiplier: 1000.0, unlockMsg: "Unlocks: Candy Land" },
+            { level: 10, req: { 'magma_lord': 1 }, multiplier: 5000.0, unlockMsg: "Unlocks: Atlantis" },
+            { level: 11, req: { 'candy_king': 1 }, multiplier: 25000.0, unlockMsg: "Unlocks: Shadow Realm" },
+            { level: 12, req: { 'leviathan': 1 }, multiplier: 100000.0, unlockMsg: "Unlocks: Celestial Haven" },
+            { level: 13, req: { 'nightmare': 1 }, multiplier: 500000.0, unlockMsg: "" },
+            { level: 14, req: { 'archangel': 1 }, multiplier: 1000000.0, unlockMsg: "" }
         ];
 
         const UPGRADES = {
@@ -733,7 +808,7 @@
         function revealBatch(egg, count) {
             const results = [];
             let highestRarityScore = 0; 
-            const getRarityVal = (r) => ({'Common':1,'Uncommon':2,'Rare':3,'Epic':4,'Legendary':5,'Mythical':6,'Godly':7,'Transcendent':8})[r]||0;
+            const getRarityVal = (r) => ({'Common':1,'Uncommon':2,'Rare':3,'Epic':4,'Legendary':5,'Mythical':6,'Godly':7,'Transcendent':8, 'Eternal':9})[r]||0;
 
             for(let i=0; i<count; i++) {
                 const petId = rollPet(egg.pool);
@@ -902,7 +977,7 @@
         }
         function closeIndexModal() { document.getElementById('index-modal').classList.add('hidden'); }
         function claimIndexReward() { if(state.collection.includes('reward_griffin')) return; state.inventory.push('reward_griffin'); state.collection.push('reward_griffin'); renderInventory(); updateUI(); saveGame(); openIndexModal(); showToast("Guardian Griffin Acquired!"); }
-        function getRarityBorder(rarity) { return {'Common':'border-gray-400','Uncommon':'border-green-400','Rare':'border-blue-500','Epic':'border-purple-500','Legendary':'border-yellow-500','Mythical':'border-red-500','Godly':'border-gray-800','Transcendent':'border-yellow-300'}[rarity] || 'border-gray-200'; }
+        function getRarityBorder(rarity) { return {'Common':'border-gray-400','Uncommon':'border-green-400','Rare':'border-blue-500','Epic':'border-purple-500','Legendary':'border-yellow-500','Mythical':'border-red-500','Godly':'border-gray-800','Transcendent':'border-yellow-300', 'Eternal':'border-cyan-300'}[rarity] || 'border-gray-200'; }
 
         // --- UI ---
         function renderShop() {
