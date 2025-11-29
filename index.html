@@ -18,7 +18,7 @@
 
         /* Dynamic Background Classes */
         .bg-world-home { background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%); }
-        .bg-world-spooky { background: linear-gradient(135deg, #2d1b4e 0%, #1a102e 100%); color: #e9d5ff; }
+        .bg-world-spooky { background: linear-gradient(135deg, #2d1b4e 0%, #1a102e 100%); color: black; }
         .bg-world-jurassic { background: linear-gradient(135deg, #fed7aa 0%, #fb923c 100%); }
         .bg-world-frozen { background: linear-gradient(135deg, #cffafe 0%, #67e8f9 100%); }
         .bg-world-magic { background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 100%); }
@@ -34,7 +34,8 @@
         .bg-world-celestial { background: linear-gradient(135deg, #fffbeb 0%, #fcd34d 50%, #fffbeb 100%); color: #78350f; }
 
         /* General Dark Text overrides for dark backgrounds */
-        .bg-world-spooky .bg-white, .bg-world-space .bg-white, .bg-world-cyber .bg-white, 
+        /* Removed .bg-world-spooky from here to keep cards white and text black */
+        .bg-world-space .bg-white, .bg-world-cyber .bg-white, 
         .bg-world-atlantis .bg-white, .bg-world-shadow .bg-white { 
             background-color: rgba(255,255,255,0.1); 
             backdrop-filter: blur(10px); 
@@ -42,11 +43,14 @@
             color: #fff;
         }
         
-        .bg-world-spooky .text-gray-800, .bg-world-space .text-gray-800, 
+        /* Ensure text inside cards on dark modes is readable */
+        /* Removed .bg-world-spooky from here */
+        .bg-world-space .text-gray-800, 
         .bg-world-cyber .text-gray-800, .bg-world-atlantis .text-gray-800,
         .bg-world-shadow .text-gray-800 { color: #f3f4f6; }
 
-        .bg-world-spooky .text-gray-500, .bg-world-space .text-gray-500,
+        /* Removed .bg-world-spooky from here */
+        .bg-world-space .text-gray-500,
         .bg-world-cyber .text-gray-500, .bg-world-atlantis .text-gray-500,
         .bg-world-shadow .text-gray-500 { color: #9ca3af; }
 
