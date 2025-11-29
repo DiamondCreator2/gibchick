@@ -174,7 +174,7 @@
 
              <!-- Achievements -->
              <div>
-                 <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-trophy text-yellow-500"></i> Achievements <span id="achievement-count" class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs">0/14</span></h3>
+                  <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-trophy text-yellow-500"></i> Achievements <span id="achievement-count" class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs">0/11</span></h3>
                  <div id="achievements-container" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto"></div>
              </div>
          </section>
@@ -679,11 +679,65 @@
                 description: 'Buy your first egg',
                 condition: (state) => state.stats.totalEggs >= 1
             },
+            tenEggs: {
+                id: 'tenEggs',
+                name: 'Egg Collector',
+                description: 'Buy 10 eggs',
+                condition: (state) => state.stats.totalEggs >= 10
+            },
+            firstRare: {
+                id: 'firstRare',
+                name: 'Rare Find',
+                description: 'Hatch your first Rare pet',
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Rare')
+            },
+            firstEpic: {
+                id: 'firstEpic',
+                name: 'Epic Hunter',
+                description: 'Hatch your first Epic pet',
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Epic')
+            },
+            firstLegendary: {
+                id: 'firstLegendary',
+                name: 'Legendary',
+                description: 'Hatch your first Legendary pet',
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Legendary')
+            },
             millionaire: {
                 id: 'millionaire',
                 name: 'Millionaire',
                 description: 'Earn $1,000,000 total',
                 condition: (state) => state.stats.totalMoney >= 1000000
+            },
+            billionaire: {
+                id: 'billionaire',
+                name: 'Billionaire',
+                description: 'Earn $1,000,000,000 total',
+                condition: (state) => state.stats.totalMoney >= 1000000000
+            },
+            firstMerge: {
+                id: 'firstMerge',
+                name: 'Alchemist',
+                description: 'Successfully merge pets',
+                condition: (state) => state.stats.totalMerges >= 1
+            },
+            hundredEggs: {
+                id: 'hundredEggs',
+                name: 'Egg Master',
+                description: 'Buy 100 eggs',
+                condition: (state) => state.stats.totalEggs >= 100
+            },
+            firstMythical: {
+                id: 'firstMythical',
+                name: 'Mythical',
+                description: 'Hatch your first Mythical pet',
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Mythical')
+            },
+            trustMaster: {
+                id: 'trustMaster',
+                name: 'Trust Master',
+                description: 'Reach trust level 5',
+                condition: (state) => (state.trust && state.trust.level >= 5)
             }
         };
 
