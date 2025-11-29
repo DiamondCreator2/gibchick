@@ -22,29 +22,42 @@
         .bg-world-jurassic { background: linear-gradient(135deg, #fed7aa 0%, #fb923c 100%); }
         .bg-world-frozen { background: linear-gradient(135deg, #cffafe 0%, #67e8f9 100%); }
         .bg-world-magic { background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 100%); }
-        .bg-world-space { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: #1f2937; } /* Dark Text */
+        .bg-world-space { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: #1f2937; } 
         .bg-world-divine { background: linear-gradient(135deg, #fef9c3 0%, #facc15 100%); }
         
         /* New Worlds */
-        .bg-world-cyber { background: linear-gradient(135deg, #0f172a 0%, #0ea5e9 100%); color: #1f2937; } /* Dark Text */
+        .bg-world-cyber { background: linear-gradient(135deg, #0f172a 0%, #0ea5e9 100%); color: #1f2937; }
         .bg-world-volcano { background: linear-gradient(135deg, #450a0a 0%, #ef4444 100%); color: #fecaca; }
         .bg-world-candy { background: linear-gradient(135deg, #fdf4ff 0%, #f5d0fe 100%); color: #86198f; }
-        .bg-world-atlantis { background: linear-gradient(135deg, #022c22 0%, #0d9488 100%); color: #1f2937; } /* Dark Text */
-        .bg-world-shadow { background: linear-gradient(135deg, #000000 0%, #581c87 100%); color: #1f2937; } /* Dark Text */
+        .bg-world-atlantis { background: linear-gradient(135deg, #022c22 0%, #0d9488 100%); color: #1f2937; }
+        .bg-world-shadow { background: linear-gradient(135deg, #000000 0%, #581c87 100%); color: #1f2937; }
         .bg-world-celestial { background: linear-gradient(135deg, #fffbeb 0%, #fcd34d 50%, #fffbeb 100%); color: #78350f; }
 
         /* Chickverse Worlds */
         .bg-world-gold { background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); color: #7c5e10; }
         .bg-world-rainbow { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #a18cd1 100%); color: #4a044e; }
         .bg-world-mecha { background: linear-gradient(135deg, #2c3e50 0%, #bdc3c7 100%); color: #1f2937; }
-        .bg-world-darkmatter { background: linear-gradient(135deg, #000000 0%, #434343 100%); color: #1f2937; } /* Dark Text */
+        .bg-world-darkmatter { background: linear-gradient(135deg, #000000 0%, #434343 100%); color: #1f2937; }
 
         /* General Dark Text overrides for dark backgrounds */
-        /* Note: Most dark worlds removed from here to force white cards with black text */
-        /* Only truly custom/light text worlds should go here if needed in future */
+        .bg-world-space .bg-white, .bg-world-cyber .bg-white, 
+        .bg-world-atlantis .bg-white, .bg-world-shadow .bg-white,
+        .bg-world-mecha .bg-white, .bg-world-darkmatter .bg-white { 
+            background-color: rgba(255,255,255,0.1); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            color: #fff;
+        }
         
-        /* Ensure text inside cards on dark modes is readable */
-        /* (Cleaned up as most use default now) */
+        .bg-world-space .text-gray-800, 
+        .bg-world-cyber .text-gray-800, .bg-world-atlantis .text-gray-800,
+        .bg-world-shadow .text-gray-800, .bg-world-mecha .text-gray-800,
+        .bg-world-darkmatter .text-gray-800 { color: #f3f4f6; }
+
+        .bg-world-space .text-gray-500,
+        .bg-world-cyber .text-gray-500, .bg-world-atlantis .text-gray-500,
+        .bg-world-shadow .text-gray-500, .bg-world-mecha .text-gray-500,
+        .bg-world-darkmatter .text-gray-500 { color: #9ca3af; }
 
         .shake-animation {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite;
@@ -227,18 +240,20 @@
                 </div>
                 
                 <!-- Galaxy Navigation -->
-                <div class="flex gap-2 overflow-x-auto pb-2 mb-2 scrollbar-hide border-b border-gray-200/20" id="galaxy-nav-container">
-                    <!-- Galaxies JS -->
-                </div>
-
+                <div class="flex gap-2 overflow-x-auto pb-2 mb-2 scrollbar-hide border-b border-gray-200/20" id="galaxy-nav-container"></div>
                 <!-- World Navigation Scroll -->
-                <div class="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide" id="world-nav-container">
-                    <!-- Worlds JS -->
+                <div class="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide" id="world-nav-container"></div>
+                
+                <!-- Hatch Amount Slider -->
+                <div class="mb-4 px-2" id="hatch-slider-container" style="display:none;">
+                     <div class="flex justify-between text-xs font-bold mb-1">
+                         <span>Hatch Amount</span>
+                         <span id="hatch-amount-display">1x</span>
+                     </div>
+                     <input type="range" id="hatch-amount-slider" min="1" max="1" value="1" class="w-full accent-blue-500" oninput="updateHatchSetting(this.value)">
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="egg-shop-container">
-                    <!-- Eggs JS -->
-                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="egg-shop-container"></div>
              </div>
 
              <!-- Upgrades -->
@@ -261,16 +276,23 @@
 
          <!-- Right Panel -->
         <section class="flex-1 bg-white/50 backdrop-blur-sm border-l border-white/20 p-4 overflow-y-auto flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center gap-2">
-                    <h3 class="font-bold text-lg flex items-center gap-2">
-                        <i class="fas fa-paw text-purple-500"></i> My Pets
-                        <span id="pet-count" class="bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full text-xs">0</span>
-                    </h3>
+            <div class="flex justify-between items-center mb-4 gap-2 flex-wrap">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <i class="fas fa-paw text-purple-500"></i> My Pets
+                    <span id="pet-count" class="bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full text-xs">0</span>
+                </h3>
+                <div class="flex gap-2">
+                    <select id="sort-inventory" onchange="updateSortSetting(this.value)" class="bg-white border border-gray-300 text-gray-700 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5">
+                        <option value="rarity_desc">Rarity (High)</option>
+                        <option value="rarity_asc">Rarity (Low)</option>
+                        <option value="power_desc">Power (High)</option>
+                        <option value="newest">Newest</option>
+                        <option value="name">Name</option>
+                    </select>
+                    <button onclick="openMergeModal()" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-3 rounded-full transition shadow-sm flex items-center gap-1">
+                        <i class="fas fa-random"></i> Merge
+                    </button>
                 </div>
-                <button onclick="openMergeModal()" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-3 rounded-full transition shadow-sm flex items-center gap-1">
-                    <i class="fas fa-random"></i> Merge
-                </button>
             </div>
             
             <div class="relative flex-1 overflow-y-auto pr-1">
@@ -285,21 +307,15 @@
     </main>
 
     <!-- Overlays -->
-    
-    <!-- Admin Modal -->
     <div id="admin-modal" class="fixed inset-0 bg-black/90 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-4 text-gray-800">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative">
             <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
             <h2 class="text-2xl font-bold mb-4 text-center text-red-600"><i class="fas fa-user-shield"></i> Admin Panel</h2>
-            
-            <!-- Password View -->
             <div id="admin-login-view">
                 <p class="text-sm text-gray-600 mb-4 text-center">Enter Access Code</p>
                 <input type="password" id="admin-password-input" class="w-full border p-2 rounded mb-4 text-center text-xl tracking-widest" placeholder="----">
                 <button onclick="checkAdminPassword()" class="w-full bg-red-600 text-white font-bold py-2 rounded hover:bg-red-700 transition">Unlock</button>
             </div>
-
-            <!-- Dashboard View -->
             <div id="admin-dashboard-view" class="hidden space-y-4">
                 <div class="bg-gray-100 p-3 rounded">
                     <label class="block text-xs font-bold text-gray-500 mb-1">ADD CASH</label>
@@ -308,7 +324,6 @@
                         <button onclick="adminAddMoney()" class="bg-green-500 text-white px-3 rounded font-bold hover:bg-green-600">+</button>
                     </div>
                 </div>
-
                 <div class="bg-gray-100 p-3 rounded">
                     <label class="block text-xs font-bold text-gray-500 mb-1">GIVE PET</label>
                     <div class="flex gap-2">
@@ -316,7 +331,6 @@
                         <button onclick="adminAddPet()" class="bg-blue-500 text-white px-3 rounded font-bold hover:bg-blue-600">+</button>
                     </div>
                 </div>
-
                 <div class="bg-gray-100 p-3 rounded">
                     <label class="block text-xs font-bold text-gray-500 mb-1">SET REBIRTH LEVEL</label>
                     <div class="flex gap-2">
@@ -333,7 +347,6 @@
             <div id="hatch-egg-display" class="transition-all duration-300 cursor-pointer relative z-10"></div>
             <div id="hatch-rays" class="absolute inset-0 bg-yellow-400 rounded-full blur-3xl opacity-0 transition-opacity duration-500 -z-10 animate-pulse pointer-events-none"></div>
             <div id="hatch-message" class="text-white text-2xl font-bold mt-8 text-center h-8 z-20">Tap to Hatch!</div>
-            
             <div id="new-pet-card" class="hidden transform transition-all duration-500 z-30">
                 <div class="bg-white p-6 rounded-2xl shadow-2xl text-center w-64 border-4" id="reveal-card-bg">
                     <div class="text-sm font-bold uppercase tracking-wider mb-2" id="reveal-rarity">Common</div>
@@ -343,7 +356,6 @@
                     <button onclick="closeHatchModal()" class="bg-gray-800 text-white px-6 py-2 rounded-full font-bold hover:bg-gray-700 transition w-full">Awesome!</button>
                 </div>
             </div>
-
             <div id="multi-pet-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-3xl w-full z-30 mt-4"></div>
             <button id="multi-hatch-close-btn" onclick="closeHatchModal()" class="hidden mt-8 bg-gray-800 text-white px-8 py-3 rounded-full font-bold hover:bg-gray-700 transition shadow-lg z-40 animate-bounce">Awesome!</button>
         </div>
@@ -414,7 +426,6 @@
                 <div id="rebirth-info" class="mb-6">
                     <p class="text-gray-300 mb-2">Current Multiplier: <span id="rebirth-current-mult" class="text-green-400 font-bold">x1</span></p>
                     <p class="text-gray-300 mb-4">Rebirth Level: <span id="rebirth-current-level" class="text-blue-400 font-bold">0</span></p>
-                    
                     <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
                         <div class="text-sm font-bold uppercase text-gray-500 mb-2">Next Rebirth Requirements</div>
                         <div id="rebirth-reqs" class="text-xl font-bold flex justify-center items-center gap-2 mb-2"></div>
@@ -472,7 +483,6 @@
             { id: 'atlantis', name: 'Atlantis', minRebirth: 12, bgClass: 'bg-world-atlantis', eggIds: ['abyssal'] },
             { id: 'shadow', name: 'Shadow Realm', minRebirth: 13, bgClass: 'bg-world-shadow', eggIds: ['eclipse'] },
             { id: 'celestial', name: 'Celestial Haven', minRebirth: 14, bgClass: 'bg-world-celestial', eggIds: ['ether', 'infinity'] },
-            // Chickverse Worlds
             { id: 'gold', name: 'Gilded Coop', minRebirth: 20, bgClass: 'bg-world-gold', eggIds: ['treasury'] },
             { id: 'rainbow', name: 'Prismatic Fields', minRebirth: 25, bgClass: 'bg-world-rainbow', eggIds: ['spectrum'] },
             { id: 'mecha', name: 'Mecha Base', minRebirth: 30, bgClass: 'bg-world-mecha', eggIds: ['machinery'] },
@@ -523,8 +533,6 @@
             'titan': { id: 'titan', name: 'Titan', icon: '🗿', rate: 500000, rarity: 'Mythical', next: 'void' },
             'void': { id: 'void', name: 'The Void', icon: '🌌', rate: 1000000, rarity: 'Godly', next: 'cosmos' },
             'cosmos': { id: 'cosmos', name: 'The Cosmos', icon: '🌌', rate: 5000000, rarity: 'Transcendent', next: 'cyborg' },
-            
-            // New High Tier Pets
             'cyborg': { id: 'cyborg', name: 'Cyborg', icon: '🤖', rate: 25000000, rarity: 'Godly', next: 'magma_lord' },
             'magma_lord': { id: 'magma_lord', name: 'Magma Lord', icon: '👹', rate: 100000000, rarity: 'Godly', next: 'candy_king' },
             'candy_king': { id: 'candy_king', name: 'Candy King', icon: '🍬', rate: 500000000, rarity: 'Godly', next: 'leviathan' },
@@ -532,21 +540,16 @@
             'nightmare': { id: 'nightmare', name: 'Nightmare', icon: '🌚', rate: 10000000000, rarity: 'Transcendent', next: 'archangel' },
             'archangel': { id: 'archangel', name: 'Archangel', icon: '👼', rate: 50000000000, rarity: 'Transcendent', next: 'chronos' },
             'chronos': { id: 'chronos', name: 'Chronos', icon: '⏳', rate: 250000000000, rarity: 'Eternal', next: 'golden_chick' },
-
-            // Lower Tier Themed Fillers
             'drone': { id: 'drone', name: 'Drone', icon: '🚁', rate: 150000, rarity: 'Epic', next: 'cyborg' },
             'magma_golem': { id: 'magma_golem', name: 'Magma Golem', icon: '🌋', rate: 2000000, rarity: 'Legendary', next: 'magma_lord' },
             'gummy_bear': { id: 'gummy_bear', name: 'Gummy Bear', icon: '🧸', rate: 5000, rarity: 'Rare', next: 'candy_king' },
             'mermaid': { id: 'mermaid', name: 'Mermaid', icon: '🧜‍♀️', rate: 5000000, rarity: 'Legendary', next: 'leviathan' },
             'wraith': { id: 'wraith', name: 'Wraith', icon: '👻', rate: 8000000, rarity: 'Legendary', next: 'nightmare' },
             'cherub': { id: 'cherub', name: 'Cherub', icon: '🏹', rate: 12000000, rarity: 'Mythical', next: 'archangel' },
-
-            // Chick Variants
             'golden_chick': { id: 'golden_chick', name: 'Golden Chick', icon: '🏆', rate: 1000000000000, rarity: 'Legendary', next: 'rainbow_chick' },
             'rainbow_chick': { id: 'rainbow_chick', name: 'Rainbow Chick', icon: '🌈', rate: 5000000000000, rarity: 'Mythical', next: 'mecha_chick' },
             'mecha_chick': { id: 'mecha_chick', name: 'Mecha Chick', icon: '🤖', rate: 25000000000000, rarity: 'Godly', next: 'darkmatter_chick' },
             'darkmatter_chick': { id: 'darkmatter_chick', name: 'Dark Matter Chick', icon: '🌑', rate: 100000000000000, rarity: 'Transcendent', next: null },
-
             'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 2000000000000, rarity: 'Special', next: null, hidden: true }
         };
 
@@ -565,7 +568,6 @@
             { id: 'divine', name: 'Divine Egg', cost: 50000000, icon: '👑', colorClass: 'bg-yellow-50 border-yellow-300', pool: { 'phoenix': 0.4, 'kraken': 0.25, 'hydra': 0.2, 'titan': 0.1, 'void': 0.05 } },
             { id: 'void', name: 'Void Egg', cost: 250000000, icon: '🕳️', colorClass: 'bg-gray-900 border-gray-600', pool: { 'void': 0.6, 'cosmos': 0.4 } },
             { id: 'mystery', name: 'Mystery Egg', cost: 25000, icon: '❓', colorClass: 'bg-purple-100 border-purple-300', pool: { 'spider': 0.2, 'bee': 0.2, 'frog': 0.2, 'turtle': 0.15, 'penguin': 0.15, 'camel': 0.1 } },
-            // New Eggs
             { id: 'cyber', name: 'Cyber Egg', cost: 1000000000, icon: '💾', colorClass: 'bg-blue-900 border-blue-500 text-blue-200', pool: { 'drone': 0.6, 'alien': 0.3, 'cyborg': 0.1 } },
             { id: 'magma', name: 'Magma Egg', cost: 5000000000, icon: '☄️', colorClass: 'bg-red-900 border-red-500 text-red-200', pool: { 'magma_golem': 0.6, 'dragon': 0.3, 'magma_lord': 0.1 } },
             { id: 'sugar', name: 'Sugar Egg', cost: 25000000000, icon: '🍭', colorClass: 'bg-pink-200 border-pink-400 text-pink-800', pool: { 'gummy_bear': 0.6, 'unicorn': 0.3, 'candy_king': 0.1 } },
@@ -573,45 +575,21 @@
             { id: 'eclipse', name: 'Eclipse Egg', cost: 500000000000, icon: '🌑', colorClass: 'bg-purple-900 border-purple-600 text-purple-200', pool: { 'wraith': 0.5, 'void': 0.4, 'nightmare': 0.1 } },
             { id: 'ether', name: 'Ether Egg', cost: 2500000000000, icon: '🌤️', colorClass: 'bg-yellow-100 border-yellow-400 text-yellow-800', pool: { 'cherub': 0.5, 'cosmos': 0.4, 'archangel': 0.1 } },
             { id: 'infinity', name: 'Infinity Egg', cost: 10000000000000, icon: '♾️', colorClass: 'bg-gray-100 border-black text-black', pool: { 'chronos': 0.05, 'archangel': 0.2, 'nightmare': 0.25, 'leviathan': 0.5 } },
-            
-            // Chickverse Eggs
             { id: 'treasury', name: 'Treasury Egg', cost: 50000000000000, icon: '🏆', colorClass: 'bg-yellow-200 border-yellow-500 text-yellow-900', pool: { 'golden_chick': 0.1, 'dragon': 0.4, 'unicorn': 0.5 } },
             { id: 'spectrum', name: 'Spectrum Egg', cost: 100000000000000, icon: '🌈', colorClass: 'bg-pink-100 border-purple-400 text-purple-900', pool: { 'rainbow_chick': 0.1, 'phoenix': 0.4, 'kraken': 0.5 } },
             { id: 'machinery', name: 'Mecha Egg', cost: 500000000000000, icon: '⚙️', colorClass: 'bg-gray-300 border-gray-600 text-gray-900', pool: { 'mecha_chick': 0.1, 'cyborg': 0.4, 'robot': 0.5 } },
             { id: 'singularity', name: 'Singularity Egg', cost: 1000000000000000, icon: '🌌', colorClass: 'bg-black border-white text-white', pool: { 'darkmatter_chick': 0.05, 'void': 0.4, 'cosmos': 0.55 } }
         ];
 
-        const REBIRTH_LEVELS = [
-            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" },
-            { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
-            { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" },
-            { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" },
-            { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space (Astral Sector)" },
-            { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" },
-            { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" },
-            { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" },
-            { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" },
-            { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" },
-            { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm (Mystic Reach)" },
-            { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" },
-            { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" },
-            { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" },
-            // Chickverse Rebirths
-            { level: 20, req: { 'golden_chick': 1 }, multiplier: 15.0, unlockMsg: "Unlocks: Chickverse Galaxy (Gilded Coop)" },
-            { level: 25, req: { 'rainbow_chick': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Prismatic Fields" },
-            { level: 30, req: { 'mecha_chick': 1 }, multiplier: 50.0, unlockMsg: "Unlocks: Mecha Base" },
-            { level: 35, req: { 'darkmatter_chick': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Void Nexus" }
-        ];
-
         const UPGRADES = {
             luck: { name: 'Luck', description: 'Increases merge success rate', icon: '🍀', baseCost: 1000, costMultiplier: 2.5, maxLevel: 10, getEffect: (level) => level * 0.05 },
             income: { name: 'Income', description: 'Multiplies all pet income', icon: '💰', baseCost: 5000, costMultiplier: 3, maxLevel: 10, getEffect: (level) => level * 0.1 },
             clickPower: { name: 'Click', description: 'Increases click earnings', icon: '👆', baseCost: 500, costMultiplier: 2, maxLevel: 20, getEffect: (level) => level * 2 },
-            autoClicker: { name: 'Auto-Click', description: 'Automatically clicks for you', icon: '🤖', baseCost: 10000, costMultiplier: 4, maxLevel: 10, getEffect: (level) => level * 5 },
+            autoClicker: { name: 'Auto-Click', description: 'Automatically clicks for you', icon: '🤖', baseCost: 10000, costMultiplier: 4, maxLevel: 10, getEffect: (level) => level * 4 }, // Buffed to 4 clicks/sec per level
             criticalClicks: { name: 'Critical', description: 'Chance for 5x click earnings', icon: '💥', baseCost: 2500, costMultiplier: 2.8, maxLevel: 15, getEffect: (level) => level * 0.02 },
             eggDiscount: { name: 'Discount', description: 'Reduces egg costs', icon: '🏷️', baseCost: 7500, costMultiplier: 3.5, maxLevel: 8, getEffect: (level) => level * 0.05 },
             petBonus: { name: 'Pet Boost', description: 'Increases pet income rates', icon: '⭐', baseCost: 15000, costMultiplier: 3.2, maxLevel: 12, getEffect: (level) => level * 0.08 },
-            multiHatch: { name: 'Multi-Hatch', description: 'Hatch multiple eggs at once', icon: '🥚', baseCost: 50000, costMultiplier: 5, maxLevel: 5, getEffect: (level) => level + 1 }
+            multiHatch: { name: 'Multi-Hatch', description: 'Max eggs hatched at once', icon: '🥚', baseCost: 50000, costMultiplier: 5, maxLevel: 5, getEffect: (level) => level + 1 }
         };
 
         const ACHIEVEMENTS = {
@@ -630,6 +608,27 @@
             firstTranscendent: { id: 'firstTranscendent', name: 'Transcendent', description: 'Get a Transcendent pet', icon: '🌌', condition: (state) => state.inventory.some(id => PETS[id] && PETS[id].rarity === 'Transcendent') }
         };
 
+        const REBIRTH_LEVELS = [
+            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" },
+            { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
+            { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" },
+            { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" },
+            { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space (Astral Sector)" },
+            { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" },
+            { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" },
+            { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" },
+            { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" },
+            { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" },
+            { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm (Mystic Reach)" },
+            { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" },
+            { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" },
+            { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" },
+            { level: 20, req: { 'golden_chick': 1 }, multiplier: 15.0, unlockMsg: "Unlocks: Chickverse Galaxy (Gilded Coop)" },
+            { level: 25, req: { 'rainbow_chick': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Prismatic Fields" },
+            { level: 30, req: { 'mecha_chick': 1 }, multiplier: 50.0, unlockMsg: "Unlocks: Mecha Base" },
+            { level: 35, req: { 'darkmatter_chick': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Void Nexus" }
+        ];
+
         // --- STATE ---
         let state = {
             money: 0,
@@ -640,6 +639,7 @@
             achievements: [],
             currentWorld: 'home',
             currentGalaxy: 'origin',
+            settings: { hatchAmount: 1, sortMode: 'rarity_desc' },
             stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 },
             lastSave: Date.now()
         };
@@ -708,13 +708,24 @@
             }
         }
 
+        function updateHatchSetting(val) {
+             state.settings.hatchAmount = parseInt(val);
+             document.getElementById('hatch-amount-display').innerText = state.settings.hatchAmount + 'x';
+             renderShop();
+        }
+        
+        function updateSortSetting(val) {
+            state.settings.sortMode = val;
+            renderInventory();
+        }
+
         function buyEgg(eggId) {
             const egg = EGGS.find(e => e.id === eggId);
             if (!egg) return;
 
             const discount = UPGRADES.eggDiscount.getEffect(state.upgrades.eggDiscount);
             const discountedCost = Math.floor(egg.cost * (1 - discount));
-            const hatchCount = UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
+            const hatchCount = state.settings.hatchAmount || 1;
             const totalCost = discountedCost * hatchCount;
 
             if (state.money >= totalCost) {
@@ -753,13 +764,10 @@
             }
 
             state.currentGalaxy = galaxyId;
-            // Switch to first unlocked world in that galaxy
             const firstWorldId = galaxy.worlds[0];
             const world = WORLDS.find(w => w.id === firstWorldId);
             if (world && state.rebirth.level >= world.minRebirth) {
                 state.currentWorld = firstWorldId;
-            } else {
-                // If specific world locked, just stay put (or find first available)
             }
             
             saveGame();
@@ -769,7 +777,6 @@
 
         // --- REBIRTH SYSTEM (DYNAMIC) ---
         function getRebirthLevelData(level) {
-            // HARDCODED LEVELS (1-14 + 20-35) for specific unlocks
             if (level === 1) return { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" };
             if (level === 2) return { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" };
             if (level === 3) return { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" };
@@ -785,16 +792,13 @@
             if (level === 13) return { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" };
             if (level === 14) return { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" };
             
-            // New Chickverse Unlocks
             if (level === 20) return { level: 20, req: { 'golden_chick': 1 }, multiplier: 15.0, unlockMsg: "Unlocks: Chickverse Galaxy (Gilded Coop)" };
             if (level === 25) return { level: 25, req: { 'rainbow_chick': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Prismatic Fields" };
             if (level === 30) return { level: 30, req: { 'mecha_chick': 1 }, multiplier: 50.0, unlockMsg: "Unlocks: Mecha Base" };
             if (level === 35) return { level: 35, req: { 'darkmatter_chick': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Void Nexus" };
 
-            // PROCEDURAL LEVELS (15-1000)
             if (level <= 1000) {
-                const multiplier = 1 + (level * 0.5); // Linear growth
-                
+                const multiplier = 1 + (level * 0.5); 
                 const highTierPets = ['magma_lord', 'candy_king', 'leviathan', 'nightmare', 'archangel', 'chronos', 'golden_chick', 'rainbow_chick', 'mecha_chick', 'darkmatter_chick'];
                 const index = (level - 15) % highTierPets.length;
                 const petId = highTierPets[index];
@@ -803,12 +807,7 @@
                 const req = {};
                 req[petId] = count;
                 
-                return {
-                    level: level,
-                    req: req,
-                    multiplier: parseFloat(multiplier.toFixed(1)),
-                    unlockMsg: ""
-                };
+                return { level: level, req: req, multiplier: parseFloat(multiplier.toFixed(1)), unlockMsg: "" };
             }
             return null;
         }
@@ -876,11 +875,8 @@
             state.rebirth.level = nextRebirth.level;
             state.rebirth.multiplier = nextRebirth.multiplier;
             
-            // Re-evaluate current galaxy/world based on new level
-            // Default reset to home unless unlocked
-            // But we keep current world if possible? No, standard is reset to start
-            state.currentWorld = 'home';
-            state.currentGalaxy = 'origin';
+            const newWorld = WORLDS.find(w => w.minRebirth === state.rebirth.level);
+            if(newWorld) state.currentWorld = newWorld.id;
 
             saveGame();
             closeRebirthModal();
@@ -920,7 +916,7 @@
             }).join('');
         }
 
-        // --- HATCHING & MERGE (Reuse prev logic, shortened for brevity but functional) ---
+        // --- HATCHING & MERGE ---
         function startHatchingSequence(egg, count = 1) {
             const overlay = document.getElementById('hatch-overlay');
             const eggContainer = document.getElementById('hatch-egg-display'); 
@@ -1089,7 +1085,7 @@
                 else if (id === 'criticalClicks') effectText = `${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% crit`;
                 else if (id === 'eggDiscount') effectText = `${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% off`;
                 else if (id === 'petBonus') effectText = `+${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% pet`;
-                else if (id === 'multiHatch') effectText = `Hatch ${upgrade.getEffect(currentLevel)}`;
+                else if (id === 'multiHatch') effectText = `Max ${1 + upgrade.getEffect(currentLevel)} eggs`;
 
                 return `<div class="bg-white/90 backdrop-blur rounded-xl p-3 shadow-md transition-all hover:shadow-lg ${maxed ? 'opacity-60' : ''} text-gray-800"><div class="flex items-center gap-3 mb-1"><div class="text-2xl">${upgrade.icon}</div><div><div class="font-bold text-md leading-none">${upgrade.name}</div><div class="text-[10px] text-gray-500">${upgrade.description}</div></div></div><div class="text-xs text-green-600 font-bold mb-2">${effectText}</div><div class="flex items-center justify-between"><div class="text-xs text-gray-500">Lvl ${currentLevel}/${upgrade.maxLevel}</div>${maxed ? `<div class="text-green-600 font-bold text-xs">MAX</div>` : `<button onclick="buyUpgrade('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-3 rounded-lg transition active:scale-95">$${formatCompact(cost)}</button>`}</div></div>`;
             }).join('');
@@ -1104,16 +1100,11 @@
         // --- ADMIN SYSTEM ---
         function openAdminModal() {
             document.getElementById('admin-modal').classList.remove('hidden');
-            // Reset view
             document.getElementById('admin-login-view').classList.remove('hidden');
             document.getElementById('admin-dashboard-view').classList.add('hidden');
             document.getElementById('admin-password-input').value = '';
         }
-
-        function closeAdminModal() {
-            document.getElementById('admin-modal').classList.add('hidden');
-        }
-
+        function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
         function checkAdminPassword() {
             const input = document.getElementById('admin-password-input').value;
             if (input === '7450') {
@@ -1121,59 +1112,34 @@
                 document.getElementById('admin-dashboard-view').classList.remove('hidden');
                 populateAdminPetList();
                 showToast("Admin Access Granted!");
-            } else {
-                showToast("Incorrect Password!");
-            }
+            } else { showToast("Incorrect Password!"); }
         }
-
         function populateAdminPetList() {
             const select = document.getElementById('admin-pet-select');
-            select.innerHTML = Object.values(PETS).map(pet => 
-                `<option value="${pet.id}">[${pet.rarity}] ${pet.name}</option>`
-            ).join('');
+            select.innerHTML = Object.values(PETS).map(pet => `<option value="${pet.id}">[${pet.rarity}] ${pet.name}</option>`).join('');
         }
-
         function adminAddMoney() {
             const amount = parseInt(document.getElementById('admin-money-input').value);
-            if (amount && amount > 0) {
-                addMoney(amount);
-                showToast(`Added $${amount.toLocaleString()}!`);
-            }
+            if (amount && amount > 0) { addMoney(amount); showToast(`Added $${amount.toLocaleString()}!`); }
         }
-
         function adminAddPet() {
             const petId = document.getElementById('admin-pet-select').value;
             if (petId && PETS[petId]) {
                 state.inventory.push(petId);
                 if (!state.collection.includes(petId)) state.collection.push(petId);
-                renderInventory();
-                saveGame();
-                showToast(`Added ${PETS[petId].name}!`);
+                renderInventory(); saveGame(); showToast(`Added ${PETS[petId].name}!`);
             }
         }
-
         function adminSetRebirth() {
             const level = parseInt(document.getElementById('admin-rebirth-input').value);
             if (!isNaN(level) && level >= 0) {
                 state.rebirth.level = level;
-                
-                // Calculate multiplier based on level
-                if (level === 0) {
-                    state.rebirth.multiplier = 1;
-                } else {
+                if (level === 0) state.rebirth.multiplier = 1;
+                else {
                     const data = getRebirthLevelData(level);
-                    if (data) {
-                        state.rebirth.multiplier = data.multiplier;
-                    } else {
-                        // Fallback if getRebirthLevelData returns null (e.g. > 1000)
-                        state.rebirth.multiplier = 1 + (level * 0.5);
-                    }
+                    state.rebirth.multiplier = data ? data.multiplier : 1 + (level * 0.5);
                 }
-
-                saveGame();
-                renderShop(); // Updates world locks
-                updateUI();
-                showToast(`Rebirth set to Level ${level} (x${state.rebirth.multiplier})`);
+                saveGame(); renderShop(); updateUI(); showToast(`Rebirth set to Level ${level} (x${state.rebirth.multiplier})`);
             }
         }
 
@@ -1204,48 +1170,50 @@
 
         // --- UI ---
         function renderShop() {
-            // Render World Navigation
             const navContainer = document.getElementById('world-nav-container');
             const galaxyNavContainer = document.getElementById('galaxy-nav-container');
             
-            // Get Current Galaxy Data
             const currentGalaxy = GALAXIES.find(g => g.id === state.currentGalaxy) || GALAXIES[0];
             const currentWorld = WORLDS.find(w => w.id === state.currentWorld) || WORLDS[0];
             
             document.getElementById('world-status').innerText = `${currentGalaxy.name} - ${currentWorld.name}`;
             document.getElementById('game-body').className = `h-screen flex flex-col overflow-hidden text-gray-800 ${currentWorld.bgClass}`;
 
-            // Render Galaxy Tabs
             galaxyNavContainer.innerHTML = GALAXIES.map(g => {
                 const locked = state.rebirth.level < g.minRebirth;
                 const active = state.currentGalaxy === g.id;
-                // Don't show galaxies that are too far ahead (optional, but clean)
-                // if (state.rebirth.level < g.minRebirth - 5) return ''; 
-                return `
-                    <button onclick="switchGalaxy('${g.id}')" class="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border transition flex items-center gap-1 ${active ? 'bg-purple-600 text-white border-purple-600' : (locked ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50')}">
-                        <span>${g.icon}</span> ${locked ? '<i class="fas fa-lock text-[10px] ml-1"></i>' : g.name}
-                    </button>
-                `;
+                return `<button onclick="switchGalaxy('${g.id}')" class="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border transition flex items-center gap-1 ${active ? 'bg-purple-600 text-white border-purple-600' : (locked ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50')}"><span>${g.icon}</span> ${locked ? '<i class="fas fa-lock text-[10px] ml-1"></i>' : g.name}</button>`;
             }).join('');
 
-            // Render Worlds for CURRENT GALAXY only
             const worldsInGalaxy = WORLDS.filter(w => currentGalaxy.worlds.includes(w.id));
             
             navContainer.innerHTML = worldsInGalaxy.map(w => {
                 const locked = state.rebirth.level < w.minRebirth;
                 const active = state.currentWorld === w.id;
-                return `
-                    <button onclick="switchWorld('${w.id}')" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold border transition ${active ? 'bg-blue-600 text-white border-blue-600' : (locked ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50')}">
-                        ${locked ? '<i class="fas fa-lock mr-1"></i>' : ''}${w.name}
-                    </button>
-                `;
+                return `<button onclick="switchWorld('${w.id}')" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold border transition ${active ? 'bg-blue-600 text-white border-blue-600' : (locked ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50')}">${locked ? '<i class="fas fa-lock mr-1"></i>' : ''}${w.name}</button>`;
             }).join('');
 
-            // Filter Eggs by World
             const eggsToRender = EGGS.filter(egg => currentWorld.eggIds.includes(egg.id));
             const container = document.getElementById('egg-shop-container');
             const discount = UPGRADES.eggDiscount.getEffect(state.upgrades.eggDiscount);
-            const hatchCount = UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
+            
+            // Slider Logic
+            const maxHatch = 1 + UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
+            const sliderContainer = document.getElementById('hatch-slider-container');
+            const slider = document.getElementById('hatch-amount-slider');
+            
+            if (maxHatch > 1) {
+                sliderContainer.style.display = 'block';
+                slider.max = maxHatch;
+                if (!state.settings.hatchAmount) state.settings.hatchAmount = 1;
+                slider.value = state.settings.hatchAmount; // Keep current value if possible
+                document.getElementById('hatch-amount-display').innerText = state.settings.hatchAmount + 'x';
+            } else {
+                 sliderContainer.style.display = 'none';
+                 state.settings.hatchAmount = 1;
+            }
+            
+            const hatchCount = state.settings.hatchAmount || 1;
 
             container.innerHTML = eggsToRender.map(egg => {
                 const discountedCost = Math.floor(egg.cost * (1 - discount));
@@ -1276,7 +1244,31 @@
 
         function renderInventory() {
             const container = document.getElementById('inventory-container');
-            const list = [...state.inventory].reverse();
+            let list = [...state.inventory];
+            
+            // Sorting Logic
+            const mode = state.settings.sortMode || 'newest';
+            
+            // Get Pet Value helper
+            const getVal = (id) => PETS[id] ? PETS[id].rate : 0;
+            const getRarityVal = (id) => {
+               const r = PETS[id] ? PETS[id].rarity : 'Common';
+               const map = {'Common':1,'Uncommon':2,'Rare':3,'Epic':4,'Legendary':5,'Mythical':6,'Godly':7,'Transcendent':8, 'Eternal':9, 'Special':10};
+               return map[r] || 0;
+            };
+
+            if (mode === 'newest') {
+                list.reverse(); // Default stack behavior
+            } else if (mode === 'rarity_desc') {
+                list.sort((a,b) => getRarityVal(b) - getRarityVal(a));
+            } else if (mode === 'rarity_asc') {
+                list.sort((a,b) => getRarityVal(a) - getRarityVal(b));
+            } else if (mode === 'power_desc') {
+                list.sort((a,b) => getVal(b) - getVal(a));
+            } else if (mode === 'name') {
+                 list.sort((a,b) => (PETS[a]?.name || '').localeCompare(PETS[b]?.name || ''));
+            }
+
             const petCounts = {};
             state.inventory.forEach(id => { petCounts[id] = (petCounts[id] || 0) + 1; });
             
@@ -1316,7 +1308,7 @@
         function showEggInfo(eggId) {
             const egg = EGGS.find(e => e.id === eggId);
             if(!egg) return;
-            const hatchCount = UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
+            const hatchCount = state.settings.hatchAmount || 1;
             document.getElementById('egg-info-title').innerHTML = `${egg.icon} ${egg.name} Rates${hatchCount > 1 ? ` (x${hatchCount})` : ''}`;
             const list = document.getElementById('egg-info-list');
             list.innerHTML = Object.entries(egg.pool).map(([id, chance]) => ({pet: PETS[id], chance})).filter(d=>d.pet).sort((a,b)=>a.chance-b.chance).map(d => {
@@ -1347,7 +1339,7 @@
         function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); }
         function confirmReset() {
             localStorage.removeItem('gibchick_save');
-            state = { money: 0, inventory: [], collection: [], upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 }, rebirth: { level: 0, multiplier: 1 }, achievements: [], currentWorld: 'home', currentGalaxy: 'origin', stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 }, lastSave: Date.now() };
+            state = { money: 0, inventory: [], collection: [], upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 }, rebirth: { level: 0, multiplier: 1 }, achievements: [], currentWorld: 'home', currentGalaxy: 'origin', settings: { hatchAmount: 1, sortMode: 'rarity_desc' }, stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 }, lastSave: Date.now() };
             renderInventory(); renderUpgrades(); renderShop(); renderAchievements(); updateUI(); updateAutoClicker(); closeResetModal(); showToast("Account Reset!");
         }
         function saveGame() { try { localStorage.setItem('gibchick_save', JSON.stringify(state)); } catch (e) { console.warn(e); } }
@@ -1365,6 +1357,7 @@
                     if(parsed.stats) state.stats = { ...state.stats, ...parsed.stats };
                     if(parsed.currentWorld) state.currentWorld = parsed.currentWorld; else state.currentWorld = 'home';
                     if(parsed.currentGalaxy) state.currentGalaxy = parsed.currentGalaxy; else state.currentGalaxy = 'origin';
+                    if(parsed.settings) state.settings = parsed.settings; else state.settings = { hatchAmount: 1, sortMode: 'rarity_desc' };
                 } catch (e) { console.error("Save corrupted"); }
             } else { state.money = 0; state.collection = []; }
         }
