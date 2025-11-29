@@ -797,11 +797,12 @@
             loadGame();
             renderShop();
             renderUpgrades();
-            // renderQuests();
+            renderQuests();
+            renderAchievements();
             renderInventory();
             updateAutoClicker();
             checkAchievements();
-            // checkQuests();
+            checkQuests();
             updateUI();
 
             setInterval(() => {
@@ -1145,6 +1146,37 @@
                 });
                 renderAchievements();
                 saveGame();
+            }
+
+            // Always update achievements display
+            renderAchievements();
+        }
+
+        /* --- ACHIEVEMENTS SYSTEM --- */
+        function renderAchievements() {
+            const container = document.getElementById('achievements-container');
+            if (!container) return;
+
+            const achievementsHtml = Object.values(ACHIEVEMENTS).map(achievement => {
+                const unlocked = state.achievements.includes(achievement.id);
+                return `
+                    <div class="bg-white rounded-lg p-2 shadow-sm border-2 ${unlocked ? 'border-yellow-400' : 'border-gray-200'}">
+                        <div class="text-center">
+                            <div class="text-lg mb-1">🏆</div>
+                            <div class="text-xs font-bold ${unlocked ? 'text-yellow-600' : 'text-gray-400'}">${achievement.name}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = achievementsHtml;
+
+            // Update achievement count
+            const totalAchievements = Object.keys(ACHIEVEMENTS).length;
+            const unlockedCount = state.achievements.length;
+            const countDisplay = document.getElementById('achievement-count');
+            if (countDisplay) {
+                countDisplay.textContent = `${unlockedCount}/${totalAchievements}`;
             }
         }
 
