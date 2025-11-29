@@ -244,15 +244,6 @@
                 <!-- World Navigation Scroll -->
                 <div class="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide" id="world-nav-container"></div>
                 
-                <!-- Hatch Amount Slider -->
-                <div class="mb-4 px-2" id="hatch-slider-container" style="display:none;">
-                     <div class="flex justify-between text-xs font-bold mb-1">
-                         <span>Hatch Amount</span>
-                         <span id="hatch-amount-display">1x</span>
-                     </div>
-                     <input type="range" id="hatch-amount-slider" min="1" max="1" value="1" class="w-full accent-blue-500" oninput="updateHatchSetting(this.value)">
-                </div>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="egg-shop-container"></div>
              </div>
 
@@ -585,11 +576,11 @@
             luck: { name: 'Luck', description: 'Increases merge success rate', icon: '🍀', baseCost: 1000, costMultiplier: 2.5, maxLevel: 10, getEffect: (level) => level * 0.05 },
             income: { name: 'Income', description: 'Multiplies all pet income', icon: '💰', baseCost: 5000, costMultiplier: 3, maxLevel: 10, getEffect: (level) => level * 0.1 },
             clickPower: { name: 'Click', description: 'Increases click earnings', icon: '👆', baseCost: 500, costMultiplier: 2, maxLevel: 20, getEffect: (level) => level * 2 },
-            autoClicker: { name: 'Auto-Click', description: 'Automatically clicks for you', icon: '🤖', baseCost: 10000, costMultiplier: 4, maxLevel: 10, getEffect: (level) => level * 4 }, // Buffed to 4 clicks/sec per level
+            autoClicker: { name: 'Auto-Click', description: 'Automatically clicks for you', icon: '🤖', baseCost: 10000, costMultiplier: 4, maxLevel: 10, getEffect: (level) => level * 4 }, // Buffed to 4 clicks/sec
             criticalClicks: { name: 'Critical', description: 'Chance for 5x click earnings', icon: '💥', baseCost: 2500, costMultiplier: 2.8, maxLevel: 15, getEffect: (level) => level * 0.02 },
             eggDiscount: { name: 'Discount', description: 'Reduces egg costs', icon: '🏷️', baseCost: 7500, costMultiplier: 3.5, maxLevel: 8, getEffect: (level) => level * 0.05 },
             petBonus: { name: 'Pet Boost', description: 'Increases pet income rates', icon: '⭐', baseCost: 15000, costMultiplier: 3.2, maxLevel: 12, getEffect: (level) => level * 0.08 },
-            multiHatch: { name: 'Multi-Hatch', description: 'Max eggs hatched at once', icon: '🥚', baseCost: 50000, costMultiplier: 5, maxLevel: 5, getEffect: (level) => level + 1 }
+            multiHatch: { name: 'Multi-Hatch', description: 'Max eggs hatched at once', icon: '🥚', baseCost: 50000, costMultiplier: 5, maxLevel: 5, getEffect: (level) => level + 1 } // Level 0-5 (1-6 eggs)
         };
 
         const ACHIEVEMENTS = {
@@ -607,27 +598,6 @@
             firstGodly: { id: 'firstGodly', name: 'Godly', description: 'Get a Godly pet', icon: '✨', condition: (state) => state.inventory.some(id => PETS[id] && PETS[id].rarity === 'Godly') },
             firstTranscendent: { id: 'firstTranscendent', name: 'Transcendent', description: 'Get a Transcendent pet', icon: '🌌', condition: (state) => state.inventory.some(id => PETS[id] && PETS[id].rarity === 'Transcendent') }
         };
-
-        const REBIRTH_LEVELS = [
-            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" },
-            { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
-            { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" },
-            { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" },
-            { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space (Astral Sector)" },
-            { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" },
-            { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" },
-            { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" },
-            { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" },
-            { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" },
-            { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm (Mystic Reach)" },
-            { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" },
-            { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" },
-            { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" },
-            { level: 20, req: { 'golden_chick': 1 }, multiplier: 15.0, unlockMsg: "Unlocks: Chickverse Galaxy (Gilded Coop)" },
-            { level: 25, req: { 'rainbow_chick': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Prismatic Fields" },
-            { level: 30, req: { 'mecha_chick': 1 }, multiplier: 50.0, unlockMsg: "Unlocks: Mecha Base" },
-            { level: 35, req: { 'darkmatter_chick': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Void Nexus" }
-        ];
 
         // --- STATE ---
         let state = {
@@ -1087,7 +1057,24 @@
                 else if (id === 'petBonus') effectText = `+${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% pet`;
                 else if (id === 'multiHatch') effectText = `Max ${1 + upgrade.getEffect(currentLevel)} eggs`;
 
-                return `<div class="bg-white/90 backdrop-blur rounded-xl p-3 shadow-md transition-all hover:shadow-lg ${maxed ? 'opacity-60' : ''} text-gray-800"><div class="flex items-center gap-3 mb-1"><div class="text-2xl">${upgrade.icon}</div><div><div class="font-bold text-md leading-none">${upgrade.name}</div><div class="text-[10px] text-gray-500">${upgrade.description}</div></div></div><div class="text-xs text-green-600 font-bold mb-2">${effectText}</div><div class="flex items-center justify-between"><div class="text-xs text-gray-500">Lvl ${currentLevel}/${upgrade.maxLevel}</div>${maxed ? `<div class="text-green-600 font-bold text-xs">MAX</div>` : `<button onclick="buyUpgrade('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-3 rounded-lg transition active:scale-95">$${formatCompact(cost)}</button>`}</div></div>`;
+                // Slider Injection for MultiHatch
+                let sliderHTML = '';
+                if (id === 'multiHatch' && currentLevel > 0) {
+                    const maxHatch = 1 + upgrade.getEffect(currentLevel);
+                    if (state.settings.hatchAmount > maxHatch) state.settings.hatchAmount = maxHatch;
+                    
+                    sliderHTML = `
+                        <div class="mt-2 mb-2 p-2 bg-gray-100/80 rounded">
+                            <div class="flex justify-between text-xs font-bold mb-1 text-gray-600">
+                                <span>Hatch Amount</span>
+                                <span id="hatch-amount-display">${state.settings.hatchAmount}x</span>
+                            </div>
+                            <input type="range" id="hatch-amount-slider" min="1" max="${maxHatch}" value="${state.settings.hatchAmount}" class="w-full accent-blue-500 cursor-pointer" oninput="updateHatchSetting(this.value)">
+                        </div>
+                    `;
+                }
+
+                return `<div class="bg-white/90 backdrop-blur rounded-xl p-3 shadow-md transition-all hover:shadow-lg ${maxed ? 'opacity-60' : ''} text-gray-800"><div class="flex items-center gap-3 mb-1"><div class="text-2xl">${upgrade.icon}</div><div><div class="font-bold text-md leading-none">${upgrade.name}</div><div class="text-[10px] text-gray-500">${upgrade.description}</div></div></div><div class="text-xs text-green-600 font-bold mb-2">${effectText}</div>${sliderHTML}<div class="flex items-center justify-between"><div class="text-xs text-gray-500">Lvl ${currentLevel}/${upgrade.maxLevel}</div>${maxed ? `<div class="text-green-600 font-bold text-xs">MAX</div>` : `<button onclick="buyUpgrade('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-3 rounded-lg transition active:scale-95">$${formatCompact(cost)}</button>`}</div></div>`;
             }).join('');
         }
 
@@ -1196,23 +1183,6 @@
             const eggsToRender = EGGS.filter(egg => currentWorld.eggIds.includes(egg.id));
             const container = document.getElementById('egg-shop-container');
             const discount = UPGRADES.eggDiscount.getEffect(state.upgrades.eggDiscount);
-            
-            // Slider Logic
-            const maxHatch = 1 + UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
-            const sliderContainer = document.getElementById('hatch-slider-container');
-            const slider = document.getElementById('hatch-amount-slider');
-            
-            if (maxHatch > 1) {
-                sliderContainer.style.display = 'block';
-                slider.max = maxHatch;
-                if (!state.settings.hatchAmount) state.settings.hatchAmount = 1;
-                slider.value = state.settings.hatchAmount; // Keep current value if possible
-                document.getElementById('hatch-amount-display').innerText = state.settings.hatchAmount + 'x';
-            } else {
-                 sliderContainer.style.display = 'none';
-                 state.settings.hatchAmount = 1;
-            }
-            
             const hatchCount = state.settings.hatchAmount || 1;
 
             container.innerHTML = eggsToRender.map(egg => {
@@ -1248,8 +1218,6 @@
             
             // Sorting Logic
             const mode = state.settings.sortMode || 'newest';
-            
-            // Get Pet Value helper
             const getVal = (id) => PETS[id] ? PETS[id].rate : 0;
             const getRarityVal = (id) => {
                const r = PETS[id] ? PETS[id].rarity : 'Common';
@@ -1257,17 +1225,11 @@
                return map[r] || 0;
             };
 
-            if (mode === 'newest') {
-                list.reverse(); // Default stack behavior
-            } else if (mode === 'rarity_desc') {
-                list.sort((a,b) => getRarityVal(b) - getRarityVal(a));
-            } else if (mode === 'rarity_asc') {
-                list.sort((a,b) => getRarityVal(a) - getRarityVal(b));
-            } else if (mode === 'power_desc') {
-                list.sort((a,b) => getVal(b) - getVal(a));
-            } else if (mode === 'name') {
-                 list.sort((a,b) => (PETS[a]?.name || '').localeCompare(PETS[b]?.name || ''));
-            }
+            if (mode === 'newest') list.reverse();
+            else if (mode === 'rarity_desc') list.sort((a,b) => getRarityVal(b) - getRarityVal(a));
+            else if (mode === 'rarity_asc') list.sort((a,b) => getRarityVal(a) - getRarityVal(b));
+            else if (mode === 'power_desc') list.sort((a,b) => getVal(b) - getVal(a));
+            else if (mode === 'name') list.sort((a,b) => (PETS[a]?.name || '').localeCompare(PETS[b]?.name || ''));
 
             const petCounts = {};
             state.inventory.forEach(id => { petCounts[id] = (petCounts[id] || 0) + 1; });
