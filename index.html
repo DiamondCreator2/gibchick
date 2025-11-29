@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gibchick.com - Multi-World Idle Egg Clicker</title>
+    <title>Gibchick.com - Idle Egg Clicker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,10 +11,24 @@
         
         body {
             font-family: 'Fredoka', sans-serif;
-            background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+            transition: background 1s ease; /* Smooth world transitions */
             overscroll-behavior: none;
             user-select: none;
         }
+
+        /* Dynamic Background Classes */
+        .bg-world-home { background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%); }
+        .bg-world-spooky { background: linear-gradient(135deg, #2d1b4e 0%, #1a102e 100%); color: #e9d5ff; }
+        .bg-world-jurassic { background: linear-gradient(135deg, #fed7aa 0%, #fb923c 100%); }
+        .bg-world-frozen { background: linear-gradient(135deg, #cffafe 0%, #67e8f9 100%); }
+        .bg-world-magic { background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 100%); }
+        .bg-world-space { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; }
+        .bg-world-divine { background: linear-gradient(135deg, #fef9c3 0%, #facc15 100%); }
+
+        /* Text Adjustments for Dark Worlds */
+        .bg-world-spooky .text-gray-800, .bg-world-space .text-gray-800 { color: #f3f4f6; }
+        .bg-world-spooky .bg-white, .bg-world-space .bg-white { background-color: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .bg-world-spooky .shadow-md, .bg-world-space .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); }
 
         .shake-animation {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite;
@@ -52,12 +66,12 @@
         }
 
         /* Rarity Gradients */
-        .rarity-common { background: linear-gradient(to bottom right, #f3f4f6, #d1d5db); border: 2px solid #9ca3af; }
-        .rarity-uncommon { background: linear-gradient(to bottom right, #d1fae5, #6ee7b7); border: 2px solid #10b981; }
-        .rarity-rare { background: linear-gradient(to bottom right, #dbeafe, #60a5fa); border: 2px solid #2563eb; }
-        .rarity-epic { background: linear-gradient(to bottom right, #f3e8ff, #c084fc); border: 2px solid #9333ea; }
-        .rarity-legendary { background: linear-gradient(to bottom right, #fef3c7, #fcd34d); border: 2px solid #d97706; box-shadow: 0 0 10px #fbbf24; }
-        .rarity-mythical { background: linear-gradient(to bottom right, #fee2e2, #f87171); border: 2px solid #dc2626; box-shadow: 0 0 15px #ef4444; animation: pulse-mythical 2s infinite; }
+        .rarity-common { background: linear-gradient(to bottom right, #f3f4f6, #d1d5db); border: 2px solid #9ca3af; color: #1f2937; }
+        .rarity-uncommon { background: linear-gradient(to bottom right, #d1fae5, #6ee7b7); border: 2px solid #10b981; color: #064e3b; }
+        .rarity-rare { background: linear-gradient(to bottom right, #dbeafe, #60a5fa); border: 2px solid #2563eb; color: #1e3a8a; }
+        .rarity-epic { background: linear-gradient(to bottom right, #f3e8ff, #c084fc); border: 2px solid #9333ea; color: #4c1d95; }
+        .rarity-legendary { background: linear-gradient(to bottom right, #fef3c7, #fcd34d); border: 2px solid #d97706; box-shadow: 0 0 10px #fbbf24; color: #78350f; }
+        .rarity-mythical { background: linear-gradient(to bottom right, #fee2e2, #f87171); border: 2px solid #dc2626; box-shadow: 0 0 15px #ef4444; animation: pulse-mythical 2s infinite; color: #7f1d1d; }
         
         .rarity-godly {
             background: linear-gradient(to bottom right, #2d2d2d, #000000);
@@ -85,6 +99,7 @@
             background: linear-gradient(to bottom right, #ffafbd, #ffc3a0);
             border: 3px solid #ff6b6b;
             box-shadow: 0 0 20px #ff6b6b;
+            color: #881337;
         }
 
         @keyframes pulse-godly {
@@ -105,23 +120,6 @@
             100% { box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700; }
         }
 
-        .rarity-cosmic {
-            background: linear-gradient(45deg, #000000, #1a0033, #330066, #6600cc);
-            border: 4px solid #ff00ff;
-            box-shadow: 0 0 40px #ff00ff, 0 0 80px #9900ff, 0 0 120px #6600cc;
-            color: #ffffff;
-            animation: pulse-cosmic 3s infinite;
-        }
-        .rarity-cosmic .text-gray-700 { color: #ff00ff !important; }
-        .rarity-cosmic .text-gray-500 { color: #cc00cc !important; }
-        .rarity-cosmic .bg-white\/50 { background: rgba(255,0,255,0.2); }
-
-        @keyframes pulse-cosmic {
-            0% { box-shadow: 0 0 20px #ff00ff, 0 0 40px #9900ff; }
-            50% { box-shadow: 0 0 50px #ff00ff, 0 0 100px #cc00ff, 0 0 150px #9900ff; }
-            100% { box-shadow: 0 0 20px #ff00ff, 0 0 40px #9900ff; }
-        }
-
         /* Styles */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
@@ -132,15 +130,15 @@
         .pet-locked-text { color: transparent; text-shadow: 0 0 8px rgba(0,0,0,0.5); }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden text-gray-800">
+<body id="game-body" class="h-screen flex flex-col overflow-hidden text-gray-800 bg-world-home">
 
     <!-- Header -->
-    <header class="bg-white shadow-md p-4 flex justify-between items-center z-10 shrink-0">
+    <header class="bg-white/90 backdrop-blur-md shadow-md p-4 flex justify-between items-center z-10 shrink-0">
         <div class="flex items-center gap-3">
             <div class="text-3xl">🐣</div>
             <div>
                 <h1 class="font-bold text-xl leading-none text-purple-600">Gibchick</h1>
-                <span class="text-xs text-gray-500">Explore worlds, collect 'em all!</span>
+                <span class="text-xs text-gray-500">Collect 'em all!</span>
             </div>
             <!-- Rebirth Button -->
             <button onclick="openRebirthModal()" class="ml-2 text-purple-500 hover:text-purple-700 transition text-sm animate-pulse" title="Rebirth">
@@ -176,21 +174,33 @@
         <!-- Left Panel -->
         <section class="flex-1 p-4 overflow-y-auto flex flex-col gap-6 relative" id="click-area">
             
-            <div class="bg-white rounded-2xl shadow-lg p-6 text-center transform hover:scale-[1.02] transition-transform cursor-pointer active:scale-95 select-none" onclick="manualClick(event)">
+            <div class="bg-white/90 backdrop-blur rounded-2xl shadow-lg p-6 text-center transform hover:scale-[1.02] transition-transform cursor-pointer active:scale-95 select-none text-gray-800" onclick="manualClick(event)">
                 <div class="text-6xl mb-2">🐥</div>
                 <h2 class="font-bold text-xl mb-1">Click for Cash!</h2>
                 <p class="text-gray-500 text-sm">Get quick money to buy eggs</p>
                 <div id="rebirth-multiplier-display" class="text-xs text-purple-600 font-bold mt-2 hidden">Rebirth Multiplier: x1</div>
             </div>
 
+            <!-- World Selector & Egg Shop -->
             <div>
-                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
-                    <i class="fas fa-shopping-basket text-orange-500"></i> Egg Shop
-                </h3>
-                <p class="text-xs text-gray-500 mb-2 italic">Explore different worlds! Click an egg icon to see drop rates!</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="egg-shop-container"></div>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-lg flex items-center gap-2">
+                        <i class="fas fa-globe text-blue-500"></i> Worlds
+                    </h3>
+                    <div class="text-xs text-gray-500" id="world-status">Home Village</div>
+                </div>
+                
+                <!-- World Navigation Scroll -->
+                <div class="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide" id="world-nav-container">
+                    <!-- Worlds JS -->
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="egg-shop-container">
+                    <!-- Eggs JS -->
+                </div>
              </div>
 
+             <!-- Upgrades -->
              <div>
                  <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
                      <i class="fas fa-arrow-up text-purple-500"></i> Upgrades
@@ -198,6 +208,7 @@
                  <div id="upgrades-container" class="grid grid-cols-1 gap-3"></div>
              </div>
 
+             <!-- Achievements -->
              <div>
                  <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
                      <i class="fas fa-trophy text-yellow-500"></i> Achievements
@@ -232,9 +243,8 @@
 
     </main>
 
-    <!-- Overlays & Modals -->
+    <!-- Overlays -->
     
-    <!-- Hatching -->
     <div id="hatch-overlay" class="fixed inset-0 bg-black/80 z-50 hidden flex flex-col items-center justify-center backdrop-blur-sm p-4 overflow-y-auto">
         <div class="relative flex flex-col items-center justify-center w-full min-h-[50vh]">
             <div id="hatch-egg-display" class="transition-all duration-300 cursor-pointer relative z-10"></div>
@@ -256,9 +266,8 @@
         </div>
     </div>
 
-    <!-- Egg Info -->
     <div id="egg-info-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-gray-800">
             <div id="egg-info-header" class="p-4 bg-gray-100 border-b flex justify-between items-center">
                 <h2 class="font-bold text-xl flex items-center gap-2" id="egg-info-title">Egg Info</h2>
                 <button onclick="closeEggInfo()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
@@ -270,13 +279,12 @@
         </div>
     </div>
 
-    <!-- Merge -->
     <div id="merge-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[80vh]">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[80vh] text-gray-800">
             <div class="p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white flex justify-between items-center shrink-0">
                 <div>
                     <h2 class="font-bold text-xl"><i class="fas fa-flask"></i> Merge Chamber</h2>
-                    <p class="text-xs opacity-90">Fuse 3 identical pets for a chance to upgrade!</p>
+                    <p class="text-xs opacity-90">Fuse 3 identical pets to upgrade!</p>
                 </div>
                 <button onclick="closeMergeModal()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
@@ -290,9 +298,8 @@
         </div>
     </div>
 
-    <!-- Index -->
     <div id="index-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[90vh] overflow-hidden flex flex-col">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[90vh] overflow-hidden flex flex-col text-gray-800">
             <div class="p-4 bg-blue-600 text-white flex justify-between items-center shrink-0">
                 <div>
                     <h2 class="font-bold text-2xl flex items-center gap-2"><i class="fas fa-book-open"></i> Pet Index</h2>
@@ -315,7 +322,6 @@
         </div>
     </div>
 
-    <!-- Rebirth Modal -->
     <div id="rebirth-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-gray-900 border border-purple-500 rounded-2xl shadow-2xl w-full max-w-md p-6 text-center text-white relative overflow-hidden">
             <div class="absolute inset-0 bg-purple-600 opacity-10 animate-pulse pointer-events-none"></div>
@@ -328,31 +334,25 @@
                     
                     <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
                         <div class="text-sm font-bold uppercase text-gray-500 mb-2">Next Rebirth Requirements</div>
-                        <div id="rebirth-reqs" class="text-xl font-bold flex justify-center items-center gap-2 mb-2">
-                            <!-- JS fills this -->
-                        </div>
+                        <div id="rebirth-reqs" class="text-xl font-bold flex justify-center items-center gap-2 mb-2"></div>
                         <div class="text-xs text-gray-400 italic">Sacrifice these pets to ascend.</div>
                         <div class="mt-3 pt-3 border-t border-gray-700">
                             <div class="text-sm">New Multiplier: <span id="rebirth-next-mult" class="text-purple-400 font-bold text-lg">x1.5</span></div>
+                            <div class="text-sm text-yellow-300 mt-1" id="rebirth-unlock-msg"></div>
                         </div>
                     </div>
                 </div>
-                
                 <p class="text-red-400 text-xs mb-6">Warning: Rebirthing resets your Money, Inventory, and Upgrades. Achievements and Index are saved.</p>
-                
                 <div class="flex gap-3 justify-center">
                     <button onclick="closeRebirthModal()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-full transition">Cancel</button>
-                    <button onclick="performRebirth()" id="rebirth-confirm-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-8 rounded-full transition shadow-lg shadow-purple-500/30 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Rebirth
-                    </button>
+                    <button onclick="performRebirth()" id="rebirth-confirm-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-8 rounded-full transition shadow-lg shadow-purple-500/30 disabled:opacity-50 disabled:cursor-not-allowed">Rebirth</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Reset -->
     <div id="reset-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center text-gray-800">
             <div class="text-red-500 text-5xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
             <h2 class="text-2xl font-bold text-gray-800 mb-2">Reset Account?</h2>
             <p class="text-gray-600 mb-6">Are you sure you want to wipe all your progress? This cannot be undone.</p>
@@ -363,12 +363,21 @@
         </div>
     </div>
 
-    <!-- Toast & Tooltip -->
     <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-[60] text-sm font-bold text-center">Notification</div>
-    <div id="pet-tooltip" class="fixed bg-white rounded-lg shadow-xl border-2 border-gray-200 p-3 opacity-0 transition-opacity duration-200 pointer-events-none z-[70] text-sm max-w-xs"><div id="pet-tooltip-content"></div></div>
+    <div id="pet-tooltip" class="fixed bg-white rounded-lg shadow-xl border-2 border-gray-200 p-3 opacity-0 transition-opacity duration-200 pointer-events-none z-[70] text-sm max-w-xs text-gray-800"><div id="pet-tooltip-content"></div></div>
 
     <script>
         // --- DATA ---
+        const WORLDS = [
+            { id: 'home', name: 'Home Village', minRebirth: 0, bgClass: 'bg-world-home', eggIds: ['starter', 'farm', 'aqua', 'desert'] },
+            { id: 'spooky', name: 'Haunted Forest', minRebirth: 1, bgClass: 'bg-world-spooky', eggIds: ['spooky', 'forest'] },
+            { id: 'jurassic', name: 'Jurassic Isle', minRebirth: 2, bgClass: 'bg-world-jurassic', eggIds: ['prehistoric', 'jungle'] },
+            { id: 'frozen', name: 'Frozen Tundra', minRebirth: 3, bgClass: 'bg-world-frozen', eggIds: ['arctic'] },
+            { id: 'magic', name: 'Magic Realm', minRebirth: 4, bgClass: 'bg-world-magic', eggIds: ['fantasy', 'mystery'] },
+            { id: 'space', name: 'Deep Space', minRebirth: 5, bgClass: 'bg-world-space', eggIds: ['cosmic', 'void'] },
+            { id: 'divine', name: 'Divine Plane', minRebirth: 6, bgClass: 'bg-world-divine', eggIds: ['divine'] }
+        ];
+
         const PETS = {
             'ant': { id: 'ant', name: 'Worker Ant', icon: '🐜', rate: 1, rarity: 'Common', next: 'chick' },
             'chick': { id: 'chick', name: 'Baby Chick', icon: '🐥', rate: 2, rarity: 'Common', next: 'mouse' },
@@ -412,13 +421,7 @@
             'hydra': { id: 'hydra', name: 'Hydra', icon: '🐍', rate: 250000, rarity: 'Mythical', next: 'titan' },
             'titan': { id: 'titan', name: 'Titan', icon: '🗿', rate: 500000, rarity: 'Mythical', next: 'void' },
             'void': { id: 'void', name: 'The Void', icon: '🌌', rate: 1000000, rarity: 'Godly', next: 'cosmos' },
-            'cosmos': { id: 'cosmos', name: 'The Cosmos', icon: '🌌', rate: 5000000, rarity: 'Transcendent', next: 'nebula' },
-
-            // Tier 9: Cosmic
-            'nebula': { id: 'nebula', name: 'Nebula', icon: '🌠', rate: 25000000, rarity: 'Cosmic', next: 'star' },
-            'star': { id: 'star', name: 'Living Star', icon: '⭐', rate: 100000000, rarity: 'Cosmic', next: null },
-
-            // Special reward pets
+            'cosmos': { id: 'cosmos', name: 'The Cosmos', icon: '🌌', rate: 5000000, rarity: 'Transcendent', next: null },
             'reward_griffin': { id: 'reward_griffin', name: 'Guardian Griffin', icon: '🦅', rate: 10000000, rarity: 'Special', next: null, hidden: true }
         };
 
@@ -436,27 +439,18 @@
             { id: 'fantasy', name: 'Fantasy Egg', cost: 10000000, icon: '🏰', colorClass: 'bg-pink-100 border-pink-200', pool: { 'unicorn': 0.35, 'griffin': 0.3, 'dragon': 0.2, 'phoenix': 0.1, 'titan': 0.05 } },
             { id: 'divine', name: 'Divine Egg', cost: 50000000, icon: '👑', colorClass: 'bg-yellow-50 border-yellow-300', pool: { 'phoenix': 0.4, 'kraken': 0.25, 'hydra': 0.2, 'titan': 0.1, 'void': 0.05 } },
             { id: 'void', name: 'Void Egg', cost: 250000000, icon: '🕳️', colorClass: 'bg-gray-900 border-gray-600', pool: { 'void': 0.6, 'cosmos': 0.4 } },
-            { id: 'mystery', name: 'Mystery Egg', cost: 25000, icon: '❓', colorClass: 'bg-purple-100 border-purple-300', pool: { 'spider': 0.2, 'bee': 0.2, 'frog': 0.2, 'turtle': 0.15, 'penguin': 0.15, 'camel': 0.1 } },
-
-            // New World Eggs
-            { id: 'space', name: 'Space Egg', cost: 500000000, icon: '🚀', colorClass: 'bg-indigo-900 border-indigo-400', pool: { 'alien': 0.4, 'robot': 0.3, 'cosmos': 0.2, 'nebula': 0.1 } },
-            { id: 'volcano', name: 'Volcano Egg', cost: 1000000000, icon: '🌋', colorClass: 'bg-red-800 border-red-400', pool: { 't-rex': 0.3, 'triceratops': 0.25, 'pterodactyl': 0.2, 'dragon': 0.15, 'phoenix': 0.1 } },
-            { id: 'arctic', name: 'Arctic Egg', cost: 2000000000, icon: '❄️', colorClass: 'bg-cyan-100 border-cyan-300', pool: { 'penguin': 0.35, 'bear': 0.25, 'yeti': 0.2, 'mammoth': 0.15, 'turtle': 0.05 } },
-            { id: 'jungle', name: 'Jungle Egg', cost: 5000000000, icon: '🌴', colorClass: 'bg-green-800 border-green-400', pool: { 'monkey': 0.3, 'snake': 0.25, 'tiger': 0.2, 'bear': 0.15, 'hydra': 0.1 } },
-            { id: 'candy', name: 'Candy Egg', cost: 10000000000, icon: '🍭', colorClass: 'bg-pink-200 border-pink-400', pool: { 'unicorn': 0.4, 'dragon': 0.3, 'phoenix': 0.2, 'titan': 0.1 } },
-            { id: 'cyber', name: 'Cyber Egg', cost: 25000000000, icon: '💻', colorClass: 'bg-green-900 border-green-300', pool: { 'robot': 0.5, 'alien': 0.3, 'titan': 0.15, 'void': 0.05 } },
-            { id: 'cosmic', name: 'Cosmic Egg', cost: 100000000000, icon: '🌌', colorClass: 'bg-purple-900 border-purple-300', pool: { 'cosmos': 0.4, 'nebula': 0.3, 'star': 0.2, 'void': 0.1 } }
+            { id: 'mystery', name: 'Mystery Egg', cost: 25000, icon: '❓', colorClass: 'bg-purple-100 border-purple-300', pool: { 'spider': 0.2, 'bee': 0.2, 'frog': 0.2, 'turtle': 0.15, 'penguin': 0.15, 'camel': 0.1 } }
         ];
 
         const REBIRTH_LEVELS = [
-            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5 },
-            { level: 2, req: { 'cat': 3 }, multiplier: 2.0 },
-            { level: 3, req: { 'fox': 2 }, multiplier: 3.0 },
-            { level: 4, req: { 't-rex': 1 }, multiplier: 5.0 },
-            { level: 5, req: { 'unicorn': 1 }, multiplier: 10.0 },
-            { level: 6, req: { 'phoenix': 1 }, multiplier: 25.0 },
-            { level: 7, req: { 'void': 1 }, multiplier: 100.0 },
-            { level: 8, req: { 'cosmos': 1 }, multiplier: 1000.0 }
+            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" },
+            { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
+            { level: 3, req: { 'fox': 2 }, multiplier: 3.0, unlockMsg: "Unlocks: Frozen Tundra" },
+            { level: 4, req: { 't-rex': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Magic Realm" },
+            { level: 5, req: { 'unicorn': 1 }, multiplier: 10.0, unlockMsg: "Unlocks: Deep Space" },
+            { level: 6, req: { 'phoenix': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Divine Plane" },
+            { level: 7, req: { 'void': 1 }, multiplier: 100.0, unlockMsg: "" },
+            { level: 8, req: { 'cosmos': 1 }, multiplier: 1000.0, unlockMsg: "" }
         ];
 
         const UPGRADES = {
@@ -494,6 +488,7 @@
             upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 },
             rebirth: { level: 0, multiplier: 1 },
             achievements: [],
+            currentWorld: 'home',
             stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 },
             lastSave: Date.now()
         };
@@ -582,6 +577,21 @@
             }
         }
 
+        function switchWorld(worldId) {
+            const world = WORLDS.find(w => w.id === worldId);
+            if (!world) return;
+            
+            if (state.rebirth.level < world.minRebirth) {
+                showToast(`Requires Rebirth Level ${world.minRebirth}!`);
+                return;
+            }
+
+            state.currentWorld = worldId;
+            saveGame();
+            renderShop();
+            updateUI();
+        }
+
         // --- REBIRTH SYSTEM ---
         function openRebirthModal() {
             const modal = document.getElementById('rebirth-modal');
@@ -589,6 +599,7 @@
             const currentMultDisplay = document.getElementById('rebirth-current-mult');
             const reqsDisplay = document.getElementById('rebirth-reqs');
             const nextMultDisplay = document.getElementById('rebirth-next-mult');
+            const unlockMsg = document.getElementById('rebirth-unlock-msg');
             const confirmBtn = document.getElementById('rebirth-confirm-btn');
 
             const currentLvl = state.rebirth.level;
@@ -601,20 +612,19 @@
             if (!nextRebirth) {
                 reqsDisplay.innerHTML = '<span class="text-green-400">Max Rebirth Level Reached!</span>';
                 nextMultDisplay.innerText = "MAX";
+                unlockMsg.innerText = "";
                 confirmBtn.disabled = true;
                 return;
             }
 
             nextMultDisplay.innerText = 'x' + nextRebirth.multiplier;
+            unlockMsg.innerText = nextRebirth.unlockMsg || "";
 
-            // Check Requirements
-            let canRebirth = true;
-            let reqsHTML = '';
-            
-            // Count inventory
             const petCounts = {};
             state.inventory.forEach(id => petCounts[id] = (petCounts[id] || 0) + 1);
 
+            let canRebirth = true;
+            let reqsHTML = '';
             for (const [petId, countNeeded] of Object.entries(nextRebirth.req)) {
                 const pet = PETS[petId];
                 const countOwned = petCounts[petId] || 0;
@@ -633,48 +643,31 @@
             confirmBtn.disabled = !canRebirth;
         }
 
-        function closeRebirthModal() {
-            document.getElementById('rebirth-modal').classList.add('hidden');
-        }
+        function closeRebirthModal() { document.getElementById('rebirth-modal').classList.add('hidden'); }
 
         function performRebirth() {
             const nextRebirth = REBIRTH_LEVELS.find(r => r.level === state.rebirth.level + 1);
             if (!nextRebirth) return;
 
-            // Remove required pets
-            const countsToRemove = { ...nextRebirth.req };
-            const newInventory = [];
-            
-            // Rebuild inventory skipping the paid pets
-            for (let item of state.inventory) {
-                if (countsToRemove[item] && countsToRemove[item] > 0) {
-                    countsToRemove[item]--; // "Consume" pet
-                } else {
-                    newInventory.push(item);
-                }
-            }
-            // Actually, usually rebirth wipes inventory. "Sacrifice these pets" usually implies they are the gate key, 
-            // but the description says "Resets Inventory". So we verify they exist, then wipe EVERYTHING.
-            
-            // Reset Progress
             state.inventory = []; 
             state.money = 0;
             state.upgrades = { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 };
             
-            // Apply Rebirth Stats
             state.rebirth.level = nextRebirth.level;
             state.rebirth.multiplier = nextRebirth.multiplier;
+            
+            // Check for new world unlock and switch if applicable
+            const newWorld = WORLDS.find(w => w.minRebirth === state.rebirth.level);
+            if(newWorld) state.currentWorld = newWorld.id;
 
             saveGame();
-            
-            // UI Updates
             closeRebirthModal();
             renderInventory();
             renderUpgrades();
+            renderShop();
             updateUI();
             updateAutoClicker();
-            
-            showToast(`Rebirth Successful! Multiplier is now x${state.rebirth.multiplier}`);
+            showToast(`Rebirth Successful! Multiplier: x${state.rebirth.multiplier}`);
         }
 
         // --- ACHIEVEMENTS ---
@@ -687,7 +680,6 @@
                     newAchievements.push(achievement);
                 }
             });
-
             if (newAchievements.length > 0) {
                 newAchievements.forEach(a => showToast(`Achievement: ${a.name}!`));
                 renderAchievements();
@@ -700,39 +692,26 @@
             const totalAchievements = Object.keys(ACHIEVEMENTS).length;
             const unlockedCount = state.achievements.length;
             document.getElementById('achievement-count').textContent = `${unlockedCount}/${totalAchievements}`;
-
             container.innerHTML = Object.values(ACHIEVEMENTS).map(a => {
                 const unlocked = state.achievements.includes(a.id);
-                return `
-                    <div class="bg-white rounded-lg p-2 shadow-sm transition-all ${unlocked ? 'border-2 border-yellow-400' : 'opacity-50'}">
-                        <div class="text-center">
-                            <div class="text-lg mb-1">${a.icon}</div>
-                            <div class="text-xs font-bold ${unlocked ? 'text-yellow-600' : 'text-gray-400'}">${a.name}</div>
-                        </div>
-                    </div>
-                `;
+                return `<div class="bg-white/80 rounded-lg p-2 shadow-sm transition-all ${unlocked ? 'border-2 border-yellow-400' : 'opacity-50'} text-gray-800"><div class="text-center"><div class="text-lg mb-1">${a.icon}</div><div class="text-xs font-bold ${unlocked ? 'text-yellow-600' : 'text-gray-400'}">${a.name}</div></div></div>`;
             }).join('');
         }
 
-        // --- HATCHING ---
+        // --- HATCHING & MERGE (Reuse prev logic, shortened for brevity but functional) ---
         function startHatchingSequence(egg, count = 1) {
             const overlay = document.getElementById('hatch-overlay');
             const eggContainer = document.getElementById('hatch-egg-display'); 
             const message = document.getElementById('hatch-message');
-            const petCard = document.getElementById('new-pet-card');
-            const multiGrid = document.getElementById('multi-pet-grid'); 
-            const rays = document.getElementById('hatch-rays');
-            const closeBtn = document.getElementById('multi-hatch-close-btn');
-
-            petCard.classList.add('hidden');
-            if(multiGrid) multiGrid.classList.add('hidden');
-            if(closeBtn) closeBtn.classList.add('hidden');
+            document.getElementById('new-pet-card').classList.add('hidden');
+            document.getElementById('multi-pet-grid').classList.add('hidden');
+            document.getElementById('multi-hatch-close-btn').classList.add('hidden');
             
             eggContainer.classList.remove('hidden', 'pop-in');
             eggContainer.style.transform = 'scale(1)';
             message.innerText = count > 1 ? "Tap to Hatch All!" : "Tap to Hatch!";
             message.classList.remove('hidden');
-            rays.style.opacity = '0';
+            document.getElementById('hatch-rays').style.opacity = '0';
 
             if (count === 1) {
                 eggContainer.className = "text-9xl transition-all duration-300 cursor-pointer relative z-10 select-none";
@@ -741,18 +720,10 @@
                 eggContainer.className = "grid grid-cols-3 gap-4 transition-all duration-300 cursor-pointer relative z-10 select-none max-w-md mx-auto";
                 eggContainer.innerHTML = Array(count).fill(`<div class="text-6xl animate-bounce">${egg.icon}</div>`).join('');
             }
-
             overlay.classList.remove('hidden');
-
             eggContainer.onclick = function() {
-                if(count === 1) {
-                    eggContainer.classList.add('shake-animation');
-                } else {
-                    Array.from(eggContainer.children).forEach((child, i) => {
-                        child.style.animation = `shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite ${i * 0.05}s`;
-                    });
-                }
-                
+                if(count === 1) eggContainer.classList.add('shake-animation');
+                else Array.from(eggContainer.children).forEach((child, i) => child.style.animation = `shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite ${i * 0.05}s`);
                 message.innerText = "Cracking...";
                 setTimeout(() => revealBatch(egg, count), 1000);
                 eggContainer.onclick = null;
@@ -760,19 +731,9 @@
         }
 
         function revealBatch(egg, count) {
-            const eggContainer = document.getElementById('hatch-egg-display');
-            const petCard = document.getElementById('new-pet-card');
-            const multiGrid = document.getElementById('multi-pet-grid');
-            const message = document.getElementById('hatch-message');
-            const rays = document.getElementById('hatch-rays');
-            const closeBtn = document.getElementById('multi-hatch-close-btn');
-
             const results = [];
             let highestRarityScore = 0; 
-            const getRarityVal = (r) => {
-                const map = {'Common':1, 'Uncommon':2, 'Rare':3, 'Epic':4, 'Legendary':5, 'Mythical':6, 'Godly':7, 'Transcendent':8};
-                return map[r] || 0;
-            };
+            const getRarityVal = (r) => ({'Common':1,'Uncommon':2,'Rare':3,'Epic':4,'Legendary':5,'Mythical':6,'Godly':7,'Transcendent':8})[r]||0;
 
             for(let i=0; i<count; i++) {
                 const petId = rollPet(egg.pool);
@@ -786,10 +747,9 @@
                 }
             }
 
-            eggContainer.classList.add('hidden');
-            eggContainer.classList.remove('shake-animation'); 
-            eggContainer.innerHTML = '';
-            message.classList.add('hidden');
+            document.getElementById('hatch-egg-display').classList.add('hidden');
+            document.getElementById('hatch-egg-display').classList.remove('shake-animation');
+            document.getElementById('hatch-message').classList.add('hidden');
 
             if (results.length === 1) {
                 const pet = results[0];
@@ -797,29 +757,24 @@
                 document.getElementById('reveal-name').innerText = pet.name;
                 document.getElementById('reveal-rarity').innerText = pet.rarity;
                 document.getElementById('reveal-rate').innerText = pet.rate.toLocaleString();
-                const cardBg = document.getElementById('reveal-card-bg');
-                cardBg.className = `bg-white p-6 rounded-2xl shadow-2xl text-center w-64 border-4 rarity-${pet.rarity.toLowerCase()}`;
-                petCard.classList.remove('hidden');
-                petCard.classList.add('pop-in');
+                document.getElementById('reveal-card-bg').className = `bg-white p-6 rounded-2xl shadow-2xl text-center w-64 border-4 rarity-${pet.rarity.toLowerCase()}`;
+                document.getElementById('new-pet-card').classList.remove('hidden');
+                document.getElementById('new-pet-card').classList.add('pop-in');
             } else {
-                multiGrid.innerHTML = results.map(pet => `
+                const grid = document.getElementById('multi-pet-grid');
+                grid.innerHTML = results.map(pet => `
                     <div class="bg-white p-3 rounded-xl shadow-lg border-2 rarity-${pet.rarity.toLowerCase()} flex flex-col items-center pop-in transform transition hover:scale-105">
-                        <div class="text-[10px] font-bold uppercase mb-1 opacity-70">${pet.rarity}</div>
+                        <div class="text-[10px] font-bold uppercase mb-1 opacity-70 text-gray-600">${pet.rarity}</div>
                         <div class="text-5xl mb-2">${pet.icon}</div>
                         <div class="font-bold text-sm text-gray-800 text-center leading-tight truncate w-full">${pet.name}</div>
-                    </div>
-                `).join('');
-                multiGrid.classList.remove('hidden');
-                closeBtn.classList.remove('hidden');
-                Array.from(multiGrid.children).forEach((el, i) => el.style.animationDelay = `${i * 0.05}s`);
+                    </div>`).join('');
+                grid.classList.remove('hidden');
+                document.getElementById('multi-hatch-close-btn').classList.remove('hidden');
+                Array.from(grid.children).forEach((el, i) => el.style.animationDelay = `${i * 0.05}s`);
             }
 
-            if(highestRarityScore >= 4) rays.style.opacity = '0.5';
-
-            saveGame();
-            renderInventory();
-            updateUI();
-            checkAchievements();
+            if(highestRarityScore >= 4) document.getElementById('hatch-rays').style.opacity = '0.5';
+            saveGame(); renderInventory(); updateUI(); checkAchievements();
         }
 
         function rollPet(pool) {
@@ -832,100 +787,52 @@
             return Object.keys(pool)[0];
         }
 
-        function closeHatchModal() {
-            document.getElementById('hatch-overlay').classList.add('hidden');
-        }
+        function closeHatchModal() { document.getElementById('hatch-overlay').classList.add('hidden'); }
 
-        // --- MERGE ---
         function openMergeModal() {
             const modal = document.getElementById('merge-modal');
-            const list = document.getElementById('merge-list');
-            const msg = document.getElementById('no-merge-msg');
             modal.classList.remove('hidden');
-            
             const counts = {};
             state.inventory.forEach(id => counts[id] = (counts[id] || 0) + 1);
-
-            const mergeable = Object.entries(counts)
-                .filter(([id, count]) => count >= 3 && PETS[id] && PETS[id].next)
-                .map(([id, count]) => ({ id, count, pet: PETS[id] }));
-
+            const mergeable = Object.entries(counts).filter(([id, count]) => count >= 3 && PETS[id] && PETS[id].next).map(([id, count]) => ({ id, count, pet: PETS[id] }));
+            const list = document.getElementById('merge-list');
+            const msg = document.getElementById('no-merge-msg');
+            
             if (mergeable.length === 0) {
-                list.innerHTML = '';
-                msg.classList.remove('hidden');
-                return;
+                list.innerHTML = ''; msg.classList.remove('hidden'); return;
             }
-
             msg.classList.add('hidden');
             list.innerHTML = mergeable.map(m => {
                 const nextPet = PETS[m.pet.next];
-                return `
-                    <div class="bg-white border-2 border-blue-100 p-4 rounded-xl flex items-center justify-between shadow-sm">
-                        <div class="flex items-center gap-4">
-                            <div class="relative">
-                                <div class="text-4xl">${m.pet.icon}</div>
-                                <div class="absolute -bottom-1 -right-1 bg-blue-600 text-white text-[10px] px-1.5 rounded-full font-bold">x${m.count}</div>
-                            </div>
-                            <div>
-                                <div class="font-bold text-gray-800">${m.pet.name}</div>
-                                <div class="text-xs text-blue-500 flex items-center gap-1">
-                                    Merge 3 <i class="fas fa-arrow-right text-[10px]"></i> ${nextPet.icon} ?
-                                </div>
-                            </div>
-                        </div>
-                        <button onclick="performMerge('${m.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition active:scale-95">Merge</button>
-                    </div>
-                `;
+                return `<div class="bg-white border-2 border-blue-100 p-4 rounded-xl flex items-center justify-between shadow-sm"><div class="flex items-center gap-4"><div class="relative"><div class="text-4xl">${m.pet.icon}</div><div class="absolute -bottom-1 -right-1 bg-blue-600 text-white text-[10px] px-1.5 rounded-full font-bold">x${m.count}</div></div><div><div class="font-bold text-gray-800">${m.pet.name}</div><div class="text-xs text-blue-500 flex items-center gap-1">Merge 3 <i class="fas fa-arrow-right text-[10px]"></i> ${nextPet.icon} ?</div></div></div><button onclick="performMerge('${m.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition active:scale-95">Merge</button></div>`;
             }).join('');
         }
-
-        function closeMergeModal() {
-            document.getElementById('merge-modal').classList.add('hidden');
-        }
-
+        function closeMergeModal() { document.getElementById('merge-modal').classList.add('hidden'); }
         function performMerge(petId) {
             const count = state.inventory.filter(id => id === petId).length;
-            if (count < 3) {
-                showToast("Not enough pets!");
-                openMergeModal();
-                return;
-            }
-
+            if (count < 3) { showToast("Not enough pets!"); openMergeModal(); return; }
             const currentPet = PETS[petId];
             const nextPetId = currentPet.next;
             const nextPet = PETS[nextPetId];
-
             let removed = 0;
             const newInventory = [];
             for (let item of state.inventory) {
-                if (item === petId && removed < 3) {
-                    removed++;
-                } else {
-                    newInventory.push(item);
-                }
+                if (item === petId && removed < 3) removed++; else newInventory.push(item);
             }
             state.inventory = newInventory;
-
             const baseChance = 0.75;
             const luckBonus = UPGRADES.luck.getEffect(state.upgrades.luck);
             const totalChance = Math.min(baseChance + luckBonus, 1);
-            const success = Math.random() < totalChance;
-
-            if (success) {
+            if (Math.random() < totalChance) {
                 state.inventory.push(nextPetId);
                 if (!state.collection.includes(nextPetId)) state.collection.push(nextPetId);
                 state.stats.totalMerges++;
-                const rarityMsg = ['Mythical', 'Godly', 'Transcendent'].includes(nextPet.rarity) ? ` (${nextPet.rarity})` : '';
-                showToast(`Success! Merged into ${nextPet.name}${rarityMsg}!`);
+                showToast(`Success! Merged into ${nextPet.name}!`);
                 checkAchievements();
             } else {
                 showToast(`Failed! The fusion unstable...`);
             }
-
-            saveGame();
-            renderInventory();
-            updateUI();
-            openMergeModal();
+            saveGame(); renderInventory(); updateUI(); openMergeModal();
         }
 
         // --- UPGRADES ---
@@ -933,23 +840,17 @@
             const upgrade = UPGRADES[upgradeId];
             if (!upgrade) return;
             const currentLevel = state.upgrades[upgradeId];
-            if (currentLevel >= upgrade.maxLevel) {
-                showToast("Max level reached!");
-                return;
-            }
+            if (currentLevel >= upgrade.maxLevel) { showToast("Max level reached!"); return; }
             const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel));
             if (state.money >= cost) {
                 state.money -= cost;
                 state.upgrades[upgradeId]++;
-                updateUI();
-                renderUpgrades();
+                updateUI(); renderUpgrades();
                 if (upgradeId === 'autoClicker') updateAutoClicker();
                 if (upgradeId === 'eggDiscount' || upgradeId === 'multiHatch') renderShop();
                 saveGame();
                 showToast(`${upgrade.name} upgraded!`);
-            } else {
-                showToast("Not enough money!");
-            }
+            } else { showToast("Not enough money!"); }
         }
 
         function renderUpgrades() {
@@ -959,31 +860,16 @@
                 const maxed = currentLevel >= upgrade.maxLevel;
                 const cost = maxed ? 0 : Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel));
                 let effectText = '';
-                if (id === 'luck') effectText = `${(Math.min(0.75 + upgrade.getEffect(currentLevel), 1) * 100).toFixed(0)}% merge success`;
+                if (id === 'luck') effectText = `${(Math.min(0.75 + upgrade.getEffect(currentLevel), 1) * 100).toFixed(0)}% chance`;
                 else if (id === 'income') effectText = `${(1 + upgrade.getEffect(currentLevel)).toFixed(1)}x income`;
-                else if (id === 'clickPower') effectText = `+$${upgrade.getEffect(currentLevel)} per click`;
-                else if (id === 'autoClicker') effectText = `${upgrade.getEffect(currentLevel)} clicks/sec`;
-                else if (id === 'criticalClicks') effectText = `${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% crit chance`;
-                else if (id === 'eggDiscount') effectText = `${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% discount`;
-                else if (id === 'petBonus') effectText = `+${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% pet income`;
-                else if (id === 'multiHatch') effectText = `Hatch ${upgrade.getEffect(currentLevel)} eggs`;
+                else if (id === 'clickPower') effectText = `+$${upgrade.getEffect(currentLevel)} click`;
+                else if (id === 'autoClicker') effectText = `${upgrade.getEffect(currentLevel)}/s`;
+                else if (id === 'criticalClicks') effectText = `${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% crit`;
+                else if (id === 'eggDiscount') effectText = `${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% off`;
+                else if (id === 'petBonus') effectText = `+${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% pet`;
+                else if (id === 'multiHatch') effectText = `Hatch ${upgrade.getEffect(currentLevel)}`;
 
-                return `
-                    <div class="bg-white rounded-xl p-4 shadow-md transition-all hover:shadow-lg ${maxed ? 'opacity-60' : ''}">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="text-3xl">${upgrade.icon}</div>
-                            <div>
-                                <div class="font-bold text-lg leading-none">${upgrade.name}</div>
-                                <div class="text-xs text-gray-500">${upgrade.description}</div>
-                            </div>
-                        </div>
-                        <div class="text-sm text-green-600 font-bold mb-3">${effectText}</div>
-                        <div class="flex items-center justify-between">
-                            <div class="text-xs text-gray-500">Lvl ${currentLevel}/${upgrade.maxLevel}</div>
-                            ${maxed ? `<div class="text-green-600 font-bold text-sm">MAX</div>` : `<button onclick="buyUpgrade('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold py-1.5 px-3 rounded-lg transition active:scale-95">$${formatCompact(cost)}</button>`}
-                        </div>
-                    </div>
-                `;
+                return `<div class="bg-white/90 backdrop-blur rounded-xl p-3 shadow-md transition-all hover:shadow-lg ${maxed ? 'opacity-60' : ''} text-gray-800"><div class="flex items-center gap-3 mb-1"><div class="text-2xl">${upgrade.icon}</div><div><div class="font-bold text-md leading-none">${upgrade.name}</div><div class="text-[10px] text-gray-500">${upgrade.description}</div></div></div><div class="text-xs text-green-600 font-bold mb-2">${effectText}</div><div class="flex items-center justify-between"><div class="text-xs text-gray-500">Lvl ${currentLevel}/${upgrade.maxLevel}</div>${maxed ? `<div class="text-green-600 font-bold text-xs">MAX</div>` : `<button onclick="buyUpgrade('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-3 rounded-lg transition active:scale-95">$${formatCompact(cost)}</button>`}</div></div>`;
             }).join('');
         }
 
@@ -996,70 +882,61 @@
         // --- INDEX ---
         function openIndexModal() {
             const modal = document.getElementById('index-modal');
-            const grid = document.getElementById('index-grid');
-            const progressText = document.getElementById('index-progress-text');
-            const rewardBtn = document.getElementById('claim-reward-btn');
             modal.classList.remove('hidden');
-
             const allPets = Object.values(PETS).filter(p => !p.hidden);
             const collectedCount = allPets.filter(p => state.collection.includes(p.id)).length;
-            const totalCount = allPets.length;
-            const isComplete = collectedCount >= totalCount;
-            const rewardClaimed = state.collection.includes('reward_griffin');
-
-            progressText.innerText = `Collected: ${collectedCount}/${totalCount}`;
-            grid.innerHTML = allPets.map(pet => {
+            document.getElementById('index-progress-text').innerText = `Collected: ${collectedCount}/${allPets.length}`;
+            document.getElementById('index-grid').innerHTML = allPets.map(pet => {
                 const isCollected = state.collection.includes(pet.id);
+                return `<div class="aspect-square rounded-xl flex flex-col items-center justify-center p-2 border-2 ${isCollected ? `bg-white ${getRarityBorder(pet.rarity)}` : 'bg-gray-200 border-gray-300'}"><div class="text-4xl mb-2 ${isCollected ? '' : 'pet-silhouette'}">${pet.icon}</div><div class="text-xs font-bold text-center w-full truncate ${isCollected ? 'text-gray-800' : 'pet-locked-text'}">${pet.name}</div></div>`;
+            }).join('');
+            
+            const btn = document.getElementById('claim-reward-btn');
+            if (state.collection.includes('reward_griffin')) {
+                btn.innerHTML = `<span>Claimed</span> <i class="fas fa-check"></i>`; btn.className = "bg-green-100 text-green-600 font-bold py-3 px-8 rounded-full cursor-default flex items-center gap-2 border-2 border-green-500"; btn.disabled = true;
+            } else if (collectedCount >= allPets.length) {
+                btn.innerHTML = `<span>Claim Reward</span> <i class="fas fa-gift"></i>`; btn.className = "bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition shadow-lg flex items-center gap-2 animate-bounce cursor-pointer"; btn.disabled = false; btn.onclick = claimIndexReward;
+            } else {
+                btn.innerHTML = `<span>Locked</span> <i class="fas fa-lock"></i>`; btn.className = "bg-gray-300 text-gray-500 font-bold py-3 px-8 rounded-full transition cursor-not-allowed flex items-center gap-2"; btn.disabled = true;
+            }
+        }
+        function closeIndexModal() { document.getElementById('index-modal').classList.add('hidden'); }
+        function claimIndexReward() { if(state.collection.includes('reward_griffin')) return; state.inventory.push('reward_griffin'); state.collection.push('reward_griffin'); renderInventory(); updateUI(); saveGame(); openIndexModal(); showToast("Guardian Griffin Acquired!"); }
+        function getRarityBorder(rarity) { return {'Common':'border-gray-400','Uncommon':'border-green-400','Rare':'border-blue-500','Epic':'border-purple-500','Legendary':'border-yellow-500','Mythical':'border-red-500','Godly':'border-gray-800','Transcendent':'border-yellow-300'}[rarity] || 'border-gray-200'; }
+
+        // --- UI ---
+        function renderShop() {
+            // Render World Navigation
+            const navContainer = document.getElementById('world-nav-container');
+            const currentWorld = WORLDS.find(w => w.id === state.currentWorld) || WORLDS[0];
+            document.getElementById('world-status').innerText = currentWorld.name;
+            
+            // Set Body Background
+            document.getElementById('game-body').className = `h-screen flex flex-col overflow-hidden text-gray-800 ${currentWorld.bgClass}`;
+
+            navContainer.innerHTML = WORLDS.map(w => {
+                const locked = state.rebirth.level < w.minRebirth;
+                const active = state.currentWorld === w.id;
                 return `
-                    <div class="aspect-square rounded-xl flex flex-col items-center justify-center p-2 border-2 ${isCollected ? `bg-white ${getRarityBorder(pet.rarity)}` : 'bg-gray-200 border-gray-300'}">
-                        <div class="text-4xl mb-2 ${isCollected ? '' : 'pet-silhouette'}">${pet.icon}</div>
-                        <div class="text-xs font-bold text-center w-full truncate ${isCollected ? 'text-gray-800' : 'pet-locked-text'}">${pet.name}</div>
-                    </div>
+                    <button onclick="switchWorld('${w.id}')" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold border transition ${active ? 'bg-blue-600 text-white border-blue-600' : (locked ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50')}">
+                        ${locked ? '<i class="fas fa-lock mr-1"></i>' : ''}${w.name}
+                    </button>
                 `;
             }).join('');
 
-            if (rewardClaimed) {
-                rewardBtn.innerHTML = `<span>Claimed</span> <i class="fas fa-check"></i>`;
-                rewardBtn.className = "bg-green-100 text-green-600 font-bold py-3 px-8 rounded-full cursor-default flex items-center gap-2 border-2 border-green-500";
-                rewardBtn.onclick = null;
-                rewardBtn.disabled = true;
-            } else if (isComplete) {
-                rewardBtn.innerHTML = `<span>Claim Reward</span> <i class="fas fa-gift"></i>`;
-                rewardBtn.className = "bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition shadow-lg flex items-center gap-2 animate-bounce cursor-pointer";
-                rewardBtn.onclick = claimIndexReward;
-                rewardBtn.disabled = false;
-            } else {
-                rewardBtn.innerHTML = `<span>Locked</span> <i class="fas fa-lock"></i>`;
-                rewardBtn.className = "bg-gray-300 text-gray-500 font-bold py-3 px-8 rounded-full transition cursor-not-allowed flex items-center gap-2";
-                rewardBtn.onclick = null;
-                rewardBtn.disabled = true;
-            }
-        }
-
-        function closeIndexModal() { document.getElementById('index-modal').classList.add('hidden'); }
-        function claimIndexReward() {
-            if(state.collection.includes('reward_griffin')) return;
-            state.inventory.push('reward_griffin');
-            state.collection.push('reward_griffin');
-            renderInventory(); updateUI(); saveGame(); openIndexModal(); showToast("Guardian Griffin Acquired!");
-        }
-        function getRarityBorder(rarity) {
-            const map = { 'Common':'border-gray-400', 'Uncommon':'border-green-400', 'Rare':'border-blue-500', 'Epic':'border-purple-500', 'Legendary':'border-yellow-500', 'Mythical':'border-red-500', 'Godly':'border-gray-800', 'Transcendent':'border-yellow-300' };
-            return map[rarity] || 'border-gray-200';
-        }
-
-        // --- MISC UI ---
-        function renderShop() {
+            // Filter Eggs by World
+            const eggsToRender = EGGS.filter(egg => currentWorld.eggIds.includes(egg.id));
             const container = document.getElementById('egg-shop-container');
             const discount = UPGRADES.eggDiscount.getEffect(state.upgrades.eggDiscount);
             const hatchCount = UPGRADES.multiHatch.getEffect(state.upgrades.multiHatch);
-            container.innerHTML = EGGS.map(egg => {
+
+            container.innerHTML = eggsToRender.map(egg => {
                 const discountedCost = Math.floor(egg.cost * (1 - discount));
                 const totalCost = discountedCost * hatchCount;
                 const hasDiscount = discount > 0;
                 const hasMultiHatch = hatchCount > 1;
                 return `
-                    <div class="rounded-xl p-4 shadow-md transition-all hover:-translate-y-1 hover:shadow-lg flex flex-col items-center ${egg.colorClass}">
+                    <div class="rounded-xl p-4 shadow-md bg-white/90 backdrop-blur transition-all hover:-translate-y-1 hover:shadow-lg flex flex-col items-center ${egg.colorClass} text-gray-800">
                         <div class="cursor-pointer transition-transform hover:scale-110 active:scale-95 text-center w-full" onclick="showEggInfo('${egg.id}')" title="Click for Drop Rates">
                             <div class="text-4xl mb-2">${egg.icon}</div>
                             <div class="font-bold text-lg leading-tight mb-1 flex items-center justify-center gap-1">${egg.name} <i class="fas fa-info-circle text-gray-400 text-xs"></i></div>
@@ -1078,67 +955,45 @@
             return "Contains: " + sorted.slice(0, 2).map(([id]) => PETS[id].icon).join(' ');
         }
 
-        function formatCompact(num) {
-            return Intl.NumberFormat('en-US', { notation: "compact", maximumFractionDigits: 1 }).format(num);
-        }
+        function formatCompact(num) { return Intl.NumberFormat('en-US', { notation: "compact", maximumFractionDigits: 1 }).format(num); }
 
         function renderInventory() {
             const container = document.getElementById('inventory-container');
-            const emptyMsg = document.getElementById('empty-inventory');
-            if (state.inventory.length === 0) {
-                if(emptyMsg) emptyMsg.style.display = 'block';
-                container.innerHTML = '';
-                return;
-            } else {
-                if(emptyMsg) emptyMsg.style.display = 'none';
-            }
             const list = [...state.inventory].reverse();
             const petCounts = {};
             state.inventory.forEach(id => { petCounts[id] = (petCounts[id] || 0) + 1; });
-            container.innerHTML = list.map(petId => {
-                const pet = PETS[petId];
-                if (!pet) return '';
-                return `
-                    <div class="rarity-${pet.rarity.toLowerCase()} rounded-lg p-2 flex flex-col items-center justify-center relative shadow-sm aspect-square transition hover:scale-105 select-none pet-card"
-                         onmouseenter="showPetTooltip('${petId}', ${petCounts[petId] || 1}, event)" onmouseleave="hidePetTooltip()">
-                        <div class="text-3xl mb-1">${pet.icon}</div>
-                        <div class="text-xs font-bold text-gray-700 truncate w-full text-center">${pet.name}</div>
-                        <div class="text-[10px] text-gray-500 font-mono bg-white/50 px-1 rounded">+$${formatCompact(pet.rate)}/s</div>
-                    </div>
-                `;
-            }).join('');
+            
+            if (list.length === 0) {
+                document.getElementById('empty-inventory').style.display = 'block';
+                container.innerHTML = '';
+            } else {
+                document.getElementById('empty-inventory').style.display = 'none';
+                container.innerHTML = list.map(petId => {
+                    const pet = PETS[petId];
+                    if (!pet) return '';
+                    return `<div class="rarity-${pet.rarity.toLowerCase()} rounded-lg p-2 flex flex-col items-center justify-center relative shadow-sm aspect-square transition hover:scale-105 select-none pet-card bg-white/90 backdrop-blur" onmouseenter="showPetTooltip('${petId}', ${petCounts[petId] || 1}, event)" onmouseleave="hidePetTooltip()"><div class="text-3xl mb-1">${pet.icon}</div><div class="text-xs font-bold text-gray-700 truncate w-full text-center">${pet.name}</div><div class="text-[10px] text-gray-500 font-mono bg-white/50 px-1 rounded">+$${formatCompact(pet.rate)}/s</div></div>`;
+                }).join('');
+            }
             document.getElementById('pet-count').innerText = state.inventory.length;
         }
 
         function updateUI() {
             document.getElementById('money-display').innerText = formatCompact(Math.floor(state.money));
             document.getElementById('income-display').innerText = formatCompact(calculateIncome());
-            
-            // Rebirth indicator
             const rDisplay = document.getElementById('rebirth-multiplier-display');
-            if(state.rebirth && state.rebirth.multiplier > 1) {
-                rDisplay.innerText = `Rebirth Multiplier: x${state.rebirth.multiplier}`;
-                rDisplay.classList.remove('hidden');
-            } else {
-                rDisplay.classList.add('hidden');
-            }
+            if(state.rebirth && state.rebirth.multiplier > 1) { rDisplay.innerText = `Rebirth Multiplier: x${state.rebirth.multiplier}`; rDisplay.classList.remove('hidden'); } 
+            else { rDisplay.classList.add('hidden'); }
         }
 
         function createFloatingText(x, y, text) {
             const el = document.createElement('div');
-            el.className = 'float-text';
-            el.style.left = x + 'px';
-            el.style.top = y + 'px';
-            el.innerText = text;
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 1000);
+            el.className = 'float-text'; el.style.left = x + 'px'; el.style.top = y + 'px'; el.innerText = text;
+            document.body.appendChild(el); setTimeout(() => el.remove(), 1000);
         }
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.style.opacity = '1';
-            setTimeout(() => toast.style.opacity = '0', 3000);
+            toast.innerText = msg; toast.style.opacity = '1'; setTimeout(() => toast.style.opacity = '0', 3000);
         }
 
         function showEggInfo(eggId) {
@@ -1164,23 +1019,19 @@
             const bonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
             const rMult = state.rebirth.multiplier || 1;
             const effectiveRate = Math.floor(pet.rate * mult * bonus * rMult);
-
             content.innerHTML = `<div class="font-bold text-lg mb-2 flex items-center gap-2"><span class="text-2xl">${pet.icon}</span><span>${pet.name}</span></div><div class="space-y-1 text-xs"><div><strong>Rarity:</strong> <span class="capitalize">${pet.rarity}</span></div><div><strong>Owned:</strong> ${count}</div><div><strong>Base Income:</strong> $${formatCompact(pet.rate)}/s</div><div><strong>Effective:</strong> $${formatCompact(effectiveRate)}/s</div>${pet.next ? `<div><strong>Next:</strong> ${PETS[pet.next].icon} ${PETS[pet.next].name}</div>` : '<div><strong>Max Tier</strong></div>'}</div>`;
             const rect = event.target.getBoundingClientRect();
-            tooltip.style.left = (rect.left + rect.width / 2) + 'px';
-            tooltip.style.top = (rect.top - 10) + 'px';
-            tooltip.style.transform = 'translate(-50%, -100%)';
-            tooltip.style.opacity = '1';
+            tooltip.style.left = (rect.left + rect.width / 2) + 'px'; tooltip.style.top = (rect.top - 10) + 'px'; tooltip.style.transform = 'translate(-50%, -100%)'; tooltip.style.opacity = '1';
         }
         function hidePetTooltip() { document.getElementById('pet-tooltip').style.opacity = '0'; }
 
-        // --- SAVE/LOAD ---
+        // --- RESET & SAVE ---
         function openResetModal() { document.getElementById('reset-modal').classList.remove('hidden'); }
         function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); }
         function confirmReset() {
             localStorage.removeItem('gibchick_save');
-            state = { money: 0, inventory: [], collection: [], upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 }, rebirth: { level: 0, multiplier: 1 }, achievements: [], stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 }, lastSave: Date.now() };
-            renderInventory(); renderUpgrades(); renderAchievements(); updateUI(); updateAutoClicker(); closeResetModal(); showToast("Account Reset!");
+            state = { money: 0, inventory: [], collection: [], upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0 }, rebirth: { level: 0, multiplier: 1 }, achievements: [], currentWorld: 'home', stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0 }, lastSave: Date.now() };
+            renderInventory(); renderUpgrades(); renderShop(); renderAchievements(); updateUI(); updateAutoClicker(); closeResetModal(); showToast("Account Reset!");
         }
         function saveGame() { try { localStorage.setItem('gibchick_save', JSON.stringify(state)); } catch (e) { console.warn(e); } }
         function loadGame() {
@@ -1195,6 +1046,7 @@
                     if(parsed.rebirth) state.rebirth = parsed.rebirth; else state.rebirth = { level: 0, multiplier: 1 };
                     if(parsed.achievements) state.achievements = parsed.achievements;
                     if(parsed.stats) state.stats = { ...state.stats, ...parsed.stats };
+                    if(parsed.currentWorld) state.currentWorld = parsed.currentWorld; else state.currentWorld = 'home';
                 } catch (e) { console.error("Save corrupted"); }
             } else { state.money = 0; state.collection = []; }
         }
