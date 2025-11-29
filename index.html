@@ -63,7 +63,12 @@
         .rarity-special { background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3); background-size: 400% 400%; border: 3px solid white; box-shadow: 0 0 20px #ffffff; color: white; text-shadow: 1px 1px 2px black; animation: rainbow 6s ease infinite; }
 
         /* Mutation Badges */
-        .mutation-badge { position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; border-radius: 50%; display: flex; items-center; justify-content: center; font-size: 12px; border: 1px solid white; z-index: 10; }
+        /* REMOVED absolute positioning from the badge itself so they stack in flex containers */
+        .mutation-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid white; box-shadow: 0 0 2px rgba(0,0,0,0.5); flex-shrink: 0; }
+        
+        /* Container for badges on cards */
+        .mutation-container { position: absolute; top: 4px; right: 4px; display: flex; gap: 2px; z-index: 10; flex-wrap: wrap; justify-content: flex-end; max-width: 60px; }
+
         .mut-gold { background: #ffd700; color: #b45309; box-shadow: 0 0 5px #ffd700; }
         .mut-rainbow { background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3); color: white; }
         .mut-darkmatter { background: black; color: #00ffcc; border-color: #00ffcc; }
@@ -1307,7 +1312,7 @@
                             <div class="text-3xl">${petDef.icon}</div>
                             <div class="text-[10px] font-bold text-center truncate w-full text-gray-800">${petDef.name}</div>
                             <div class="text-[9px] text-gray-500">${timeIn}s in</div>
-                            <div class="flex gap-1 flex-wrap justify-center">${renderMutationIcons(p.mutations)}</div>
+                            <div class="flex gap-1 flex-wrap justify-center mt-1">${renderMutationIcons(p.mutations)}</div>
                             <div class="absolute top-1 right-1 text-xs text-red-500"><i class="fas fa-sign-out-alt"></i></div>
                         </div>
                     `;
@@ -1321,9 +1326,9 @@
                 const petDef = PETS[p.id];
                 return `
                     <div class="flex-shrink-0 w-16 h-16 bg-white border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-blue-50 relative text-gray-800" onclick="addToCosmos(${p.uid})">
+                        <div class="mutation-container" style="top:2px; right:2px; gap:1px;">${renderMutationIcons(p.mutations)}</div>
                         <div class="text-2xl">${petDef.icon}</div>
                         <div class="text-[9px] truncate w-full text-center">${petDef.name}</div>
-                         <div class="flex gap-0.5 absolute bottom-1">${renderMutationIcons(p.mutations)}</div>
                     </div>
                 `;
             }).join('');
@@ -1334,6 +1339,10 @@
             const idx = state.inventory.findIndex(p => p.uid === uid);
             if (idx === -1) return;
             const pet = state.inventory.splice(idx, 1)[0];
+            
+            // Initializing mutations array if it doesn't exist
+            if (!pet.mutations) pet.mutations = [];
+            
             pet.enterTime = Date.now();
             for(let i=0; i<8; i++) {
                 if(!state.cosmosSlots[i]) {
@@ -1357,6 +1366,10 @@
             let changed = false;
             state.cosmosSlots.forEach((p, idx) => {
                 if (!p) return;
+                
+                // Initialize if missing
+                if (!p.mutations) p.mutations = [];
+
                 if (Math.random() < 0.1) {
                     const timeInSeconds = (Date.now() - p.enterTime) / 1000;
                     const destroyChance = 0.20 + (timeInSeconds / 1000); 
@@ -1366,32 +1379,41 @@
                         showToast(`${PETS[p.id].name} was destroyed by the Cosmos!`);
                         changed = true;
                     } else {
-                        const roll = Math.random();
-                        let mutation = null;
-                        if (roll < 0.5) mutation = 'gold';
-                        else if (roll < 0.6) mutation = 'rainbow';
-                        else if (roll < 0.7) mutation = 'darkmatter';
-                        else if (roll < 0.75) mutation = 'radioactive';
-                        else if (roll < 0.79) mutation = 'chaos';
-                        else if (roll < 0.8) mutation = 'revival';
-                        
-                        if (mutation && (!p.mutations || !p.mutations.includes(mutation) || mutation === 'chaos')) {
-                            if (!p.mutations) p.mutations = [];
-                            if (mutation === 'chaos' || !p.mutations.includes(mutation)) {
-                                p.mutations.push(mutation);
-                                showToast(`${PETS[p.id].name} mutated: ${mutation.toUpperCase()}!`);
-                                changed = true;
-                                if (mutation === 'radioactive' && !state.stats.radioactiveDiscovery) {
-                                    state.stats.radioactiveDiscovery = true;
-                                    showToast("New World Discovered: Radioactive Wasteland!");
-                                    renderShop();
+                        // Only try to mutate if we have less than 3 mutations
+                        if (p.mutations.length < 3) {
+                            const roll = Math.random();
+                            let mutation = null;
+                            if (roll < 0.5) mutation = 'gold';
+                            else if (roll < 0.6) mutation = 'rainbow';
+                            else if (roll < 0.7) mutation = 'darkmatter';
+                            else if (roll < 0.75) mutation = 'radioactive';
+                            else if (roll < 0.79) mutation = 'chaos';
+                            else if (roll < 0.8) mutation = 'revival';
+                            
+                            // Apply mutation if selected and (not owned OR is chaos/stackable)
+                            if (mutation) {
+                                // Logic: Chaos stacks, others unique
+                                if (mutation === 'chaos' || !p.mutations.includes(mutation)) {
+                                    p.mutations.push(mutation);
+                                    showToast(`${PETS[p.id].name} mutated: ${mutation.toUpperCase()}!`);
+                                    changed = true;
+                                    
+                                    if (mutation === 'radioactive' && !state.stats.radioactiveDiscovery) {
+                                        state.stats.radioactiveDiscovery = true;
+                                        showToast("New World Discovered: Radioactive Wasteland!");
+                                        renderShop();
+                                    }
                                 }
                             }
                         }
                     }
                 }
             });
-            if (changed && !document.getElementById('kitchen-modal').classList.contains('hidden')) renderCosmos();
+            
+            // Always render if modal is open to update timers, regardless of mutations
+            if (!document.getElementById('kitchen-modal').classList.contains('hidden')) {
+                renderCosmos();
+            }
         }
 
         function renderMutationIcons(mutations) {
@@ -2051,12 +2073,12 @@
         function buyUpgrade(upgradeId) {
             const upgrade = UPGRADES[upgradeId];
             if (!upgrade) return;
-            const currentLevel = state.upgrades[upgradeId];
+            const currentLevel = state.upgrades[upgradeId] || 0;
             if (currentLevel >= upgrade.maxLevel) { showToast("Max level reached!"); return; }
             const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel));
             if (state.money >= cost) {
                 state.money -= cost;
-                state.upgrades[upgradeId]++;
+                state.upgrades[upgradeId] = currentLevel + 1;
                 updateUI(); renderUpgrades();
                 if (upgradeId === 'autoClicker') updateAutoClicker();
                 if (upgradeId === 'eggDiscount' || upgradeId === 'multiHatch') renderShop();
@@ -2068,7 +2090,7 @@
         function renderUpgrades() {
             const container = document.getElementById('upgrades-container');
             container.innerHTML = Object.entries(UPGRADES).map(([id, upgrade]) => {
-                const currentLevel = state.upgrades[id];
+                const currentLevel = state.upgrades[id] || 0;
                 const maxed = currentLevel >= upgrade.maxLevel;
                 const cost = maxed ? 0 : Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel));
                 
@@ -2085,7 +2107,7 @@
 
         function updateAutoClicker() {
             if (autoClickerInterval) { clearInterval(autoClickerInterval); autoClickerInterval = null; }
-            const clicksPerSecond = UPGRADES.autoClicker.getEffect(state.upgrades.autoClicker);
+            const clicksPerSecond = UPGRADES.autoClicker.getEffect(state.upgrades.autoClicker || 0);
             if (clicksPerSecond > 0) autoClickerInterval = setInterval(() => manualClick(null, true), 1000 / clicksPerSecond);
         }
 
@@ -2120,7 +2142,7 @@
             }).join('');
 
             const eggsToRender = EGGS.filter(egg => currentWorld.eggIds.includes(egg.id));
-            const discount = UPGRADES.eggDiscount.getEffect(state.upgrades.eggDiscount);
+            const discount = UPGRADES.eggDiscount.getEffect(state.upgrades.eggDiscount || 0);
             const hatchCount = state.settings.hatchAmount || 1;
             
             document.getElementById('egg-shop-container').innerHTML = eggsToRender.map(egg => {
@@ -2134,14 +2156,12 @@
             let list = [...state.inventory];
             const mode = state.settings.sortMode || 'newest';
             
-            // Sorting logic... (keeping simple for brevity, same as before)
             if (mode === 'newest') list.reverse();
 
             if(list.length === 0) {
                  container.innerHTML = ''; document.getElementById('empty-inventory').style.display = 'block';
             } else {
                 document.getElementById('empty-inventory').style.display = 'none';
-                // Count pets for tooltip info
                 const petCounts = {};
                 state.inventory.forEach(pet => {
                     petCounts[pet.id] = (petCounts[pet.id] || 0) + 1;
@@ -2149,13 +2169,21 @@
 
                 container.innerHTML = list.map(p => {
                     const pet = PETS[p.id];
-                    let base = pet.rate; // Simplified display rate
+                    let base = pet.rate;
+                    
+                    // Logic to display mutations in top right
+                    const mutationsHTML = p.mutations && p.mutations.length > 0 
+                        ? `<div class="mutation-container">${renderMutationIcons(p.mutations)}</div>` 
+                        : '';
+
                     if(p.mutations && p.mutations.includes('gold')) base *= 2;
                     const count = petCounts[p.id] || 1;
+                    
                     return `<div class="rarity-${pet.rarity.toLowerCase()} rounded-lg p-2 flex flex-col items-center justify-center relative shadow-sm aspect-square transition hover:scale-105 select-none pet-card bg-white/90 backdrop-blur text-gray-800"
                          onmouseenter="showPetTooltip('${p.id}', ${count}, event)"
                          onmouseleave="hidePetTooltip()"
                          onclick="selectPetForMerge('${p.id}')">
+                        ${mutationsHTML}
                         <div class="text-3xl mb-1">${pet.icon}</div>
                         <div class="text-xs font-bold truncate w-full text-center">${pet.name}</div>
                         <div class="text-[10px] text-gray-500">+$${formatCompact(base)}/s</div>
@@ -2185,7 +2213,35 @@
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    state = { ...state, ...parsed };
+                    
+                    // Default state definition for robustness
+                    const defaultState = {
+                        money: 0,
+                        inventory: [],
+                        collection: [],
+                        cosmosSlots: [],
+                        upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0, offlineProgress: 0, prestigeBonus: 0, goldenEggs: 0, petEvolution: 0, luckBoost: 0 },
+                        rebirth: { level: 0, multiplier: 1 },
+                        achievements: [],
+                        trust: { level: 1, experience: 0, questsCompleted: [] },
+                        dailyRewards: { lastClaim: 0, streak: 0, claimedDays: [] },
+                        playTime: { totalSeconds: 0, lastUpdate: Date.now(), rewards: [] },
+                        currentWorld: 'home',
+                        currentGalaxy: 'origin',
+                        settings: { hatchAmount: 1, sortMode: 'rarity_desc' },
+                        stats: { totalClicks: 0, totalEggs: 0, totalMerges: 0, totalMoney: 0, radioactiveDiscovery: false },
+                        lastSave: Date.now()
+                    };
+
+                    // Deep merge objects that might have new keys
+                    state = { ...defaultState, ...parsed };
+                    
+                    // Specifically merge nested objects that change frequently
+                    state.upgrades = { ...defaultState.upgrades, ...(parsed.upgrades || {}) };
+                    state.stats = { ...defaultState.stats, ...(parsed.stats || {}) };
+                    state.trust = { ...defaultState.trust, ...(parsed.trust || {}) };
+                    state.playTime = { ...defaultState.playTime, ...(parsed.playTime || {}) };
+                    
                     if (state.inventory.length > 0 && typeof state.inventory[0] === 'string') {
                          state.inventory = state.inventory.map((id, i) => ({ id: id, uid: Date.now() + i, mutations: [] }));
                     }
