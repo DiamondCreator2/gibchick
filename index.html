@@ -396,7 +396,13 @@
             { id: 'astral', name: 'Astral Sector', icon: '🪐', minRebirth: 5, worlds: ['space', 'divine', 'cyber', 'volcano'] },
             { id: 'mystic', name: 'Mystic Reach', icon: '✨', minRebirth: 11, worlds: ['candy', 'atlantis', 'shadow', 'celestial'] },
             { id: 'chickverse', name: 'Chickverse', icon: '🐣', minRebirth: 20, worlds: ['gold', 'rainbow', 'mecha', 'darkmatter'] },
-            { id: 'apocalypse', name: 'Apocalypse', icon: '☢️', minRebirth: 2, worlds: ['radioactive'] }
+            { id: 'apocalypse', name: 'Apocalypse', icon: '☢️', minRebirth: 2, worlds: ['radioactive'] },
+            { id: 'nebulon', name: 'Nebulon Cluster', icon: '🌠', minRebirth: 30, worlds: ['nebula', 'cosmic', 'quantum', 'singularity'] },
+            { id: 'chronoverse', name: 'Chronoverse', icon: '⏰', minRebirth: 40, worlds: ['temporal', 'ether', 'infinity', 'paradox'] },
+            { id: 'elementia', name: 'Elementia', icon: '🔥', minRebirth: 50, worlds: ['elemental', 'volcano', 'eclipse', 'dreamscape'] },
+            { id: 'mechanica', name: 'Mechanica', icon: '⚙️', minRebirth: 60, worlds: ['machinery', 'cyber', 'steampunk', 'digital'] },
+            { id: 'celebrantia', name: 'Celebrantia', icon: '🎉', minRebirth: 70, worlds: ['celebration', 'candy', 'spectrum', 'festival'] },
+            { id: 'gemworld', name: 'Gemworld', icon: '💎', minRebirth: 80, worlds: ['gemstone', 'treasury', 'divine', 'ultimate_cosmos'] }
         ];
 
         const WORLDS = [
@@ -417,7 +423,33 @@
             { id: 'rainbow', name: 'Prismatic Fields', minRebirth: 25, bgClass: 'bg-world-rainbow', eggIds: ['spectrum'] },
             { id: 'mecha', name: 'Mecha Base', minRebirth: 30, bgClass: 'bg-world-mecha', eggIds: ['machinery'] },
             { id: 'darkmatter', name: 'Void Nexus', minRebirth: 35, bgClass: 'bg-world-darkmatter', eggIds: ['singularity'] },
-            { id: 'radioactive', name: 'Radioactive Wasteland', minRebirth: 0, bgClass: 'bg-world-radioactive', eggIds: ['toxic'], hidden: true }
+            { id: 'radioactive', name: 'Radioactive Wasteland', minRebirth: 0, bgClass: 'bg-world-radioactive', eggIds: ['toxic'], hidden: true },
+
+            // New Galaxy Worlds
+            { id: 'nebula', name: 'Nebula Fields', minRebirth: 30, bgClass: 'bg-world-nebula', eggIds: ['celestial', 'legendary'] },
+            { id: 'cosmic', name: 'Cosmic Abyss', minRebirth: 32, bgClass: 'bg-world-cosmic', eggIds: ['ultimate', 'ultimate_cosmos'] },
+            { id: 'quantum', name: 'Quantum Realm', minRebirth: 34, bgClass: 'bg-world-quantum', eggIds: ['quantum'] },
+            { id: 'singularity', name: 'Singularity Core', minRebirth: 36, bgClass: 'bg-world-singularity', eggIds: ['singularity'] },
+            { id: 'temporal', name: 'Time Streams', minRebirth: 40, bgClass: 'bg-world-temporal', eggIds: ['temporal'] },
+            { id: 'ether', name: 'Ether Planes', minRebirth: 42, bgClass: 'bg-world-ether', eggIds: ['ether'] },
+            { id: 'infinity', name: 'Infinite Loop', minRebirth: 44, bgClass: 'bg-world-infinity', eggIds: ['infinity'] },
+            { id: 'paradox', name: 'Paradox Zone', minRebirth: 46, bgClass: 'bg-world-paradox', eggIds: ['paradox'] },
+            { id: 'elemental', name: 'Elemental Chaos', minRebirth: 50, bgClass: 'bg-world-elemental', eggIds: ['elemental'] },
+            { id: 'volcano', name: 'Volcanic Core', minRebirth: 52, bgClass: 'bg-world-volcano', eggIds: ['volcano'] },
+            { id: 'eclipse', name: 'Eclipse Veil', minRebirth: 54, bgClass: 'bg-world-eclipse', eggIds: ['eclipse'] },
+            { id: 'dreamscape', name: 'Dreamscape', minRebirth: 56, bgClass: 'bg-world-dreamscape', eggIds: ['dreamscape'] },
+            { id: 'machinery', name: 'Mecha Base', minRebirth: 60, bgClass: 'bg-world-machinery', eggIds: ['machinery'] },
+            { id: 'cyber', name: 'Cyber City', minRebirth: 62, bgClass: 'bg-world-cyber', eggIds: ['cyber'] },
+            { id: 'steampunk', name: 'Steamworks', minRebirth: 64, bgClass: 'bg-world-steampunk', eggIds: ['steampunk'] },
+            { id: 'digital', name: 'Digital Matrix', minRebirth: 66, bgClass: 'bg-world-digital', eggIds: ['digital'] },
+            { id: 'celebration', name: 'Festival Grounds', minRebirth: 70, bgClass: 'bg-world-celebration', eggIds: ['celebration'] },
+            { id: 'candy', name: 'Candy Land', minRebirth: 72, bgClass: 'bg-world-candy', eggIds: ['sugar'] },
+            { id: 'spectrum', name: 'Prismatic Fields', minRebirth: 74, bgClass: 'bg-world-spectrum', eggIds: ['spectrum'] },
+            { id: 'festival', name: 'Eternal Festival', minRebirth: 76, bgClass: 'bg-world-festival', eggIds: ['celebration'] },
+            { id: 'gemstone', name: 'Crystal Caverns', minRebirth: 80, bgClass: 'bg-world-gemstone', eggIds: ['gemstone'] },
+            { id: 'treasury', name: 'Gilded Coop', minRebirth: 82, bgClass: 'bg-world-treasury', eggIds: ['treasury'] },
+            { id: 'divine', name: 'Divine Plane', minRebirth: 84, bgClass: 'bg-world-divine', eggIds: ['divine'] },
+            { id: 'ultimate_cosmos', name: 'Ultimate Cosmos', minRebirth: 86, bgClass: 'bg-world-ultimate', eggIds: ['ultimate_cosmos'] }
         ];
 
         const PETS = {
@@ -585,7 +617,54 @@
             'clock': { id: 'clock', name: 'Clock', icon: '🕐', rate: 3700000, rarity: 'Legendary', next: 'chronos' },
             'portal': { id: 'portal', name: 'Portal', icon: '🌀', rate: 5600000, rarity: 'Legendary', next: 'void' },
             'dimension': { id: 'dimension', name: 'Dimension', icon: '🌌', rate: 8500000, rarity: 'Mythical', next: 'cosmos' },
-            'eternity': { id: 'eternity', name: 'Eternity', icon: '♾️', rate: 13500000, rarity: 'Transcendent', next: null }
+            'eternity': { id: 'eternity', name: 'Eternity', icon: '♾️', rate: 13500000, rarity: 'Transcendent', next: 'void_lord' },
+
+            // Ultra Rare/Transcendent Pets
+            'void_lord': { id: 'void_lord', name: 'Void Lord', icon: '🌑', rate: 50000000, rarity: 'Transcendent', next: 'cosmic_titan' },
+            'cosmic_titan': { id: 'cosmic_titan', name: 'Cosmic Titan', icon: '💫', rate: 200000000, rarity: 'Transcendent', next: 'reality_weaver' },
+            'reality_weaver': { id: 'reality_weaver', name: 'Reality Weaver', icon: '🌀', rate: 1000000000, rarity: 'Transcendent', next: null },
+
+            // Digital/Cyber Pets
+            'pixel': { id: 'pixel', name: 'Pixel', icon: '🔳', rate: 25000000, rarity: 'Epic', next: 'byte' },
+            'byte': { id: 'byte', name: 'Byte', icon: '💾', rate: 75000000, rarity: 'Legendary', next: 'data' },
+            'data': { id: 'data', name: 'Data Stream', icon: '🌊', rate: 250000000, rarity: 'Mythical', next: 'algorithm' },
+            'algorithm': { id: 'algorithm', name: 'Algorithm', icon: '🧮', rate: 1000000000, rarity: 'Transcendent', next: null },
+
+            // Nature/Elemental Pets
+            'breeze': { id: 'breeze', name: 'Gentle Breeze', icon: '💨', rate: 30000000, rarity: 'Rare', next: 'storm' },
+            'storm': { id: 'storm', name: 'Thunder Storm', icon: '⛈️', rate: 90000000, rarity: 'Epic', next: 'earthquake' },
+            'earthquake': { id: 'earthquake', name: 'Earthquake', icon: '🌋', rate: 300000000, rarity: 'Legendary', next: 'volcano' },
+            'volcano': { id: 'volcano', name: 'Living Volcano', icon: '🌋', rate: 1200000000, rarity: 'Mythical', next: null },
+
+            // Time/Space Pets
+            'moment': { id: 'moment', name: 'Frozen Moment', icon: '🕰️', rate: 35000000, rarity: 'Epic', next: 'era' },
+            'era': { id: 'era', name: 'Ancient Era', icon: '📜', rate: 110000000, rarity: 'Legendary', next: 'dimension' },
+            'dimension': { id: 'dimension', name: 'Pocket Dimension', icon: '🔮', rate: 400000000, rarity: 'Mythical', next: 'multiverse' },
+            'multiverse': { id: 'multiverse', name: 'Multiverse', icon: '🌌', rate: 1500000000, rarity: 'Transcendent', next: null },
+
+            // Holiday/Event Pets
+            'firework': { id: 'firework', name: 'Firework', icon: '🎆', rate: 40000000, rarity: 'Epic', next: 'lantern' },
+            'lantern': { id: 'lantern', name: 'Festival Lantern', icon: '🏮', rate: 125000000, rarity: 'Legendary', next: 'dragon_dance' },
+            'dragon_dance': { id: 'dragon_dance', name: 'Dragon Dance', icon: '🐲', rate: 450000000, rarity: 'Mythical', next: 'festival' },
+            'festival': { id: 'festival', name: 'Eternal Festival', icon: '🎪', rate: 1800000000, rarity: 'Transcendent', next: null },
+
+            // Gem/Crystal Pets
+            'ruby': { id: 'ruby', name: 'Ruby Guardian', icon: '💎', rate: 45000000, rarity: 'Epic', next: 'sapphire' },
+            'sapphire': { id: 'sapphire', name: 'Sapphire Spirit', icon: '💎', rate: 135000000, rarity: 'Legendary', next: 'emerald' },
+            'emerald': { id: 'emerald', name: 'Emerald Essence', icon: '💎', rate: 500000000, rarity: 'Mythical', next: 'diamond' },
+            'diamond': { id: 'diamond', name: 'Diamond Core', icon: '💎', rate: 2000000000, rarity: 'Transcendent', next: null },
+
+            // Mechanical/Steam Punk Pets
+            'gear': { id: 'gear', name: 'Clockwork Gear', icon: '⚙️', rate: 50000000, rarity: 'Epic', next: 'steam' },
+            'steam': { id: 'steam', name: 'Steam Engine', icon: '🚂', rate: 150000000, rarity: 'Legendary', next: 'piston' },
+            'piston': { id: 'piston', name: 'Hydraulic Piston', icon: '🔧', rate: 600000000, rarity: 'Mythical', next: 'automaton' },
+            'automaton': { id: 'automaton', name: 'Grand Automaton', icon: '🤖', rate: 2500000000, rarity: 'Transcendent', next: null },
+
+            // Dream/Illusion Pets
+            'dream': { id: 'dream', name: 'Sweet Dream', icon: '💭', rate: 55000000, rarity: 'Epic', next: 'nightmare' },
+            'nightmare': { id: 'nightmare', name: 'Living Nightmare', icon: '👻', rate: 165000000, rarity: 'Legendary', next: 'illusion' },
+            'illusion': { id: 'illusion', name: 'Perfect Illusion', icon: '🎭', rate: 700000000, rarity: 'Mythical', next: 'phantasm' },
+            'phantasm': { id: 'phantasm', name: 'Phantasm Lord', icon: '👑', rate: 3000000000, rarity: 'Transcendent', next: null }
         };
 
         const EGGS = [
@@ -620,6 +699,18 @@
             { id: 'machinery', name: 'Mecha Egg', cost: 500000000000000, icon: '⚙️', colorClass: 'bg-gray-300 border-gray-600 text-gray-900', pool: { 'mecha_chick': 0.1, 'cyborg': 0.4, 'robot': 0.5 } },
             { id: 'singularity', name: 'Singularity Egg', cost: 1000000000000000, icon: '🌌', colorClass: 'bg-black border-white text-white', pool: { 'darkmatter_chick': 0.05, 'void': 0.4, 'cosmos': 0.55 } },
             { id: 'toxic', name: 'Toxic Egg', cost: 100000000, icon: '☢️', colorClass: 'bg-green-900 border-green-400 text-green-200', pool: { 'roach': 0.6, 'slime': 0.3, 'hazmat': 0.09, 'godzilla': 0.01 } },
+
+            // New Advanced World Eggs
+            { id: 'digital', name: 'Digital Egg', cost: 750000000000, icon: '💻', colorClass: 'bg-green-800 border-green-400 text-green-200', pool: { 'pixel': 0.5, 'byte': 0.3, 'data': 0.15, 'algorithm': 0.05 } },
+            { id: 'elemental', name: 'Elemental Egg', cost: 1500000000000, icon: '🔥', colorClass: 'bg-orange-800 border-orange-400 text-orange-200', pool: { 'breeze': 0.4, 'storm': 0.3, 'earthquake': 0.2, 'volcano': 0.1 } },
+            { id: 'temporal', name: 'Temporal Egg', cost: 3000000000000, icon: '⏰', colorClass: 'bg-indigo-700 border-indigo-400 text-indigo-200', pool: { 'moment': 0.4, 'era': 0.3, 'dimension': 0.2, 'multiverse': 0.1 } },
+            { id: 'celebration', name: 'Celebration Egg', cost: 6000000000000, icon: '🎉', colorClass: 'bg-pink-700 border-pink-400 text-pink-200', pool: { 'firework': 0.4, 'lantern': 0.3, 'dragon_dance': 0.2, 'festival': 0.1 } },
+            { id: 'gemstone', name: 'Gemstone Egg', cost: 12000000000000, icon: '💍', colorClass: 'bg-cyan-700 border-cyan-400 text-cyan-200', pool: { 'ruby': 0.35, 'sapphire': 0.3, 'emerald': 0.25, 'diamond': 0.1 } },
+            { id: 'steampunk', name: 'Steampunk Egg', cost: 25000000000000, icon: '🔩', colorClass: 'bg-amber-800 border-amber-400 text-amber-200', pool: { 'gear': 0.4, 'steam': 0.3, 'piston': 0.2, 'automaton': 0.1 } },
+            { id: 'dreamscape', name: 'Dreamscape Egg', cost: 50000000000000, icon: '🌙', colorClass: 'bg-purple-800 border-purple-400 text-purple-200', pool: { 'dream': 0.4, 'nightmare': 0.3, 'illusion': 0.2, 'phantasm': 0.1 } },
+            { id: 'quantum', name: 'Quantum Egg', cost: 100000000000000, icon: '⚛️', colorClass: 'bg-blue-900 border-blue-400 text-blue-200', pool: { 'void_lord': 0.3, 'cosmic_titan': 0.4, 'reality_weaver': 0.3 } },
+            { id: 'paradox', name: 'Paradox Egg', cost: 200000000000000, icon: '🔄', colorClass: 'bg-gray-800 border-gray-400 text-gray-200', pool: { 'eternity': 0.4, 'multiverse': 0.3, 'reality_weaver': 0.3 } },
+            { id: 'ultimate_cosmos', name: 'Ultimate Cosmos Egg', cost: 500000000000000, icon: '✨', colorClass: 'bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 border-white text-white', pool: { 'cosmic_titan': 0.3, 'reality_weaver': 0.3, 'phantasm': 0.2, 'automaton': 0.2 } },
 
             // Ocean/Sea Eggs
             { id: 'coral', name: 'Coral Egg', cost: 150000000, icon: '🪸', colorClass: 'bg-cyan-800 border-cyan-400 text-cyan-200', pool: { 'dolphin': 0.5, 'octopus': 0.3, 'seahorse': 0.15, 'jellyfish': 0.05 } },
