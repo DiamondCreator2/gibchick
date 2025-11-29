@@ -1152,6 +1152,52 @@
             renderAchievements();
         }
 
+        /* --- PET TOOLTIP SYSTEM --- */
+        function showPetTooltip(petId, count, event) {
+            const pet = PETS[petId];
+            if (!pet) return;
+
+            const tooltip = document.getElementById('pet-tooltip');
+            const content = document.getElementById('pet-tooltip-content');
+
+            // Calculate effective income (with upgrades)
+            const incomeMultiplier = 1 + UPGRADES.income.getEffect(state.upgrades.income);
+            const petBonus = 1 + UPGRADES.petBonus.getEffect(state.upgrades.petBonus);
+            const effectiveRate = Math.floor(pet.rate * incomeMultiplier * petBonus);
+
+            content.innerHTML = `
+                <div class="font-bold text-lg mb-2 flex items-center gap-2">
+                    <span class="text-2xl">${pet.icon}</span>
+                    <span>${pet.name}</span>
+                </div>
+                <div class="space-y-1 text-xs">
+                    <div><strong>Rarity:</strong> <span class="capitalize">${pet.rarity}</span></div>
+                    <div><strong>Owned:</strong> ${count}</div>
+                    <div><strong>Base Income:</strong> $${pet.rate.toLocaleString()}/s</div>
+                    <div><strong>Effective Income:</strong> $${effectiveRate.toLocaleString()}/s</div>
+                    ${pet.next ? `<div><strong>Next Tier:</strong> ${PETS[pet.next].icon} ${PETS[pet.next].name}</div>` : '<div><strong>Max Tier</strong></div>'}
+                </div>
+            `;
+
+            // Position tooltip near mouse cursor
+            const rect = event.target.getBoundingClientRect();
+            tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+            tooltip.style.top = (rect.top - 10) + 'px';
+            tooltip.style.transform = 'translate(-50%, -100%)';
+            tooltip.style.opacity = '1';
+        }
+
+        function hidePetTooltip() {
+            const tooltip = document.getElementById('pet-tooltip');
+            tooltip.style.opacity = '0';
+        }
+
+        function selectPetForMerge(petId) {
+            // For now, just show a toast. Could be expanded to merge system
+            const pet = PETS[petId];
+            showToast(`Selected ${pet.name} for potential merge!`);
+        }
+
         /* --- ACHIEVEMENTS SYSTEM --- */
         function renderAchievements() {
             const container = document.getElementById('achievements-container');
@@ -1474,11 +1520,25 @@
                  container.innerHTML = ''; document.getElementById('empty-inventory').style.display = 'block';
             } else {
                 document.getElementById('empty-inventory').style.display = 'none';
+                // Count pets for tooltip info
+                const petCounts = {};
+                state.inventory.forEach(pet => {
+                    petCounts[pet.id] = (petCounts[pet.id] || 0) + 1;
+                });
+
                 container.innerHTML = list.map(p => {
                     const pet = PETS[p.id];
                     let base = pet.rate; // Simplified display rate
                     if(p.mutations && p.mutations.includes('gold')) base *= 2;
-                    return `<div class="rarity-${pet.rarity.toLowerCase()} rounded-lg p-2 flex flex-col items-center justify-center relative shadow-sm aspect-square transition hover:scale-105 select-none pet-card bg-white/90 backdrop-blur text-gray-800" onclick="addToCosmos(${p.uid})"><div class="text-3xl mb-1">${pet.icon}</div><div class="text-xs font-bold truncate w-full text-center">${pet.name}</div><div class="text-[10px] text-gray-500">+$${formatCompact(base)}/s</div></div>`;
+                    const count = petCounts[p.id] || 1;
+                    return `<div class="rarity-${pet.rarity.toLowerCase()} rounded-lg p-2 flex flex-col items-center justify-center relative shadow-sm aspect-square transition hover:scale-105 select-none pet-card bg-white/90 backdrop-blur text-gray-800"
+                         onmouseenter="showPetTooltip('${p.id}', ${count}, event)"
+                         onmouseleave="hidePetTooltip()"
+                         onclick="selectPetForMerge('${p.id}')">
+                        <div class="text-3xl mb-1">${pet.icon}</div>
+                        <div class="text-xs font-bold truncate w-full text-center">${pet.name}</div>
+                        <div class="text-[10px] text-gray-500">+$${formatCompact(base)}/s</div>
+                    </div>`;
                 }).join('');
             }
             document.getElementById('pet-count').innerText = state.inventory.length;
