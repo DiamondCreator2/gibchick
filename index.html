@@ -160,6 +160,18 @@
                  <div id="upgrades-container" class="grid grid-cols-1 gap-3"></div>
              </div>
 
+             <!-- Trust & Quests -->
+             <div>
+                 <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                     <i class="fas fa-star text-yellow-500"></i> Kitchen Trust
+                     <span id="trust-display" class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs">Trust Level: 1</span>
+                 </h3>
+                 <p class="text-xs text-gray-500 mb-2 italic">Complete quests to gain trust and improve cosmic drop rates!</p>
+                 <div id="quests-container" class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto">
+                     <!-- Quests inserted by JS -->
+                 </div>
+             </div>
+
              <!-- Achievements -->
              <div>
                  <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-trophy text-yellow-500"></i> Achievements <span id="achievement-count" class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs">0/14</span></h3>
@@ -540,6 +552,76 @@
             { id: 'toxic', name: 'Toxic Egg', cost: 100000000, icon: '☢️', colorClass: 'bg-green-900 border-green-400 text-green-200', pool: { 'roach': 0.6, 'slime': 0.3, 'hazmat': 0.09, 'godzilla': 0.01 } }
         ];
 
+        const QUESTS = {
+            firstEgg: {
+                id: 'firstEgg',
+                name: 'First Steps in the Kitchen',
+                description: 'Buy your first egg',
+                reward: 10,
+                condition: (state) => state.stats.totalEggs >= 1,
+                completed: false
+            },
+            tenEggs: {
+                id: 'tenEggs',
+                name: 'Kitchen Novice',
+                description: 'Buy 10 eggs',
+                reward: 25,
+                condition: (state) => state.stats.totalEggs >= 10,
+                completed: false
+            },
+            firstRare: {
+                id: 'firstRare',
+                name: 'Rare Discovery',
+                description: 'Hatch your first Rare pet',
+                reward: 50,
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Rare'),
+                completed: false
+            },
+            millionaire: {
+                id: 'millionaire',
+                name: 'Wealthy Chef',
+                description: 'Earn $1,000,000 total',
+                reward: 100,
+                condition: (state) => state.stats.totalMoney >= 1000000,
+                completed: false
+            },
+            firstCosmic: {
+                id: 'firstCosmic',
+                name: 'Cosmic Chef',
+                description: 'Hatch your first Cosmic pet',
+                reward: 200,
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Cosmic'),
+                completed: false
+            },
+            hundredEggs: {
+                id: 'hundredEggs',
+                name: 'Master Chef',
+                description: 'Buy 100 eggs',
+                reward: 150,
+                condition: (state) => state.stats.totalEggs >= 100,
+                completed: false
+            },
+            tenRares: {
+                id: 'tenRares',
+                name: 'Rare Collector',
+                description: 'Collect 10 different Rare pets',
+                reward: 300,
+                condition: (state) => {
+                    const rarePets = state.inventory.filter(p => PETS[p.id] && PETS[p.id].rarity === 'Rare').map(p => p.id);
+                    return [...new Set(rarePets)].length >= 10;
+                },
+                completed: false
+            },
+            kitchenTrust: {
+                id: 'kitchenTrust',
+                name: 'Kitchen Cosmos Trust',
+                description: 'Complete 5 trust quests',
+                reward: 500,
+                condition: (state) => state.trust.questsCompleted.length >= 5,
+                completed: false
+            }
+        };
+
         const UPGRADES = {
             luck: { name: 'Luck', description: 'Increases merge success rate', icon: '🍀', baseCost: 1000, costMultiplier: 2.5, maxLevel: 10, getEffect: (level) => level * 0.05 },
             income: { name: 'Income', description: 'Multiplies all pet income', icon: '💰', baseCost: 5000, costMultiplier: 3, maxLevel: 10, getEffect: (level) => level * 0.1 },
@@ -563,6 +645,7 @@
             collection: [],
             cosmosSlots: [],
             upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0, offlineProgress: 0, prestigeBonus: 0, goldenEggs: 0, petEvolution: 0, luckBoost: 0 },
+            trust: { level: 1, experience: 0, questsCompleted: [] },
             rebirth: { level: 0, multiplier: 1 },
             achievements: [],
             currentWorld: 'home',
@@ -579,8 +662,11 @@
             loadGame();
             renderShop();
             renderUpgrades();
+            renderQuests();
             renderInventory();
             updateAutoClicker();
+            checkAchievements();
+            checkQuests();
             updateUI();
 
             setInterval(() => {
@@ -898,7 +984,99 @@
 
         // --- ACHIEVEMENTS ---
         function checkAchievements() {
-            // (Simplified for brevity, same logic)
+            // Ensure state is properly initialized
+            if (!state.stats) {
+                state.stats = {
+                    totalClicks: 0,
+                    totalEggs: 0,
+                    totalMerges: 0,
+                    totalMoney: 0
+                };
+            }
+            if (!state.inventory) state.inventory = [];
+            if (!state.achievements) state.achievements = [];
+
+            let newAchievements = [];
+            Object.values(ACHIEVEMENTS).forEach(achievement => {
+                if (!state.achievements.includes(achievement.id) && achievement.condition(state)) {
+                    state.achievements.push(achievement.id);
+                    newAchievements.push(achievement);
+                }
+            });
+
+            if (newAchievements.length > 0) {
+                newAchievements.forEach(achievement => {
+                    showToast(`Achievement Unlocked: ${achievement.name}!`);
+                });
+                renderAchievements();
+                saveGame();
+            }
+        }
+
+        /* --- TRUST SYSTEM --- */
+        function checkQuests() {
+            if (!state.trust) {
+                state.trust = { level: 1, experience: 0, questsCompleted: [] };
+            }
+
+            let newQuests = [];
+            Object.values(QUESTS).forEach(quest => {
+                if (!state.trust.questsCompleted.includes(quest.id) && quest.condition(state)) {
+                    state.trust.questsCompleted.push(quest.id);
+                    state.trust.experience += quest.reward;
+                    newQuests.push(quest);
+                }
+            });
+
+            // Level up logic
+            const expNeeded = state.trust.level * 100;
+            while (state.trust.experience >= expNeeded) {
+                state.trust.experience -= expNeeded;
+                state.trust.level++;
+                showToast(`🏆 Trust Level Up! Now level ${state.trust.level}!`);
+            }
+
+            if (newQuests.length > 0) {
+                newQuests.forEach(quest => {
+                    showToast(`📜 Quest Completed: ${quest.name}! (+${quest.reward} trust)`);
+                });
+                renderQuests();
+                saveGame();
+            }
+        }
+
+        function getTrustBonus() {
+            // Trust increases drop rates for good pets in cosmic/kitchen eggs
+            return state.trust.level * 0.05; // 5% per level
+        }
+
+        function renderQuests() {
+            const container = document.getElementById('quests-container');
+            if (!container) return;
+
+            const questsHtml = Object.values(QUESTS).map(quest => {
+                const completed = state.trust.questsCompleted.includes(quest.id);
+                return `
+                    <div class="bg-white rounded-lg p-3 shadow-sm border-2 ${completed ? 'border-green-400' : 'border-gray-200'}">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-sm ${completed ? 'text-green-600' : 'text-gray-800'}">${quest.name}</h4>
+                            <span class="text-xs ${completed ? 'text-green-600' : 'text-gray-500'}">+${quest.reward} trust</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-2">${quest.description}</p>
+                        <div class="text-xs ${completed ? 'text-green-600 font-bold' : 'text-gray-400'}">
+                            ${completed ? '✅ Completed' : '⏳ In Progress'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = questsHtml;
+
+            // Update trust display
+            const trustDisplay = document.getElementById('trust-display');
+            if (trustDisplay) {
+                trustDisplay.textContent = `Trust Level: ${state.trust.level} (${state.trust.experience}/${state.trust.level * 100} XP)`;
+            }
         }
 
         // --- HATCHING ---
@@ -938,7 +1116,7 @@
             const getRarityVal = (r) => ({'Common':1,'Uncommon':2,'Rare':3,'Epic':4,'Legendary':5,'Mythical':6,'Godly':7,'Transcendent':8, 'Eternal':9})[r]||0;
 
             for(let i=0; i<count; i++) {
-                const petId = rollPet(egg.pool);
+                const petId = rollPet(egg.pool, egg.id);
                 if(petId && PETS[petId]) {
                     const newPet = { id: petId, uid: Date.now() + i, mutations: [] };
                     state.inventory.push(newPet);
@@ -974,14 +1152,35 @@
             saveGame(); renderInventory(); updateUI();
         }
 
-        function rollPet(pool) {
+        function rollPet(pool, eggId = null) {
+            let adjustedPool = { ...pool };
+
+            // Apply trust bonus to cosmic/kitchen eggs
+            if (eggId && (eggId.includes('cosmic') || eggId.includes('celestial') || eggId.includes('ultimate') || eggId.includes('ether') || eggId.includes('eclipse'))) {
+                const trustBonus = getTrustBonus();
+                const totalChance = Object.values(adjustedPool).reduce((sum, chance) => sum + chance, 0);
+
+                // Boost rare pet chances with trust
+                Object.keys(adjustedPool).forEach(petId => {
+                    if (PETS[petId] && ['Rare', 'Epic', 'Legendary', 'Mythical', 'Godly', 'Transcendent', 'Cosmic', 'Special'].includes(PETS[petId].rarity)) {
+                        adjustedPool[petId] = adjustedPool[petId] * (1 + trustBonus);
+                    }
+                });
+
+                // Normalize probabilities
+                const newTotal = Object.values(adjustedPool).reduce((sum, chance) => sum + chance, 0);
+                Object.keys(adjustedPool).forEach(petId => {
+                    adjustedPool[petId] = adjustedPool[petId] * (totalChance / newTotal);
+                });
+            }
+
             const rand = Math.random();
             let cumulative = 0;
-            for (const [petId, chance] of Object.entries(pool)) {
+            for (const [petId, chance] of Object.entries(adjustedPool)) {
                 cumulative += chance;
                 if (rand < cumulative) return petId;
             }
-            return Object.keys(pool)[0];
+            return Object.keys(adjustedPool)[0];
         }
 
         function closeHatchModal() { document.getElementById('hatch-overlay').classList.add('hidden'); }
