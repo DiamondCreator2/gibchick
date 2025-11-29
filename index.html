@@ -551,6 +551,21 @@
             { id: 'toxic', name: 'Toxic Egg', cost: 100000000, icon: '☢️', colorClass: 'bg-green-900 border-green-400 text-green-200', pool: { 'roach': 0.6, 'slime': 0.3, 'hazmat': 0.09, 'godzilla': 0.01 } }
         ];
 
+        const ACHIEVEMENTS = {
+            firstEgg: {
+                id: 'firstEgg',
+                name: 'First Steps',
+                description: 'Buy your first egg',
+                condition: (state) => state.stats.totalEggs >= 1
+            },
+            millionaire: {
+                id: 'millionaire',
+                name: 'Millionaire',
+                description: 'Earn $1,000,000 total',
+                condition: (state) => state.stats.totalMoney >= 1000000
+            }
+        };
+
         const QUESTS = {
             firstEgg: {
                 id: 'firstEgg',
