@@ -256,15 +256,6 @@
                 <!-- World Navigation Scroll -->
                 <div class="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide" id="world-nav-container"></div>
                 
-                <!-- Hatch Amount Slider -->
-                <div class="mb-4 px-2" id="hatch-slider-container" style="display:none;">
-                     <div class="flex justify-between text-xs font-bold mb-1">
-                         <span>Hatch Amount</span>
-                         <span id="hatch-amount-display">1x</span>
-                     </div>
-                     <input type="range" id="hatch-amount-slider" min="1" max="1" value="1" class="w-full accent-blue-500" oninput="updateHatchSetting(this.value)">
-                </div>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="egg-shop-container"></div>
              </div>
 
@@ -593,27 +584,6 @@
             { id: 'singularity', name: 'Singularity Egg', cost: 1000000000000000, icon: '🌌', colorClass: 'bg-black border-white text-white', pool: { 'darkmatter_chick': 0.05, 'void': 0.4, 'cosmos': 0.55 } }
         ];
 
-        const REBIRTH_LEVELS = [
-            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" },
-            { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
-            { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" },
-            { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" },
-            { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space (Astral Sector)" },
-            { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" },
-            { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" },
-            { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" },
-            { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" },
-            { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" },
-            { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm (Mystic Reach)" },
-            { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" },
-            { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" },
-            { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" },
-            { level: 20, req: { 'golden_chick': 1 }, multiplier: 15.0, unlockMsg: "Unlocks: Chickverse Galaxy (Gilded Coop)" },
-            { level: 25, req: { 'rainbow_chick': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Prismatic Fields" },
-            { level: 30, req: { 'mecha_chick': 1 }, multiplier: 50.0, unlockMsg: "Unlocks: Mecha Base" },
-            { level: 35, req: { 'darkmatter_chick': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Void Nexus" }
-        ];
-
         const UPGRADES = {
             luck: { name: 'Luck', description: 'Increases merge success rate', icon: '🍀', baseCost: 1000, costMultiplier: 2.5, maxLevel: 10, getEffect: (level) => level * 0.05 },
             income: { name: 'Income', description: 'Multiplies all pet income', icon: '💰', baseCost: 5000, costMultiplier: 3, maxLevel: 10, getEffect: (level) => level * 0.1 },
@@ -640,6 +610,27 @@
             firstGodly: { id: 'firstGodly', name: 'Godly', description: 'Get a Godly pet', icon: '✨', condition: (state) => state.inventory.some(id => PETS[id] && PETS[id].rarity === 'Godly') },
             firstTranscendent: { id: 'firstTranscendent', name: 'Transcendent', description: 'Get a Transcendent pet', icon: '🌌', condition: (state) => state.inventory.some(id => PETS[id] && PETS[id].rarity === 'Transcendent') }
         };
+
+        const REBIRTH_LEVELS = [
+            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" },
+            { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
+            { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" },
+            { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" },
+            { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space (Astral Sector)" },
+            { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" },
+            { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" },
+            { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" },
+            { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" },
+            { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" },
+            { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm (Mystic Reach)" },
+            { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" },
+            { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" },
+            { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" },
+            { level: 20, req: { 'golden_chick': 1 }, multiplier: 15.0, unlockMsg: "Unlocks: Chickverse Galaxy (Gilded Coop)" },
+            { level: 25, req: { 'rainbow_chick': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Prismatic Fields" },
+            { level: 30, req: { 'mecha_chick': 1 }, multiplier: 50.0, unlockMsg: "Unlocks: Mecha Base" },
+            { level: 35, req: { 'darkmatter_chick': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Void Nexus" }
+        ];
 
         // --- STATE ---
         let state = {
@@ -741,7 +732,7 @@
         function updateHatchSetting(val) {
              state.settings.hatchAmount = parseInt(val);
              document.getElementById('hatch-amount-display').innerText = state.settings.hatchAmount + 'x';
-             // renderShop(); // Removed to prevent flickering, value updates in UI via span
+             renderShop(); // Updates shop buttons instantly
         }
         
         function updateSortSetting(val) {
@@ -906,6 +897,9 @@
             
             state.rebirth.level = nextRebirth.level;
             state.rebirth.multiplier = nextRebirth.multiplier;
+
+            // Reset Hatch Amount on Rebirth
+            state.settings.hatchAmount = 1; 
             
             const newWorld = WORLDS.find(w => w.minRebirth === state.rebirth.level);
             if(newWorld) state.currentWorld = newWorld.id;
@@ -1119,7 +1113,7 @@
                 else if (id === 'petBonus') effectText = `+${(upgrade.getEffect(currentLevel) * 100).toFixed(1)}% pet`;
                 else if (id === 'multiHatch') effectText = `Max ${1 + upgrade.getEffect(currentLevel)} eggs`;
 
-                // Slider Injection for MultiHatch
+                // Slider Injection for MultiHatch (Inside the Upgrade Card)
                 let sliderHTML = '';
                 if (id === 'multiHatch' && currentLevel > 0) {
                     const maxHatch = 1 + upgrade.getEffect(currentLevel);
