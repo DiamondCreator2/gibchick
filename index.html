@@ -42,7 +42,6 @@
             color: #fff;
         }
         
-        /* Ensure text inside cards on dark modes is readable */
         .bg-world-spooky .text-gray-800, .bg-world-space .text-gray-800, 
         .bg-world-cyber .text-gray-800, .bg-world-atlantis .text-gray-800,
         .bg-world-shadow .text-gray-800 { color: #f3f4f6; }
@@ -549,23 +548,6 @@
             { id: 'infinity', name: 'Infinity Egg', cost: 10000000000000, icon: '♾️', colorClass: 'bg-gray-800 border-white text-white', pool: { 'chronos': 0.05, 'archangel': 0.2, 'nightmare': 0.25, 'leviathan': 0.5 } }
         ];
 
-        const REBIRTH_LEVELS = [
-            { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" },
-            { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" },
-            { level: 3, req: { 'fox': 2 }, multiplier: 3.0, unlockMsg: "Unlocks: Frozen Tundra" },
-            { level: 4, req: { 't-rex': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Magic Realm" },
-            { level: 5, req: { 'unicorn': 1 }, multiplier: 10.0, unlockMsg: "Unlocks: Deep Space" },
-            { level: 6, req: { 'phoenix': 1 }, multiplier: 25.0, unlockMsg: "Unlocks: Divine Plane" },
-            { level: 7, req: { 'void': 1 }, multiplier: 100.0, unlockMsg: "Unlocks: Cyber City" },
-            { level: 8, req: { 'cosmos': 1 }, multiplier: 500.0, unlockMsg: "Unlocks: Volcanic Core" },
-            { level: 9, req: { 'cyborg': 1 }, multiplier: 1000.0, unlockMsg: "Unlocks: Candy Land" },
-            { level: 10, req: { 'magma_lord': 1 }, multiplier: 5000.0, unlockMsg: "Unlocks: Atlantis" },
-            { level: 11, req: { 'candy_king': 1 }, multiplier: 25000.0, unlockMsg: "Unlocks: Shadow Realm" },
-            { level: 12, req: { 'leviathan': 1 }, multiplier: 100000.0, unlockMsg: "Unlocks: Celestial Haven" },
-            { level: 13, req: { 'nightmare': 1 }, multiplier: 500000.0, unlockMsg: "" },
-            { level: 14, req: { 'archangel': 1 }, multiplier: 1000000.0, unlockMsg: "" }
-        ];
-
         const UPGRADES = {
             luck: { name: 'Luck', description: 'Increases merge success rate', icon: '🍀', baseCost: 1000, costMultiplier: 2.5, maxLevel: 10, getEffect: (level) => level * 0.05 },
             income: { name: 'Income', description: 'Multiplies all pet income', icon: '💰', baseCost: 5000, costMultiplier: 3, maxLevel: 10, getEffect: (level) => level * 0.1 },
@@ -705,7 +687,48 @@
             updateUI();
         }
 
-        // --- REBIRTH SYSTEM ---
+        // --- REBIRTH SYSTEM (DYNAMIC) ---
+        function getRebirthLevelData(level) {
+            // HARDCODED LEVELS (1-14) for specific unlocks
+            // Debuffed Multipliers: 1 + (Level * 0.25) approx logic
+            if (level === 1) return { level: 1, req: { 'mouse': 5 }, multiplier: 1.5, unlockMsg: "Unlocks: Haunted Forest" };
+            if (level === 2) return { level: 2, req: { 'cat': 3 }, multiplier: 2.0, unlockMsg: "Unlocks: Jurassic Isle" };
+            if (level === 3) return { level: 3, req: { 'fox': 2 }, multiplier: 2.5, unlockMsg: "Unlocks: Frozen Tundra" };
+            if (level === 4) return { level: 4, req: { 't-rex': 1 }, multiplier: 3.0, unlockMsg: "Unlocks: Magic Realm" };
+            if (level === 5) return { level: 5, req: { 'unicorn': 1 }, multiplier: 3.5, unlockMsg: "Unlocks: Deep Space" };
+            if (level === 6) return { level: 6, req: { 'phoenix': 1 }, multiplier: 4.0, unlockMsg: "Unlocks: Divine Plane" };
+            if (level === 7) return { level: 7, req: { 'void': 1 }, multiplier: 4.5, unlockMsg: "Unlocks: Cyber City" };
+            if (level === 8) return { level: 8, req: { 'cosmos': 1 }, multiplier: 5.0, unlockMsg: "Unlocks: Volcanic Core" };
+            if (level === 9) return { level: 9, req: { 'cyborg': 1 }, multiplier: 5.5, unlockMsg: "Unlocks: Candy Land" };
+            if (level === 10) return { level: 10, req: { 'magma_lord': 1 }, multiplier: 6.0, unlockMsg: "Unlocks: Atlantis" };
+            if (level === 11) return { level: 11, req: { 'candy_king': 1 }, multiplier: 6.5, unlockMsg: "Unlocks: Shadow Realm" };
+            if (level === 12) return { level: 12, req: { 'leviathan': 1 }, multiplier: 7.0, unlockMsg: "Unlocks: Celestial Haven" };
+            if (level === 13) return { level: 13, req: { 'nightmare': 1 }, multiplier: 7.5, unlockMsg: "" };
+            if (level === 14) return { level: 14, req: { 'archangel': 1 }, multiplier: 8.0, unlockMsg: "" };
+
+            // PROCEDURAL LEVELS (15-1000)
+            if (level <= 1000) {
+                const multiplier = 1 + (level * 0.5); // Linear growth: +50% per rebirth (e.g. Lvl 100 = x51)
+                
+                // Cycle through high tier pets
+                const highTierPets = ['magma_lord', 'candy_king', 'leviathan', 'nightmare', 'archangel', 'chronos'];
+                const index = (level - 15) % highTierPets.length;
+                const petId = highTierPets[index];
+                const count = 1 + Math.floor((level - 15) / highTierPets.length);
+                
+                const req = {};
+                req[petId] = count;
+                
+                return {
+                    level: level,
+                    req: req,
+                    multiplier: parseFloat(multiplier.toFixed(1)),
+                    unlockMsg: ""
+                };
+            }
+            return null;
+        }
+
         function openRebirthModal() {
             const modal = document.getElementById('rebirth-modal');
             const currentLevelDisplay = document.getElementById('rebirth-current-level');
@@ -716,7 +739,7 @@
             const confirmBtn = document.getElementById('rebirth-confirm-btn');
 
             const currentLvl = state.rebirth.level;
-            const nextRebirth = REBIRTH_LEVELS.find(r => r.level === currentLvl + 1);
+            const nextRebirth = getRebirthLevelData(currentLvl + 1);
 
             currentLevelDisplay.innerText = currentLvl;
             currentMultDisplay.innerText = 'x' + state.rebirth.multiplier;
@@ -759,7 +782,7 @@
         function closeRebirthModal() { document.getElementById('rebirth-modal').classList.add('hidden'); }
 
         function performRebirth() {
-            const nextRebirth = REBIRTH_LEVELS.find(r => r.level === state.rebirth.level + 1);
+            const nextRebirth = getRebirthLevelData(state.rebirth.level + 1);
             if (!nextRebirth) return;
 
             state.inventory = []; 
@@ -769,7 +792,6 @@
             state.rebirth.level = nextRebirth.level;
             state.rebirth.multiplier = nextRebirth.multiplier;
             
-            // Check for new world unlock and switch if applicable
             const newWorld = WORLDS.find(w => w.minRebirth === state.rebirth.level);
             if(newWorld) state.currentWorld = newWorld.id;
 
@@ -811,7 +833,7 @@
             }).join('');
         }
 
-        // --- HATCHING & MERGE (Reuse prev logic, shortened for brevity but functional) ---
+        // --- HATCHING & MERGE ---
         function startHatchingSequence(egg, count = 1) {
             const overlay = document.getElementById('hatch-overlay');
             const eggContainer = document.getElementById('hatch-egg-display'); 
