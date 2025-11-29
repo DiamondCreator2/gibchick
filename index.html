@@ -532,8 +532,6 @@
             { id: 'divine', name: 'Divine Egg', cost: 50000000, icon: '👑', colorClass: 'bg-yellow-50 border-yellow-300 text-gray-900', pool: { 'phoenix': 0.4, 'kraken': 0.25, 'hydra': 0.2, 'titan': 0.1, 'void': 0.05 } },
             { id: 'void', name: 'Void Egg', cost: 250000000, icon: '🕳️', colorClass: 'bg-gray-900 border-gray-600 text-white', pool: { 'void': 0.6, 'cosmos': 0.4 } },
             { id: 'mystery', name: 'Mystery Egg', cost: 25000, icon: '❓', colorClass: 'bg-purple-100 border-purple-300 text-gray-900', pool: { 'spider': 0.2, 'bee': 0.2, 'frog': 0.2, 'turtle': 0.15, 'penguin': 0.15, 'camel': 0.1 } },
-
-            // Additional eggs for more worlds
             { id: 'enchanted', name: 'Enchanted Egg', cost: 500000, icon: '✨', colorClass: 'bg-pink-200 border-pink-400 text-gray-900', pool: { 'unicorn': 0.3, 'phoenix': 0.25, 'dragon': 0.2, 'griffin': 0.15, 'yeti': 0.1 } },
             { id: 'ancient', name: 'Ancient Egg', cost: 2000000, icon: '🏛️', colorClass: 'bg-amber-200 border-amber-400 text-gray-900', pool: { 't-rex': 0.25, 'triceratops': 0.2, 'mammoth': 0.2, 'reaper': 0.15, 'titan': 0.1, 'void': 0.05, 'cosmos': 0.05 } },
             { id: 'celestial', name: 'Celestial Egg', cost: 10000000, icon: '🌟', colorClass: 'bg-blue-200 border-blue-400 text-gray-900', pool: { 'phoenix': 0.25, 'dragon': 0.2, 'griffin': 0.15, 'cosmos': 0.15, 'nebula': 0.1, 'star': 0.05, 'reward_griffin': 0.05, 'void': 0.05 } },
@@ -663,11 +661,11 @@
             loadGame();
             renderShop();
             renderUpgrades();
-            renderQuests();
+            // renderQuests();
             renderInventory();
             updateAutoClicker();
             checkAchievements();
-            checkQuests();
+            // checkQuests();
             updateUI();
 
             setInterval(() => {
