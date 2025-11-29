@@ -172,9 +172,39 @@
                  </div>
              </div>
 
+             <!-- Daily & Play Time Rewards -->
+             <div>
+                 <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                     <i class="fas fa-gift text-green-500"></i> Rewards
+                 </h3>
+                 <div class="space-y-3">
+                     <!-- Daily Rewards -->
+                     <div class="bg-green-50 rounded-lg p-3 border-2 border-green-200">
+                         <div class="flex items-center justify-between mb-2">
+                             <h4 class="font-bold text-sm text-green-700">Daily Rewards</h4>
+                             <span id="daily-reward-info" class="text-xs text-green-600">Loading...</span>
+                         </div>
+                         <button id="daily-reward-btn" onclick="claimDailyReward()" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-3 rounded-lg transition">
+                             Claim Daily Reward
+                         </button>
+                     </div>
+
+                     <!-- Play Time Rewards -->
+                     <div class="bg-blue-50 rounded-lg p-3 border-2 border-blue-200">
+                         <div class="flex items-center justify-between mb-2">
+                             <h4 class="font-bold text-sm text-blue-700">Play Time Rewards</h4>
+                             <span id="playtime-info" class="text-xs text-blue-600">Loading...</span>
+                         </div>
+                         <div class="text-xs text-blue-600">
+                             Earn rewards for playing! Next reward in <span id="next-playtime">calculating...</span>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
              <!-- Achievements -->
              <div>
-                  <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-trophy text-yellow-500"></i> Achievements <span id="achievement-count" class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs">0/11</span></h3>
+                  <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-trophy text-yellow-500"></i> Achievements <span id="achievement-count" class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs">0/22</span></h3>
                  <div id="achievements-container" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto"></div>
              </div>
          </section>
@@ -764,6 +794,7 @@
         ];
 
         const ACHIEVEMENTS = {
+            // Basic Progression
             firstEgg: {
                 id: 'firstEgg',
                 name: 'First Steps',
@@ -776,6 +807,14 @@
                 description: 'Buy 10 eggs',
                 condition: (state) => state.stats.totalEggs >= 10
             },
+            firstClick: {
+                id: 'firstClick',
+                name: 'Click Master',
+                description: 'Click 100 times',
+                condition: (state) => state.stats.totalClicks >= 100
+            },
+
+            // Pet Collection
             firstRare: {
                 id: 'firstRare',
                 name: 'Rare Find',
@@ -794,6 +833,32 @@
                 description: 'Hatch your first Legendary pet',
                 condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Legendary')
             },
+            firstMythical: {
+                id: 'firstMythical',
+                name: 'Mythical',
+                description: 'Hatch your first Mythical pet',
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Mythical')
+            },
+            firstGodly: {
+                id: 'firstGodly',
+                name: 'Godly',
+                description: 'Hatch your first Godly pet',
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Godly')
+            },
+            firstTranscendent: {
+                id: 'firstTranscendent',
+                name: 'Transcendent',
+                description: 'Hatch your first Transcendent pet',
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Transcendent')
+            },
+            firstCosmic: {
+                id: 'firstCosmic',
+                name: 'Cosmic',
+                description: 'Hatch your first Cosmic pet',
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Cosmic')
+            },
+
+            // Wealth Achievements
             millionaire: {
                 id: 'millionaire',
                 name: 'Millionaire',
@@ -806,11 +871,31 @@
                 description: 'Earn $1,000,000,000 total',
                 condition: (state) => state.stats.totalMoney >= 1000000000
             },
+            trillionaire: {
+                id: 'trillionaire',
+                name: 'Trillionaire',
+                description: 'Earn $1,000,000,000,000 total',
+                condition: (state) => state.stats.totalMoney >= 1000000000000
+            },
+            quadrillionaire: {
+                id: 'quadrillionaire',
+                name: 'Quadrillionaire',
+                description: 'Earn $1,000,000,000,000,000 total',
+                condition: (state) => state.stats.totalMoney >= 1000000000000000
+            },
+
+            // Gameplay Achievements
             firstMerge: {
                 id: 'firstMerge',
                 name: 'Alchemist',
                 description: 'Successfully merge pets',
                 condition: (state) => state.stats.totalMerges >= 1
+            },
+            tenMerges: {
+                id: 'tenMerges',
+                name: 'Master Alchemist',
+                description: 'Perform 10 successful merges',
+                condition: (state) => state.stats.totalMerges >= 10
             },
             hundredEggs: {
                 id: 'hundredEggs',
@@ -818,21 +903,56 @@
                 description: 'Buy 100 eggs',
                 condition: (state) => state.stats.totalEggs >= 100
             },
-            firstMythical: {
-                id: 'firstMythical',
-                name: 'Mythical',
-                description: 'Hatch your first Mythical pet',
-                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Mythical')
+            thousandEggs: {
+                id: 'thousandEggs',
+                name: 'Egg Emperor',
+                description: 'Buy 1,000 eggs',
+                condition: (state) => state.stats.totalEggs >= 1000
             },
+
+            // Special Achievements
             trustMaster: {
                 id: 'trustMaster',
                 name: 'Trust Master',
                 description: 'Reach trust level 5',
                 condition: (state) => (state.trust && state.trust.level >= 5)
+            },
+            trustLegend: {
+                id: 'trustLegend',
+                name: 'Trust Legend',
+                description: 'Reach trust level 10',
+                condition: (state) => (state.trust && state.trust.level >= 10)
+            },
+            collectionMaster: {
+                id: 'collectionMaster',
+                name: 'Collection Master',
+                description: 'Collect 50 different pets',
+                condition: (state) => state.collection.length >= 50
+            },
+            collectionLegend: {
+                id: 'collectionLegend',
+                name: 'Collection Legend',
+                description: 'Collect 100 different pets',
+                condition: (state) => state.collection.length >= 100
+            },
+
+            // Galaxy Achievements
+            firstGalaxy: {
+                id: 'firstGalaxy',
+                name: 'Galaxy Explorer',
+                description: 'Unlock your first galaxy',
+                condition: (state) => state.currentGalaxy !== 'origin'
+            },
+            allGalaxies: {
+                id: 'allGalaxies',
+                name: 'Galaxy Master',
+                description: 'Unlock all galaxies',
+                condition: (state) => true // This would need to check if all galaxies are unlocked
             }
         };
 
         const QUESTS = {
+            // Basic Kitchen Tasks
             firstEgg: {
                 id: 'firstEgg',
                 name: 'First Steps in the Kitchen',
@@ -849,6 +969,16 @@
                 condition: (state) => state.stats.totalEggs >= 10,
                 completed: false
             },
+            firstClick: {
+                id: 'firstClick',
+                name: 'Click Training',
+                description: 'Click 50 times',
+                reward: 15,
+                condition: (state) => state.stats.totalClicks >= 50,
+                completed: false
+            },
+
+            // Pet Discovery Quests
             firstRare: {
                 id: 'firstRare',
                 name: 'Rare Discovery',
@@ -857,12 +987,20 @@
                 condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Rare'),
                 completed: false
             },
-            millionaire: {
-                id: 'millionaire',
-                name: 'Wealthy Chef',
-                description: 'Earn $1,000,000 total',
+            firstEpic: {
+                id: 'firstEpic',
+                name: 'Epic Discovery',
+                description: 'Hatch your first Epic pet',
+                reward: 75,
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Epic'),
+                completed: false
+            },
+            firstLegendary: {
+                id: 'firstLegendary',
+                name: 'Legendary Discovery',
+                description: 'Hatch your first Legendary pet',
                 reward: 100,
-                condition: (state) => state.stats.totalMoney >= 1000000,
+                condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Legendary'),
                 completed: false
             },
             firstCosmic: {
@@ -873,14 +1011,34 @@
                 condition: (state) => state.inventory.some(p => PETS[p.id] && PETS[p.id].rarity === 'Cosmic'),
                 completed: false
             },
-            hundredEggs: {
-                id: 'hundredEggs',
-                name: 'Master Chef',
-                description: 'Buy 100 eggs',
-                reward: 150,
-                condition: (state) => state.stats.totalEggs >= 100,
+
+            // Wealth Building Quests
+            millionaire: {
+                id: 'millionaire',
+                name: 'Wealthy Chef',
+                description: 'Earn $1,000,000 total',
+                reward: 100,
+                condition: (state) => state.stats.totalMoney >= 1000000,
                 completed: false
             },
+            tenMillion: {
+                id: 'tenMillion',
+                name: 'Rich Chef',
+                description: 'Earn $10,000,000 total',
+                reward: 150,
+                condition: (state) => state.stats.totalMoney >= 10000000,
+                completed: false
+            },
+            billionaire: {
+                id: 'billionaire',
+                name: 'Billionaire Chef',
+                description: 'Earn $1,000,000,000 total',
+                reward: 250,
+                condition: (state) => state.stats.totalMoney >= 1000000000,
+                completed: false
+            },
+
+            // Collection Quests
             tenRares: {
                 id: 'tenRares',
                 name: 'Rare Collector',
@@ -892,12 +1050,96 @@
                 },
                 completed: false
             },
+            fiveEpics: {
+                id: 'fiveEpics',
+                name: 'Epic Collector',
+                description: 'Collect 5 different Epic pets',
+                reward: 400,
+                condition: (state) => {
+                    const epicPets = state.inventory.filter(p => PETS[p.id] && PETS[p.id].rarity === 'Epic').map(p => p.id);
+                    return [...new Set(epicPets)].length >= 5;
+                },
+                completed: false
+            },
+
+            // Gameplay Quests
+            firstMerge: {
+                id: 'firstMerge',
+                name: 'First Fusion',
+                description: 'Successfully merge pets for the first time',
+                reward: 80,
+                condition: (state) => state.stats.totalMerges >= 1,
+                completed: false
+            },
+            fiveMerges: {
+                id: 'fiveMerges',
+                name: 'Fusion Expert',
+                description: 'Perform 5 successful merges',
+                reward: 120,
+                condition: (state) => state.stats.totalMerges >= 5,
+                completed: false
+            },
+            hundredEggs: {
+                id: 'hundredEggs',
+                name: 'Master Chef',
+                description: 'Buy 100 eggs',
+                reward: 150,
+                condition: (state) => state.stats.totalEggs >= 100,
+                completed: false
+            },
+
+            // Trust Building Quests
             kitchenTrust: {
                 id: 'kitchenTrust',
                 name: 'Kitchen Cosmos Trust',
                 description: 'Complete 5 trust quests',
                 reward: 500,
                 condition: (state) => state.trust.questsCompleted.length >= 5,
+                completed: false
+            },
+            trustBuilder: {
+                id: 'trustBuilder',
+                name: 'Trust Builder',
+                description: 'Reach trust level 3',
+                reward: 300,
+                condition: (state) => (state.trust && state.trust.level >= 3),
+                completed: false
+            },
+            trustMaster: {
+                id: 'trustMaster',
+                name: 'Trust Master',
+                description: 'Reach trust level 7',
+                reward: 600,
+                condition: (state) => (state.trust && state.trust.level >= 7),
+                completed: false
+            },
+
+            // Advanced Quests
+            collection25: {
+                id: 'collection25',
+                name: 'Pet Collector',
+                description: 'Collect 25 different pets',
+                reward: 350,
+                condition: (state) => state.collection.length >= 25,
+                completed: false
+            },
+            collection50: {
+                id: 'collection50',
+                name: 'Pet Master',
+                description: 'Collect 50 different pets',
+                reward: 500,
+                condition: (state) => state.collection.length >= 50,
+                completed: false
+            },
+            galaxyExplorer: {
+                id: 'galaxyExplorer',
+                name: 'Galaxy Explorer',
+                description: 'Unlock 3 different galaxies',
+                reward: 400,
+                condition: (state) => {
+                    // This would need to check unlocked galaxies
+                    return true; // Placeholder
+                },
                 completed: false
             }
         };
@@ -925,9 +1167,11 @@
             collection: [],
             cosmosSlots: [],
             upgrades: { luck: 0, income: 0, clickPower: 0, autoClicker: 0, criticalClicks: 0, eggDiscount: 0, petBonus: 0, multiHatch: 0, offlineProgress: 0, prestigeBonus: 0, goldenEggs: 0, petEvolution: 0, luckBoost: 0 },
-            trust: { level: 1, experience: 0, questsCompleted: [] },
             rebirth: { level: 0, multiplier: 1 },
             achievements: [],
+            trust: { level: 1, experience: 0, questsCompleted: [] },
+            dailyRewards: { lastClaim: 0, streak: 0, claimedDays: [] },
+            playTime: { totalSeconds: 0, lastUpdate: Date.now(), rewards: [] },
             currentWorld: 'home',
             currentGalaxy: 'origin',
             settings: { hatchAmount: 1, sortMode: 'rarity_desc' },
@@ -948,15 +1192,23 @@
             updateAutoClicker();
             checkAchievements();
             checkQuests();
+            checkDailyRewards();
+            updateDailyUI();
+            updatePlayTimeUI();
             updateUI();
 
             setInterval(() => {
                 const income = calculateIncome();
                 if (income > 0) addMoney(income);
+                updatePlayTime();
             }, 1000);
-            
+
             setInterval(processCosmos, 1000);
             setInterval(saveGame, 10000);
+            setInterval(() => {
+                updateDailyUI();
+                updatePlayTimeUI();
+            }, 5000); // Update UI every 5 seconds
         };
 
         function formatCompact(num) {
@@ -1369,6 +1621,154 @@
             if (countDisplay) {
                 countDisplay.textContent = `${unlockedCount}/${totalAchievements}`;
             }
+        }
+
+        /* --- DAILY REWARDS SYSTEM --- */
+        function checkDailyRewards() {
+            const now = Date.now();
+            const lastClaim = state.dailyRewards.lastClaim;
+            const daysSinceLastClaim = Math.floor((now - lastClaim) / (1000 * 60 * 60 * 24));
+
+            if (daysSinceLastClaim >= 1) {
+                // New day available
+                const streak = state.dailyRewards.streak;
+                const reward = calculateDailyReward(streak + 1);
+
+                showToast(`🎁 Daily reward available! Day ${streak + 1}: ${formatCompact(reward)} coins`);
+                // The reward will be claimed when player clicks the claim button
+            }
+        }
+
+        function calculateDailyReward(day) {
+            // Base reward increases with streak, with bonuses for milestones
+            let base = 1000 * day;
+            if (day >= 7) base *= 2; // Week streak bonus
+            if (day >= 30) base *= 3; // Month streak bonus
+            if (day >= 100) base *= 5; // Century streak bonus
+            return base;
+        }
+
+        function claimDailyReward() {
+            const now = Date.now();
+            const lastClaim = state.dailyRewards.lastClaim;
+            const daysSinceLastClaim = Math.floor((now - lastClaim) / (1000 * 60 * 60 * 24));
+
+            if (daysSinceLastClaim >= 1) {
+                const streak = daysSinceLastClaim === 1 ? state.dailyRewards.streak + 1 : 1;
+                const reward = calculateDailyReward(streak);
+
+                state.dailyRewards.lastClaim = now;
+                state.dailyRewards.streak = streak;
+                state.dailyRewards.claimedDays.push(now);
+
+                addMoney(reward);
+                showToast(`🎉 Daily reward claimed! Day ${streak}: +${formatCompact(reward)} coins`);
+
+                updateDailyUI();
+                saveGame();
+            } else {
+                showToast('Daily reward already claimed today!');
+            }
+        }
+
+        function updateDailyUI() {
+            const now = Date.now();
+            const lastClaim = state.dailyRewards.lastClaim;
+            const daysSinceLastClaim = Math.floor((now - lastClaim) / (1000 * 60 * 60 * 24));
+            const canClaim = daysSinceLastClaim >= 1;
+
+            // Update UI elements if they exist
+            const dailyBtn = document.getElementById('daily-reward-btn');
+            const dailyInfo = document.getElementById('daily-reward-info');
+
+            if (dailyBtn) {
+                dailyBtn.disabled = !canClaim;
+                dailyBtn.textContent = canClaim ? 'Claim Daily Reward' : 'Already Claimed';
+            }
+
+            if (dailyInfo) {
+                const streak = state.dailyRewards.streak;
+                const nextReward = calculateDailyReward(canClaim ? streak + 1 : streak);
+                dailyInfo.textContent = `Streak: ${streak} days | Next: ${formatCompact(nextReward)} coins`;
+            }
+        }
+
+        function updatePlayTimeUI() {
+            const playTimeInfo = getPlayTimeInfo();
+            const playtimeInfoEl = document.getElementById('playtime-info');
+            const nextPlaytimeEl = document.getElementById('next-playtime');
+
+            if (playtimeInfoEl) {
+                playtimeInfoEl.textContent = `${playTimeInfo.hours}h ${playTimeInfo.minutes % 60}m played`;
+            }
+
+            if (nextPlaytimeEl && playTimeInfo.nextReward) {
+                const remainingHours = playTimeInfo.nextReward.hours - playTimeInfo.hours;
+                nextPlaytimeEl.textContent = `${remainingHours}h (${formatCompact(playTimeInfo.nextReward.reward)} coins)`;
+            } else if (nextPlaytimeEl) {
+                nextPlaytimeEl.textContent = 'All claimed!';
+            }
+        }
+
+        /* --- PLAY TIME REWARDS SYSTEM --- */
+        function updatePlayTime() {
+            const now = Date.now();
+            const timeDiff = Math.floor((now - state.playTime.lastUpdate) / 1000);
+            state.playTime.totalSeconds += timeDiff;
+            state.playTime.lastUpdate = now;
+
+            checkPlayTimeRewards();
+        }
+
+        function checkPlayTimeRewards() {
+            const totalHours = Math.floor(state.playTime.totalSeconds / 3600);
+            const rewards = [
+                { hours: 1, reward: 1000, name: '1 Hour Player' },
+                { hours: 5, reward: 5000, name: '5 Hour Veteran' },
+                { hours: 10, reward: 10000, name: '10 Hour Expert' },
+                { hours: 25, reward: 25000, name: '25 Hour Master' },
+                { hours: 50, reward: 50000, name: '50 Hour Legend' },
+                { hours: 100, reward: 100000, name: '100 Hour Champion' },
+                { hours: 250, reward: 250000, name: '250 Hour Hero' },
+                { hours: 500, reward: 500000, name: '500 Hour Titan' },
+                { hours: 1000, reward: 1000000, name: '1000 Hour God' }
+            ];
+
+            rewards.forEach(reward => {
+                if (totalHours >= reward.hours && !state.playTime.rewards.includes(reward.hours)) {
+                    state.playTime.rewards.push(reward.hours);
+                    addMoney(reward.reward);
+                    showToast(`⏰ Play Time Reward: ${reward.name}! +${formatCompact(reward.reward)} coins`);
+                }
+            });
+        }
+
+        function getPlayTimeInfo() {
+            const totalHours = Math.floor(state.playTime.totalSeconds / 3600);
+            const totalMinutes = Math.floor(state.playTime.totalSeconds / 60);
+            return {
+                hours: totalHours,
+                minutes: totalMinutes,
+                nextReward: getNextPlayTimeReward(totalHours)
+            };
+        }
+
+        function getNextPlayTimeReward(currentHours) {
+            const rewards = [1, 5, 10, 25, 50, 100, 250, 500, 1000];
+            for (let reward of rewards) {
+                if (currentHours < reward && !state.playTime.rewards.includes(reward)) {
+                    return { hours: reward, reward: calculatePlayTimeReward(reward) };
+                }
+            }
+            return null;
+        }
+
+        function calculatePlayTimeReward(hours) {
+            const rewards = {
+                1: 1000, 5: 5000, 10: 10000, 25: 25000, 50: 50000,
+                100: 100000, 250: 250000, 500: 500000, 1000: 1000000
+            };
+            return rewards[hours] || 0;
         }
 
         /* --- TRUST SYSTEM --- */
